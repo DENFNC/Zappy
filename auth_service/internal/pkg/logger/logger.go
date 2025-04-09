@@ -1,4 +1,4 @@
-package main
+package logger
 
 import (
 	"context"
@@ -57,29 +57,28 @@ func (h *PrettyHandler) Handle(ctx context.Context, r slog.Record) error {
 	return nil
 }
 
-func New() *slog.Logger { return nil }
+func New(logType string) (*slog.Logger, error) {
+	var handle slog.Handler
 
-func main() {
-	var handle PrettyHandler = PrettyHandler{
-		Handler: slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
-			Level: slog.LevelWarn,
-		}),
+	if logType == "" {
+		return nil, fmt.Errorf("log type is empty")
 	}
 
-	logger := slog.New(&handle)
+	switch logType {
+	case "dev":
+		handle = &PrettyHandler{
+			Handler: slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+				Level: slog.LevelDebug,
+			}),
+		}
+	case "prod":
+		handle = slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+			AddSource: true,
+			Level:     slog.LevelInfo,
+		})
+	}
 
-	logger.Debug("Debug message")
-	logger.Info("Info message")
-	logger.Warn(
-		"Warn message",
-		slog.String("key1", "value1"),
-	)
-	logger.Error(
-		"Error message",
-		slog.String("key1", "value1"),
-		slog.String("key2", "value2"),
-		slog.String("key3", "value2"),
-		slog.String("key4", "value2"),
-		slog.String("key5", "value2"),
-	)
+	logger := slog.New(handle)
+
+	return logger, nil
 }

@@ -1,2 +1,4 @@
 app_log: "dev"
 # database_url :""
+grpc:
+  port: 8080
