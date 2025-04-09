@@ -1,0 +1,63 @@
+syntax = "proto3";
+package auth;
+
+
+option go_package = "github.com/DENFNC/Zappy/proto/gen/v1;v1";
+
+
+message UserDefault {
+    string username = 1;
+    string email = 2;
+}
+
+// ========= Регистрация =========
+// Запрос на регистрацию нового пользователя
+message RegisterRequest {
+    UserDefault user = 1;
+    string password = 2;
+}
+
+
+// Ответ на регистрацию
+message RegisterResponse {
+    string token = 1;
+    int64 user_id = 2;
+}
+
+
+// ========= Аутентификация =========
+// Запрос на аутентификацию
+message LoginRequest {
+    oneof auth_type {
+        string username = 1;
+        string email = 2;
+    }
+    string password = 3;
+}
+
+
+// Ответ на аутентификацию
+message LoginResponse {
+    string token = 1;
+}
+
+
+// ========= Обновление JWT токена =========
+// Запрос на обновление
+message RefreshRequest {
+    string token = 1;
+}
+
+
+// Ответ на обновление
+message RefreshResponse {
+    string token = 1;
+}
+
+
+// ========= Сервисы =========
+service Auth {
+    rpc Register(RegisterRequest) returns (RegisterResponse) {}
+    rpc Login(LoginRequest) returns (LoginResponse) {}
+    rpc Refresh(RefreshRequest) returns (RefreshResponse) {}
+}
