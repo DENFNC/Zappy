@@ -69,6 +69,12 @@ func New(logType string) (*slog.Logger, error) {
 		handle = &PrettyHandler{
 			Handler: slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
 				Level: slog.LevelDebug,
+				ReplaceAttr: func(groups []string, a slog.Attr) slog.Attr {
+					if len(groups) > 0 {
+						a.Key = strings.Join(groups, ".") + "." + a.Key
+					}
+					return a
+				},
 			}),
 		}
 	case "prod":
