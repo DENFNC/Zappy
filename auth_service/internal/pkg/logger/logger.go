@@ -1,3 +1,6 @@
+// Package logger предоставляет кастомный логгер, построенный на базе пакета slog.
+// В режиме разработки ("dev") используются цветная и удобочитаемая (pretty) раскраска сообщений,
+// а в режиме продакшна ("prod") – логирование в формате JSON с информацией об источнике.
 package logger
 
 import (
@@ -11,10 +14,18 @@ import (
 	"github.com/fatih/color"
 )
 
+// PrettyHandler расширяет стандартный обработчик slog.Handler для форматированного вывода логов.
+// Он оборачивает базовый slog.Handler и переопределяет метод Handle для вывода
+// сообщений с цветовой подсветкой в зависимости от уровня лога.
 type PrettyHandler struct {
 	slog.Handler
 }
 
+// Handle обрабатывает запись лога slog.Record.
+// Он форматирует время, уровень, сообщение и дополнительные атрибуты.
+// В зависимости от уровня (Debug, Info, Warn, Error) применяется соответствующая цветовая подсветка.
+// Если присутствуют дополнительные атрибуты, они сериализуются в отформатированный JSON.
+// Полученная строка выводится в стандартный вывод.
 func (h *PrettyHandler) Handle(ctx context.Context, r slog.Record) error {
 	levelString := r.Level.String() + " | "
 	msgString := r.Message
@@ -40,23 +51,59 @@ func (h *PrettyHandler) Handle(ctx context.Context, r slog.Record) error {
 		return true
 	})
 
-	fieldJSON, err := json.MarshalIndent(fields, "", " ")
-	if err != nil {
-		return err
+	var fieldJSON []byte
+	if len(fields) > 0 {
+		// Форматируем атрибуты в отформатированный JSON.
+		var err error
+		fieldJSON, err = json.MarshalIndent(fields, "", " ")
+		if err != nil {
+			return err
+		}
 	}
 
 	var sb strings.Builder
 	timeFormat := r.Time.Format("2006-01-02 15:04:05")
 	sb.WriteString(fmt.Sprintf("[%s]  ", timeFormat))
 	sb.WriteString(levelString)
-	sb.WriteString(fmt.Sprintf("%s\n", msgString))
-	sb.WriteString(color.RGB(112, 128, 144).Sprint(string(fieldJSON)))
+	sb.WriteString(msgString)
+	if len(fields) > 0 {
+		sb.WriteString("\n")
+		sb.WriteString(color.RGB(112, 128, 144).Sprint(string(fieldJSON)))
+	}
 
 	finalString := sb.String()
 	fmt.Println(finalString)
 	return nil
 }
 
+// WithAttrs возвращает новый обработчик с добавленными атрибутами.
+// Переданные атрибуты объединяются с базовыми атрибутами обработчика.
+func (h *PrettyHandler) WithAttrs(attrs []slog.Attr) slog.Handler {
+	return &PrettyHandler{
+		Handler: h.Handler.WithAttrs(attrs),
+	}
+}
+
+// WithGroup возвращает новый обработчик, который добавляет указанную группу к ключам атрибутов.
+// Это позволяет структурировать атрибуты логов по группам.
+func (h *PrettyHandler) WithGroup(name string) slog.Handler {
+	return &PrettyHandler{
+		Handler: h.Handler.WithGroup(name),
+	}
+}
+
+// New создает новый экземпляр slog.Logger в зависимости от переданного типа логирования.
+// Параметр logType должен принимать одно из двух значений: "dev" для режима разработки или "prod" для продакшн-режима.
+//
+// В режиме "dev":
+// - Создается PrettyHandler, который выводит текстовые логи с цветовой подсветкой и уровнем логирования Debug.
+// - Для каждого атрибута вызывается ReplaceAttr, объединяющий группы (если присутствуют) с ключом атрибута.
+//
+// В режиме "prod":
+//   - Создается стандартный JSONHandler с дополнительной информацией об источнике вызова
+//     и уровнем логирования Info.
+//
+// Если logType пустой, функция возвращает ошибку.
 func New(logType string) (*slog.Logger, error) {
 	var handle slog.Handler
 
