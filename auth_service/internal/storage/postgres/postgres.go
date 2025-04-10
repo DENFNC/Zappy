@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -27,4 +28,25 @@ func New(conn string) *Storage {
 	return &Storage{
 		DB: dbpool,
 	}
+}
+
+func (s *Storage) WithTx(ctx context.Context, conn *pgxpool.Conn, f func(pgx.Tx) error) error {
+	tx, err := conn.Begin(ctx)
+	if err != nil {
+		return err
+	}
+
+	defer func() {
+		if r := recover(); r != nil {
+			_ = tx.Rollback(ctx)
+		} else if err != nil {
+			_ = tx.Rollback(ctx)
+		}
+	}()
+
+	if err = f(tx); err != nil {
+		return err
+	}
+
+	return tx.Commit(ctx)
 }

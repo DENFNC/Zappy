@@ -4,7 +4,6 @@ CREATE TABLE
         email VARCHAR(255) UNIQUE NOT NULL,
         username VARCHAR(255) UNIQUE NOT NULL,
         password_hash VARCHAR(255) NOT NULL,
-        role VARCHAR(20) DEFAULT 'user' NOT NULL,
         created_at TIMESTAMP DEFAULT NOW () NOT NULL,
         updated_at TIMESTAMP DEFAULT NOW () NOT NULL
     );
