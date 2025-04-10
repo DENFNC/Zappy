@@ -1,5 +1,6 @@
-APP_PROTO=proto/grpc
+APP_PROTO=proto/grpc/v1
 APP_PROTO_GEN=proto/gen/v1
+APP_PROTO_VALIDATE=proto/third_party
 GOPATH ?= $(shell go env GOPATH)
 BIN_PATH := $(GOPATH)/bin
 
@@ -8,12 +9,15 @@ BIN_PATH := $(GOPATH)/bin
 
 grpc-gen: check-plugins
 	@echo "🔧 Generating gRPC code..."
+	@mkdir -p $(APP_PROTO_GEN)
 	PATH="$(BIN_PATH):$$PATH" \
-	protoc -I=proto/grpc \
-		--go_out=proto/gen/v1 --go_opt=paths=source_relative \
-		--go-grpc_out=proto/gen/v1 --go-grpc_opt=paths=source_relative \
-		proto/grpc/v1/auth.proto
-	@echo "✅ gRPC code generated."
+	protoc -I=$(APP_PROTO) -I=$(APP_PROTO_VALIDATE) \
+		--go_out=$(APP_PROTO_GEN) --go_opt=paths=source_relative \
+		--go-grpc_out=$(APP_PROTO_GEN) --go-grpc_opt=paths=source_relative \
+		--validate_out=$(APP_PROTO_GEN) \
+		--validate_opt=lang=go \
+		--validate_opt=paths=source_relative \
+		$(wildcard $(APP_PROTO)/*.proto)
 
 
 grpc-clean:
@@ -40,6 +44,13 @@ check-plugins:
 		go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest; \
 	else \
 		echo "✅ protoc-gen-go-grpc found."; \
+	fi
+
+	@if [ ! -x "$(BIN_PATH)/protoc-gen-validate" ]; then \
+		echo "⬇️  Installing protoc-gen-validate..."; \
+		go get github.com/envoyproxy/protoc-gen-validate@latest; \
+	else \
+		echo "✅ protoc-gen-validate found."; \
 	fi
 
 	@if ! echo $$PATH | grep -q "$(BIN_PATH)"; then \

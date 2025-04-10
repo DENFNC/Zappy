@@ -1,9 +1,23 @@
 {
     "cSpell.words": [
+        "authgrpc",
         "cleanenv",
+        "dbpool",
         "DENFNC",
+        "envoyproxy",
+        "extendee",
         "GOPATH",
         "grpcapp",
-        "protoc"
+        "Idxs",
+        "jackc",
+        "pgxpool",
+        "protoc",
+        "protogen",
+        "protoimpl",
+        "protoreflect",
+        "PSQL",
+        "Serv",
+        "sslmode",
+        "stdlib"
     ]
 }

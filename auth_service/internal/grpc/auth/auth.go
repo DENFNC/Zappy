@@ -1,9 +1,9 @@
-package auth
+package authgrpc
 
 import (
 	"context"
 
-	"github.com/DENFNC/Zappy/proto/gen/v1/v1"
+	v1 "github.com/DENFNC/Zappy/proto/gen/v1"
 	"google.golang.org/grpc"
 )
 
@@ -30,8 +30,8 @@ type serverAPI struct {
 	auth Auth
 }
 
-func Register(gRPC *grpc.Server) {
-	v1.RegisterAuthServer(gRPC, &serverAPI{})
+func ServRegister(gRPC *grpc.Server, auth Auth) {
+	v1.RegisterAuthServer(gRPC, &serverAPI{auth: auth})
 }
 
 func (sa *serverAPI) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginResponse, error) {

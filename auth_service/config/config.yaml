@@ -1,4 +1,5 @@
 app_log: "dev"
-# database_url :""
 grpc:
   port: 8080
+postgres:
+  url: "postgres://postgres:admin@localhost:5432/auth_service?sslmode=disable"

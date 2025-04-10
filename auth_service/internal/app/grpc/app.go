@@ -5,7 +5,7 @@ import (
 	"log/slog"
 	"net"
 
-	"github.com/DENFNC/Zappy/internal/grpc/auth"
+	authgrpc "github.com/DENFNC/Zappy/internal/grpc/auth"
 	"google.golang.org/grpc"
 )
 
@@ -15,10 +15,16 @@ type App struct {
 	port       int
 }
 
-func New(log *slog.Logger, port int) *App {
-	grpcServer := grpc.NewServer()
+func New(log *slog.Logger, port int, auth authgrpc.Auth) *App {
+	if log == nil {
+		panic("logger cannot be nil")
+	}
+	if auth == nil {
+		panic("auth service cannot be nil")
+	}
 
-	auth.Register(grpcServer)
+	grpcServer := grpc.NewServer()
+	authgrpc.ServRegister(grpcServer, auth)
 
 	return &App{
 		log:        log,
