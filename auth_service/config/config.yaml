@@ -1,4 +1,5 @@
 app_log: "dev"
+app_uuid : "f7f7db8a-1827-404a-97e8-2c36595a4db4"
 grpc:
   port: 8080
 postgres:

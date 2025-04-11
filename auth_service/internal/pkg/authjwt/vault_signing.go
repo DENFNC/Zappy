@@ -1,7 +1,7 @@
-// Package jwt реализует алгоритмы подписи и верификации токенов JWT с использованием Hashicorp Vault.
+// Package authjwt реализует алгоритмы подписи и верификации токенов JWT с использованием Hashicorp Vault.
 // Реализована подпись с использованием алгоритма RSA-PSS (PS256), где приватный ключ хранится в Vault,
 // а публичный ключ извлекается посредством интерфейса.
-package jwt
+package authjwt
 
 import (
 	"crypto"
@@ -39,6 +39,16 @@ type VaultKey interface {
 type SigningMethodVaultPS256 struct {
 	Vault PublicKeyProvider
 	name  string
+}
+
+func NewSigningMethodVaultPS256(
+	vault PublicKeyProvider,
+	name string,
+) *SigningMethodVaultPS256 {
+	return &SigningMethodVaultPS256{
+		Vault: vault,
+		name:  name,
+	}
 }
 
 // Alg возвращает имя алгоритма подписи, используемого в SigningMethodVaultPS256.

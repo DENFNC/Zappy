@@ -5,7 +5,9 @@ go 1.23.5
 require (
 	github.com/envoyproxy/protoc-gen-validate v1.2.1
 	github.com/fatih/color v1.18.0
+	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/golang-migrate/migrate/v4 v4.18.2
+	github.com/google/uuid v1.6.0
 	github.com/hashicorp/vault/api v1.16.0
 	github.com/ilyakaznacheev/cleanenv v1.5.0
 	github.com/jackc/pgx/v5 v5.7.4
