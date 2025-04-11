@@ -1,5 +1,8 @@
 {
     "cSpell.words": [
+        "декомпозирован",
+        "инкапсулирует",
+        "парсинга",
         "authgrpc",
         "cleanenv",
         "dbpool",
@@ -11,6 +14,7 @@
         "Idxs",
         "jackc",
         "pgxpool",
+        "prehashed",
         "protoc",
         "protogen",
         "protoimpl",
