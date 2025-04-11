@@ -8,8 +8,10 @@ import (
 
 type Config struct {
 	LogType  string `yaml:"log_type" env-default:"dev"`
+	AppUUID  string `yaml:"app_uuid" env-required:"true"`
 	GRPC     ConfigGRPC
 	Postgres ConfigPSQL
+	Vault    ConfigVault
 }
 
 type ConfigGRPC struct {
@@ -18,6 +20,11 @@ type ConfigGRPC struct {
 
 type ConfigPSQL struct {
 	URL string `yaml:"url" env-required:"true"`
+}
+
+type ConfigVault struct {
+	URL   string `yaml:"url" env-required:"true"`
+	Token string `yaml:"token" env-required:"true"`
 }
 
 func MustLoad(path string) *Config {

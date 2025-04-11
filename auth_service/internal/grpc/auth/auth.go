@@ -2,7 +2,6 @@ package authgrpc
 
 import (
 	"context"
-	"fmt"
 
 	v1 "github.com/DENFNC/Zappy/proto/gen/v1"
 	"google.golang.org/grpc"
@@ -41,16 +40,17 @@ func (sa *serverAPI) Login(ctx context.Context, req *v1.LoginRequest) (*v1.Login
 }
 
 func (sa *serverAPI) Register(ctx context.Context, req *v1.RegisterRequest) (*v1.RegisterResponse, error) {
-	token, userID, err := sa.auth.Register(
+	token, userID, _ := sa.auth.Register(
 		ctx,
 		req.GetUser().Username.Username,
 		req.GetUser().Email.Email,
 		req.GetPassword().Password,
 	)
 
-	if err != nil {
-		fmt.Println(err)
-	}
+	// if err != nil {
+	// 	sa.log.Error("Ошибка регистрации пользователя", "username", username, "error", err)
+	// 	return nil, err
+	// }
 
 	return &v1.RegisterResponse{
 		Token:  token,

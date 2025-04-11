@@ -1,13 +1,15 @@
-// Package authjwt реализует алгоритмы подписи и верификации токенов JWT с использованием Hashicorp Vault.
+// Package vaulttoken реализует алгоритмы подписи и верификации токенов JWT с использованием Hashicorp Vault.
 // Реализована подпись с использованием алгоритма RSA-PSS (PS256), где приватный ключ хранится в Vault,
 // а публичный ключ извлекается посредством интерфейса.
-package authjwt
+package vaulttoken
 
 import (
 	"crypto"
 	"crypto/rsa"
 	"crypto/sha256"
+	"crypto/x509"
 	"encoding/base64"
+	"encoding/pem"
 	"fmt"
 	"strings"
 
@@ -15,39 +17,30 @@ import (
 )
 
 const (
-	emptyValue = 0
+	methodVaultPS256 = "PS256"
 )
 
-// PublicKeyProvider определяет интерфейс для получения публичного RSA ключа.
-// Реализации должны предоставлять метод FetchPublicKey, который возвращает
-// публичный ключ и ошибку, если операция неудачна.
-type PublicKeyProvider interface {
-	// FetchPublicKey извлекает публичный RSA ключ.
-	FetchPublicKey() (*rsa.PublicKey, error)
+type VaultKMS interface {
+	Read(keyName string) (*api.Secret, error)
+	Sign(keyName string, data map[string]any) (*api.Secret, error)
 }
 
-// VaultKey расширяет PublicKeyProvider и предоставляет методы для доступа
-// к данным, необходимым для взаимодействия с Vault, таким как имя ключа и клиент.
-type VaultKey interface {
-	PublicKeyProvider
-	GetKeyName() string
-	GetClient() *api.Client
-}
-
-// SigningMethodVaultPS256 реализует метод подписи, основанный на алгоритме PS256 (RSA-PSS с SHA256)
+// SigningMethodVaultPS256 реализует метод подписи, основанный на алгоритме PS256(RSA-PSS с SHA256)
 // с использованием Vault для выполнения криптографических операций.
 type SigningMethodVaultPS256 struct {
-	Vault PublicKeyProvider
-	name  string
+	Vault   VaultKMS
+	keyName string
+	name    string
 }
 
 func NewSigningMethodVaultPS256(
-	vault PublicKeyProvider,
-	name string,
+	vault VaultKMS,
+	keyName string,
 ) *SigningMethodVaultPS256 {
 	return &SigningMethodVaultPS256{
-		Vault: vault,
-		name:  name,
+		Vault:   vault,
+		keyName: keyName,
+		name:    methodVaultPS256,
 	}
 }
 
@@ -63,14 +56,9 @@ func (m *SigningMethodVaultPS256) Alg() string {
 //   - []byte: подпись в виде байтов, полученная из Vault.
 //   - error: подробную ошибку, если операция не выполнена.
 func (m *SigningMethodVaultPS256) Sign(signingString string, key interface{}) ([]byte, error) {
-	vaultKey, ok := key.(VaultKey)
-	if !ok {
-		return nil, fmt.Errorf("signing error: invalid key type; expected object implementing VaultKey")
-	}
-
 	digest := generateDigest(signingString)
 	payload := createVaultSignData(digest)
-	secret, err := performVaultSignOperation(vaultKey, payload)
+	secret, err := m.Vault.Sign(m.keyName, payload)
 	if err != nil {
 		return nil, err
 	}
@@ -114,31 +102,6 @@ func createVaultSignData(digest []byte) map[string]any {
 	}
 }
 
-// performVaultSignOperation выполняет запрос к Vault для выполнения операции подписи.
-// Формируется путь вида "transit/sign/<KeyName>" и отправляется запрос с данными payload.
-//
-// Параметры:
-//   - vaultKey: объект, реализующий интерфейс VaultKey, предоставляющий имя ключа и клиент Vault.
-//   - data: данные для запроса в формате map[string]any.
-//
-// Возвращает:
-//   - *api.Secret: результат операции от Vault.
-//   - error: подробная ошибка, если запрос не выполнен или получен некорректный ответ.
-func performVaultSignOperation(vaultKey VaultKey, data map[string]any) (*api.Secret, error) {
-	signPath := fmt.Sprintf("transit/sign/%s", vaultKey.GetKeyName())
-	secret, err := vaultKey.GetClient().Logical().Write(signPath, data)
-	if err != nil {
-		return nil, fmt.Errorf("vault sign error: failed to write to %q: %w", signPath, err)
-	}
-	if secret == nil {
-		return nil, fmt.Errorf("vault sign error: received empty response from %q", signPath)
-	}
-	if len(secret.Warnings) != emptyValue {
-		return nil, fmt.Errorf("vault sign error: warning received: %s", secret.Warnings[0])
-	}
-	return secret, nil
-}
-
 // extractSignatureFromVaultResponse извлекает строку подписи из ответа Vault,
 // разбивает её по разделителю ":" и декодирует итоговую часть из Base64.
 //
@@ -176,12 +139,7 @@ func extractSignatureFromVaultResponse(secret *api.Secret) ([]byte, error) {
 // Возвращает:
 //   - error: nil, если подпись корректна; в противном случае – подробное описание ошибки.
 func (m *SigningMethodVaultPS256) Verify(signingString string, sig []byte, key interface{}) error {
-	vsk, ok := key.(PublicKeyProvider)
-	if !ok {
-		return fmt.Errorf("verify error: invalid key type; expected object implementing PublicKeyProvider")
-	}
-
-	pubKey, err := vsk.FetchPublicKey()
+	pubKey, err := m.fetchPublicKey()
 	if err != nil {
 		return fmt.Errorf("verify error: failed to fetch public key from vault: %w", err)
 	}
@@ -197,4 +155,78 @@ func (m *SigningMethodVaultPS256) Verify(signingString string, sig []byte, key i
 		return fmt.Errorf("verify error: RSA-PSS verification failed: %w", err)
 	}
 	return nil
+}
+
+// fetchPublicKey получает публичный RSA ключ из Vault для данного ключа подписания.
+// Данный метод декомпозирован на несколько вспомогательных функций, каждая из которых
+// отвечает за отдельный этап обработки:
+//  1. Чтение информации о ключе из Vault (readKeySecret).
+//  2. Извлечение PEM-представления публичного ключа (extractPublicKeyPEM).
+//  3. Декодирование и парсинг PEM в *rsa.PublicKey (parseRSAPublicKeyFromPEM).
+//
+// Возвращает:
+//   - *rsa.PublicKey: указатель на публичный RSA ключ, если процесс извлечения и парсинга прошел успешно.
+//   - error: ошибка, описывающая возникшую проблему на любом из этапов получения или обработки данных.
+func (m *SigningMethodVaultPS256) fetchPublicKey() (*rsa.PublicKey, error) {
+	secret, err := m.Vault.Read(m.keyName)
+	if err != nil {
+		return nil, err
+	}
+
+	pubPem, err := extractPublicKeyPEM(secret, m.keyName)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseRSAPublicKeyFromPEM(pubPem)
+}
+
+// extractPublicKeyPEM извлекает строку с PEM-представлением публичного ключа из ответа Vault.
+// Для этого из данных ключей выбирается информация о последней версии.
+func extractPublicKeyPEM(secret *api.Secret, keyName string) (string, error) {
+	keysAny, ok := secret.Data["keys"]
+	if !ok {
+		return "", fmt.Errorf("no 'keys' field in response from vault for key: %s", keyName)
+	}
+	keysMap, ok := keysAny.(map[string]interface{})
+	if !ok {
+		return "", fmt.Errorf("cannot parse 'keys' field as map for key: %s", keyName)
+	}
+
+	versionDataAny, ok := keysMap["latest_version"]
+	if !ok {
+		return "", fmt.Errorf("failed to find latest key version for key: %s", keyName)
+	}
+
+	versionData, ok := versionDataAny.(map[string]interface{})
+	if !ok {
+		return "", fmt.Errorf("invalid data format for key version for key: %s", keyName)
+	}
+
+	pubPem, ok := versionData["public_key"].(string)
+	if !ok {
+		return "", fmt.Errorf("no 'public_key' field for latest key version of key: %s", keyName)
+	}
+
+	return pubPem, nil
+}
+
+// parseRSAPublicKeyFromPEM декодирует PEM-представление публичного ключа
+// и парсит его в объект *rsa.PublicKey.
+func parseRSAPublicKeyFromPEM(pubPem string) (*rsa.PublicKey, error) {
+	block, _ := pem.Decode([]byte(pubPem))
+	if block == nil {
+		return nil, fmt.Errorf("failed to PEM-decode public key")
+	}
+
+	parsedKey, err := x509.ParsePKIXPublicKey(block.Bytes)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse public key: %w", err)
+	}
+
+	rsaPub, ok := parsedKey.(*rsa.PublicKey)
+	if !ok {
+		return nil, fmt.Errorf("public key is not an RSA key")
+	}
+	return rsaPub, nil
 }

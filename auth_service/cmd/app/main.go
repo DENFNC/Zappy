@@ -24,7 +24,7 @@ func main() {
 
 	// Инициализация сервиса.
 
-	application := app.New(logger, cfg.GRPC.Port, db)
+	application := app.New(logger, db, cfg)
 	go application.App.MustRun()
 
 	// Создаем канал для получения системных сигналов.

@@ -5,6 +5,7 @@ import (
 	"log/slog"
 
 	"github.com/DENFNC/Zappy/internal/domain/models"
+	vaulttoken "github.com/DENFNC/Zappy/internal/pkg/authjwt"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -13,14 +14,20 @@ const (
 )
 
 type Auth struct {
-	log  *slog.Logger
-	repo models.UserRepository
+	log   *slog.Logger
+	repo  models.UserRepository
+	vault vaulttoken.VaultKMS
 }
 
-func NewAuth(log *slog.Logger, repo models.UserRepository) *Auth {
+func NewAuth(
+	log *slog.Logger,
+	repo models.UserRepository,
+	vault vaulttoken.VaultKMS,
+) *Auth {
 	return &Auth{
-		log:  log,
-		repo: repo,
+		log:   log,
+		repo:  repo,
+		vault: vault,
 	}
 }
 
@@ -49,9 +56,17 @@ func (a *Auth) Register(
 		passHash,
 	)
 
+	token, err := vaulttoken.Generate(a.vault, "test", "rsa", 10)
+	if err != nil {
+		log.Error(
+			"failed to create token",
+			slog.Any("error", err),
+		)
+	}
+
 	userID, err := a.repo.Create(ctx, user)
 	if err != nil {
-		log.Info(
+		log.Error(
 			"error saving the user",
 			slog.Any("error", err),
 		)
@@ -63,7 +78,7 @@ func (a *Auth) Register(
 		"username", username,
 	)
 
-	return "", userID, nil
+	return token, userID, nil
 }
 
 func (a *Auth) Login(

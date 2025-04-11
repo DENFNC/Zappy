@@ -1,7 +1,7 @@
-// Package authjwt предоставляет функции для создания JWT-токенов, подписанных с помощью метода,
+// Package vaulttoken предоставляет функции для создания JWT-токенов, подписанных с помощью метода,
 // основанного на публичном ключе из внешнего хранилища (vault). Это позволяет удобно генерировать
 // безопасные токены с заданными регистрационными данными.
-package authjwt
+package vaulttoken
 
 import (
 	"time"
@@ -23,12 +23,12 @@ import (
 //   - строка с подписанным JWT-токеном.
 //   - ошибка, если в процессе создания или подписания токена возникли проблемы.
 func Generate(
-	vault PublicKeyProvider,
-	name, iss string,
+	vault VaultKMS,
+	iss, keyName string,
 	expires time.Duration,
 ) (string, error) {
 	// Создаем новый метод подписи, используя vault и имя
-	newMethod := NewSigningMethodVaultPS256(vault, name)
+	newMethod := NewSigningMethodVaultPS256(vault, keyName)
 
 	// Формируем стандартные зарегистерованные клеймы токена
 	claims := jwt.NewWithClaims(

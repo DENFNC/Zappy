@@ -4,3 +4,6 @@ grpc:
   port: 8080
 postgres:
   url: "postgres://postgres:admin@localhost:5432/auth_service?sslmode=disable"
+vault:
+  url: "http://127.0.0.1:8200"
+  token: "root"

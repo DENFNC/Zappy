@@ -6,6 +6,8 @@
         "клеймы",
         "парсинга",
         "токеном",
+        "хэша",
+        "хэширования",
         "authgrpc",
         "authjwt",
         "cleanenv",
@@ -26,6 +28,7 @@
         "PSQL",
         "Serv",
         "sslmode",
-        "stdlib"
+        "stdlib",
+        "vaulttoken"
     ]
 }
