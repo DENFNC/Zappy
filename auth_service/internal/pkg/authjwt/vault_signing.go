@@ -71,62 +71,6 @@ func (m *SigningMethodVaultPS256) Sign(signingString string, key interface{}) ([
 	return sigRaw, nil
 }
 
-// generateDigest вычисляет SHA256-хэш для заданной строки.
-//
-// Параметры:
-//   - signingString: строка, которую необходимо хэшировать.
-//
-// Возвращает:
-//   - []byte: результат хэширования.
-func generateDigest(signingString string) []byte {
-	h := sha256.New()
-	h.Write([]byte(signingString))
-	return h.Sum(nil)
-}
-
-// createVaultSignData подготавливает данные для запроса в Vault на основе полученного хэша.
-// Данные включают Base64-кодированный хэш и параметры алгоритмов подписи.
-//
-// Параметры:
-//   - digest: SHA256-хэш исходной строки.
-//
-// Возвращает:
-//   - map[string]any: мапа с параметрами, соответствующая требованиям Vault API.
-func createVaultSignData(digest []byte) map[string]any {
-	inputB64 := base64.StdEncoding.EncodeToString(digest)
-	return map[string]any{
-		"input":               inputB64,
-		"signature_algorithm": "pss",
-		"hash_algorithm":      "sha2-256",
-		"prehashed":           true,
-	}
-}
-
-// extractSignatureFromVaultResponse извлекает строку подписи из ответа Vault,
-// разбивает её по разделителю ":" и декодирует итоговую часть из Base64.
-//
-// Параметры:
-//   - secret: объект *api.Secret, полученный из Vault.
-//
-// Возвращает:
-//   - []byte: декодированная подпись.
-//   - error: подробное описание ошибки, если формат подписи неверный или декодирование не удалось.
-func extractSignatureFromVaultResponse(secret *api.Secret) ([]byte, error) {
-	vaultSignature, ok := secret.Data["signature"].(string)
-	if !ok {
-		return nil, fmt.Errorf("vault sign error: missing 'signature' field in response")
-	}
-	parts := strings.SplitN(vaultSignature, ":", 3)
-	if len(parts) != 3 {
-		return nil, fmt.Errorf("vault sign error: unexpected signature format %q", vaultSignature)
-	}
-	sigRaw, err := base64.StdEncoding.DecodeString(parts[2])
-	if err != nil {
-		return nil, fmt.Errorf("vault sign error: failed to decode signature from Base64: %w", err)
-	}
-	return sigRaw, nil
-}
-
 // Verify проверяет корректность подписи для заданной строки signingString,
 // используя публичный ключ, полученный посредством интерфейса PublicKeyProvider.
 // Параметр key должен реализовывать PublicKeyProvider.
@@ -229,4 +173,60 @@ func parseRSAPublicKeyFromPEM(pubPem string) (*rsa.PublicKey, error) {
 		return nil, fmt.Errorf("public key is not an RSA key")
 	}
 	return rsaPub, nil
+}
+
+// generateDigest вычисляет SHA256-хэш для заданной строки.
+//
+// Параметры:
+//   - signingString: строка, которую необходимо хэшировать.
+//
+// Возвращает:
+//   - []byte: результат хэширования.
+func generateDigest(signingString string) []byte {
+	h := sha256.New()
+	h.Write([]byte(signingString))
+	return h.Sum(nil)
+}
+
+// createVaultSignData подготавливает данные для запроса в Vault на основе полученного хэша.
+// Данные включают Base64-кодированный хэш и параметры алгоритмов подписи.
+//
+// Параметры:
+//   - digest: SHA256-хэш исходной строки.
+//
+// Возвращает:
+//   - map[string]any: мапа с параметрами, соответствующая требованиям Vault API.
+func createVaultSignData(digest []byte) map[string]any {
+	inputB64 := base64.StdEncoding.EncodeToString(digest)
+	return map[string]any{
+		"input":               inputB64,
+		"signature_algorithm": "pss",
+		"hash_algorithm":      "sha2-256",
+		"prehashed":           true,
+	}
+}
+
+// extractSignatureFromVaultResponse извлекает строку подписи из ответа Vault,
+// разбивает её по разделителю ":" и декодирует итоговую часть из Base64.
+//
+// Параметры:
+//   - secret: объект *api.Secret, полученный из Vault.
+//
+// Возвращает:
+//   - []byte: декодированная подпись.
+//   - error: подробное описание ошибки, если формат подписи неверный или декодирование не удалось.
+func extractSignatureFromVaultResponse(secret *api.Secret) ([]byte, error) {
+	vaultSignature, ok := secret.Data["signature"].(string)
+	if !ok {
+		return nil, fmt.Errorf("vault sign error: missing 'signature' field in response")
+	}
+	parts := strings.SplitN(vaultSignature, ":", 3)
+	if len(parts) != 3 {
+		return nil, fmt.Errorf("vault sign error: unexpected signature format %q", vaultSignature)
+	}
+	sigRaw, err := base64.StdEncoding.DecodeString(parts[2])
+	if err != nil {
+		return nil, fmt.Errorf("vault sign error: failed to decode signature from Base64: %w", err)
+	}
+	return sigRaw, nil
 }

@@ -550,10 +550,11 @@ const file_auth_proto_rawDesc = "" +
 	"\bUsername\x12?\n" +
 	"\busername\x18\x01 \x01(\tB#\xfaB r\x1e\x10\x05\x18\xff\x012\x17^[a-zA-Z0-9._-]{5,255}$R\busername\"&\n" +
 	"\x05Email\x12\x1d\n" +
-	"\x05email\x18\x01 \x01(\tB\a\xfaB\x04r\x02`\x01R\x05email\"e\n" +
-	"\bPassword\x12Y\n" +
-	"\bpassword\x18\x01 \x01(\tB=\xfaB:r8\x10\n" +
-	"\x18\xff\x0121^[a-zA-Z0-9!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]+$R\bpassword\"\\\n" +
+	"\x05email\x18\x01 \x01(\tB\a\xfaB\x04r\x02`\x01R\x05email\"2\n" +
+	"\bPassword\x12&\n" +
+	"\bpassword\x18\x01 \x01(\tB\n" +
+	"\xfaB\ar\x05\x10\n" +
+	"\x18\xff\x01R\bpassword\"\\\n" +
 	"\vUserDefault\x12*\n" +
 	"\busername\x18\x01 \x01(\v2\x0e.auth.UsernameR\busername\x12!\n" +
 	"\x05email\x18\x02 \x01(\v2\v.auth.EmailR\x05email\"d\n" +

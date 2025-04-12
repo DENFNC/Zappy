@@ -351,17 +351,6 @@ func (m *Password) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if !_Password_Password_Pattern.MatchString(m.GetPassword()) {
-		err := PasswordValidationError{
-			field:  "Password",
-			reason: "value does not match regex pattern \"^[a-zA-Z0-9!@#$%^&*()_+\\\\-=\\\\[\\\\]{};':\\\"\\\\\\\\|,.<>\\\\/?]+$\"",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
 	if len(errors) > 0 {
 		return PasswordMultiError(errors)
 	}
@@ -438,8 +427,6 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = PasswordValidationError{}
-
-var _Password_Password_Pattern = regexp.MustCompile("^[a-zA-Z0-9!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]+$")
 
 // Validate checks the field values on UserDefault with the rules defined in
 // the proto definition for this message. If any rules are violated, the first

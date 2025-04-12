@@ -26,7 +26,6 @@ message Password {
     string password = 1 [(validate.rules).string = {
         min_len: 10,
         max_len: 255,
-        pattern: "^[a-zA-Z0-9!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]+$",
     }];
 }
 

@@ -1,9 +1,12 @@
 app_log: "dev"
-app_uuid : "f7f7db8a-1827-404a-97e8-2c36595a4db4"
 grpc:
   port: 8080
 postgres:
   url: "postgres://postgres:admin@localhost:5432/auth_service?sslmode=disable"
 vault:
+  issuer: "auth-service"
+  app_uuid : "f7f7db8a-1827-404a-97e8-2c36595a4db4"
   url: "http://127.0.0.1:8200"
   token: "root"
+  expires: 10h
+  key_name: "rsa"

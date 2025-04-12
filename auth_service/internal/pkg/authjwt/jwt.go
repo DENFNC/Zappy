@@ -4,6 +4,8 @@
 package vaulttoken
 
 import (
+	"errors"
+	"fmt"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -24,7 +26,8 @@ import (
 //   - ошибка, если в процессе создания или подписания токена возникли проблемы.
 func Generate(
 	vault VaultKMS,
-	iss, keyName string,
+	iss string,
+	keyName string,
 	expires time.Duration,
 ) (string, error) {
 	// Создаем новый метод подписи, используя vault и имя
@@ -49,4 +52,18 @@ func Generate(
 	}
 
 	return tokenStr, nil
+}
+
+func Verify(tokenString string) error {
+	token, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
+		return nil, nil
+	})
+	if err != nil {
+		return fmt.Errorf("failed to parse token: %w", err)
+	}
+	if !token.Valid {
+		return errors.New("token is invalid")
+	}
+
+	return nil
 }

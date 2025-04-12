@@ -33,7 +33,7 @@ func main() {
 		)
 		os.Exit(1)
 	}
-	application, err := app.New(logger, db, vault, cfg.GRPC.Port)
+	application, err := app.New(logger, db, vault, cfg.Vault, cfg.GRPC.Port)
 	if err != nil {
 		logger.Error(
 			"Error starting application",

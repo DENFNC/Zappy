@@ -2,13 +2,13 @@ package config
 
 import (
 	"os"
+	"time"
 
 	"github.com/ilyakaznacheev/cleanenv"
 )
 
 type Config struct {
 	LogType  string `yaml:"log_type" env-default:"dev"`
-	AppUUID  string `yaml:"app_uuid" env-required:"true"`
 	GRPC     ConfigGRPC
 	Postgres ConfigPSQL
 	Vault    ConfigVault
@@ -23,8 +23,12 @@ type ConfigPSQL struct {
 }
 
 type ConfigVault struct {
-	URL   string `yaml:"url" env-required:"true"`
-	Token string `yaml:"token" env-required:"true"`
+	URL     string        `yaml:"url" env-required:"true"`
+	Token   string        `yaml:"token" env-required:"true"`
+	AppUUID string        `yaml:"app_uuid" env-required:"true"`
+	Issuer  string        `yaml:"issuer" env-required:"true"`
+	Expires time.Duration `yaml:"expires" env-default:"5m"`
+	KeyName string        `yaml:"key_name" env-required:"true"`
 }
 
 func MustLoad(path string) *Config {

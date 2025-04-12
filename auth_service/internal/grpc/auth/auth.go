@@ -83,7 +83,6 @@ func (sa *serverAPI) Register(ctx context.Context, req *v1.RegisterRequest) (*v1
 		if errors.Is(err, authservice.ErrInvalidCredentials) {
 			return nil, status.Error(codes.Unauthenticated, "invalid credentials")
 		}
-		// На остальные ошибки возвращаем внутреннюю ошибку сервера.
 		return nil, status.Error(codes.Internal, "internal server error")
 	}
 
