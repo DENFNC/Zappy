@@ -11,6 +11,12 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+var (
+	ErrInternalServer     = "Internal Server Error"
+	ErrInvalidArgument    = "Invalid argument"
+	ErrInvalidCredentials = "invalid credentials"
+)
+
 type Auth interface {
 	Login(
 		ctx context.Context,
@@ -40,7 +46,7 @@ func ServRegister(gRPC *grpc.Server, auth Auth) {
 
 func (sa *serverAPI) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginResponse, error) {
 	if err := req.Validate(); err != nil {
-		return nil, status.Error(codes.InvalidArgument, "Invalid argument")
+		return nil, status.Error(codes.InvalidArgument, ErrInvalidArgument)
 	}
 
 	var authIdentifier string
@@ -60,7 +66,7 @@ func (sa *serverAPI) Login(ctx context.Context, req *v1.LoginRequest) (*v1.Login
 		req.GetPassword().Password,
 	)
 	if err != nil {
-		return nil, status.Error(codes.Internal, "Internal Server Error")
+		return nil, status.Error(codes.Internal, ErrInternalServer)
 	}
 
 	return &v1.LoginResponse{
@@ -70,7 +76,7 @@ func (sa *serverAPI) Login(ctx context.Context, req *v1.LoginRequest) (*v1.Login
 
 func (sa *serverAPI) Register(ctx context.Context, req *v1.RegisterRequest) (*v1.RegisterResponse, error) {
 	if err := req.Validate(); err != nil {
-		return nil, status.Error(codes.InvalidArgument, "Invalid argument")
+		return nil, status.Error(codes.InvalidArgument, ErrInvalidArgument)
 	}
 
 	token, userID, err := sa.auth.Register(
@@ -81,9 +87,9 @@ func (sa *serverAPI) Register(ctx context.Context, req *v1.RegisterRequest) (*v1
 	)
 	if err != nil {
 		if errors.Is(err, authservice.ErrInvalidCredentials) {
-			return nil, status.Error(codes.Unauthenticated, "invalid credentials")
+			return nil, status.Error(codes.Unauthenticated, ErrInvalidCredentials)
 		}
-		return nil, status.Error(codes.Internal, "internal server error")
+		return nil, status.Error(codes.Internal, ErrInternalServer)
 	}
 
 	return &v1.RegisterResponse{
@@ -93,5 +99,23 @@ func (sa *serverAPI) Register(ctx context.Context, req *v1.RegisterRequest) (*v1
 }
 
 func (sa *serverAPI) Refresh(ctx context.Context, req *v1.RefreshRequest) (*v1.RefreshResponse, error) {
-	panic("implement me")
+	if err := req.Validate(); err != nil {
+		return nil, status.Error(codes.InvalidArgument, ErrInvalidArgument)
+	}
+
+	newToken, err := sa.auth.Refresh(
+		ctx,
+		req.GetToken(),
+	)
+	if err != nil {
+		// TODO: Уменьшить связь, попробовать реализовать errors.Is немного иначе
+		if errors.Is(err, authservice.ErrInvalidToken) {
+			return nil, status.Error(codes.Unauthenticated, err.Error())
+		}
+		return nil, status.Error(codes.Internal, ErrInternalServer)
+	}
+
+	return &v1.RefreshResponse{
+		Token: newToken,
+	}, nil
 }
