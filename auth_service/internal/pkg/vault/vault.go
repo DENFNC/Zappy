@@ -25,6 +25,10 @@ func New(addr, authToken string) (*Vault, error) {
 
 	client.SetToken(authToken)
 
+	if _, err = client.Sys().Health(); err != nil {
+		return nil, fmt.Errorf("error connecting to vault: %w", err)
+	}
+
 	return &Vault{
 		client: client,
 	}, nil

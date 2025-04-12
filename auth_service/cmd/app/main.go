@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log/slog"
 	"os"
 	"os/signal"
 	"syscall"
@@ -8,6 +9,7 @@ import (
 	"github.com/DENFNC/Zappy/internal/app"
 	"github.com/DENFNC/Zappy/internal/config"
 	"github.com/DENFNC/Zappy/internal/pkg/logger"
+	"github.com/DENFNC/Zappy/internal/pkg/vault"
 	psql "github.com/DENFNC/Zappy/internal/storage/postgres"
 )
 
@@ -23,8 +25,22 @@ func main() {
 	db := psql.New(cfg.Postgres.URL)
 
 	// Инициализация сервиса.
-
-	application := app.New(logger, db, cfg)
+	vault, err := vault.New(cfg.Vault.URL, cfg.Vault.Token)
+	if err != nil {
+		logger.Error(
+			"Error connecting to vault",
+			slog.String("error", err.Error()),
+		)
+		os.Exit(1)
+	}
+	application, err := app.New(logger, db, vault, cfg.GRPC.Port)
+	if err != nil {
+		logger.Error(
+			"Error starting application",
+			slog.String("error", err.Error()),
+		)
+		os.Exit(1)
+	}
 	go application.App.MustRun()
 
 	// Создаем канал для получения системных сигналов.

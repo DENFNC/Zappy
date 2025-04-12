@@ -2,6 +2,8 @@ package repo
 
 import (
 	"context"
+	"errors"
+	"fmt"
 
 	"github.com/DENFNC/Zappy/internal/domain/models"
 	psql "github.com/DENFNC/Zappy/internal/storage/postgres"
@@ -68,8 +70,38 @@ func (u *User) GetByID(ctx context.Context, id string) (*models.User, error) {
 	return &user, nil
 }
 
-func (u *User) GetByEmail(ctx context.Context, email string) (*models.User, error) {
-	panic("implement me!")
+func (u *User) GetByAuthIdentifier(ctx context.Context, identifier string) (*models.User, error) {
+	row := u.DB.QueryRow(
+		ctx,
+		`SELECT
+			id,
+			email,
+			username,
+			password_hash,
+			created_at,
+			updated_at
+		FROM users
+		WHERE username = $1 OR email = $1
+		LIMIT 1`,
+		identifier,
+	)
+
+	var user models.User
+	if err := row.Scan(
+		&user.ID,
+		&user.Email,
+		&user.Username,
+		&user.Password,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+	); err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, ErrUserNotFound
+		}
+		return nil, fmt.Errorf("failed to scan user: %w", err)
+	}
+
+	return &user, nil
 }
 
 func (u *User) Update(ctx context.Context, user *models.User) error {
