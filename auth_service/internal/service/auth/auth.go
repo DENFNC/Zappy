@@ -123,8 +123,6 @@ func (a *Auth) Refresh(
 	const op = "auth.Refresh"
 	log := a.log.With("op", op)
 
-	panic("test panic")
-
 	if token == "" {
 		log.Error("Empty token provided for refresh")
 		return "", errpkg.New("INVALID_TOKEN", "token is empty", nil)
