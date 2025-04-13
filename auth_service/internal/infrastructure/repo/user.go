@@ -3,9 +3,9 @@ package repo
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/DENFNC/Zappy/internal/domain/models"
+	errpkg "github.com/DENFNC/Zappy/internal/errors"
 	psql "github.com/DENFNC/Zappy/internal/storage/postgres"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -31,13 +31,16 @@ func (u *User) Create(ctx context.Context, user *models.User) (uint64, error) {
 				RETURNING id`,
 				user.Email, user.Username, user.Password,
 			).Scan(&userID); err != nil {
-				return err
+				return errpkg.New("CREATE_USER_ERROR", "failed to create user", err)
 			}
 
 			return nil
 		})
 	})
-	return userID, err
+	if err != nil {
+		return 0, errpkg.New("CREATE_USER_TX_ERROR", "transaction error while creating user", err)
+	}
+	return userID, nil
 }
 
 func (u *User) GetByID(ctx context.Context, id string) (*models.User, error) {
@@ -64,7 +67,7 @@ func (u *User) GetByID(ctx context.Context, id string) (*models.User, error) {
 		&user.CreatedAt,
 		&user.UpdatedAt,
 	); err != nil {
-		return nil, err
+		return nil, errpkg.New("GET_USER_BY_ID_ERROR", "failed to get user by id", err)
 	}
 
 	return &user, nil
@@ -96,9 +99,9 @@ func (u *User) GetByAuthIdentifier(ctx context.Context, identifier string) (*mod
 		&user.UpdatedAt,
 	); err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, ErrUserNotFound
+			return nil, errpkg.ErrUserNotFound
 		}
-		return nil, fmt.Errorf("failed to scan user: %w", err)
+		return nil, errpkg.New("GET_USER_BY_AUTH_ERROR", "failed to scan user", err)
 	}
 
 	return &user, nil

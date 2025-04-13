@@ -3,18 +3,18 @@ package authservice
 import (
 	"context"
 	"errors"
-	"fmt"
+
 	"log/slog"
 
 	"github.com/DENFNC/Zappy/internal/config"
 	"github.com/DENFNC/Zappy/internal/domain/models"
-	"github.com/DENFNC/Zappy/internal/infrastructure/repo"
+	errpkg "github.com/DENFNC/Zappy/internal/errors"
 	vaulttoken "github.com/DENFNC/Zappy/internal/pkg/authjwt"
 	"golang.org/x/crypto/bcrypt"
 )
 
 const (
-	emptyValue uint64 = 0
+	emptyValue = 0
 )
 
 type Auth struct {
@@ -49,13 +49,13 @@ func (a *Auth) Register(
 
 	if username == "" || email == "" || password == "" {
 		log.Error("empty registration field")
-		return "", emptyValue, fmt.Errorf("%w: registration fields cannot be empty", ErrInvalidCredentials)
+		return "", emptyValue, errpkg.New("INVALID_CREDENTIALS", "registration fields cannot be empty", nil)
 	}
 
 	passHash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		log.Error("password hash generation error", slog.String("error", err.Error()))
-		return "", emptyValue, fmt.Errorf("%w: failed to generate password hash", ErrInternalServer)
+		return "", emptyValue, errpkg.New("INTERNAL_SERVER", "failed to generate password hash", err)
 	}
 
 	user := models.NewUser(
@@ -67,13 +67,13 @@ func (a *Auth) Register(
 	token, err := a.generateToken()
 	if err != nil {
 		log.Error("failed to generate token", slog.String("error", err.Error()))
-		return "", emptyValue, fmt.Errorf("%w: token generation failed", ErrInternalServer)
+		return "", emptyValue, errpkg.New("INTERNAL_SERVER", "token generation failed", err)
 	}
 
 	userID, err := a.repo.Create(ctx, user)
 	if err != nil {
 		log.Error("error saving the user", slog.String("error", err.Error()))
-		return "", emptyValue, fmt.Errorf("%w: failed to save user", ErrInternalServer)
+		return "", emptyValue, errpkg.New("INTERNAL_SERVER", "failed to save user", err)
 	}
 
 	return token, userID, nil
@@ -89,28 +89,28 @@ func (a *Auth) Login(
 
 	if identifier == "" || password == "" {
 		log.Error("empty login credentials")
-		return "", fmt.Errorf("%w: login credentials cannot be empty", ErrInvalidCredentials)
+		return "", errpkg.New("INVALID_CREDENTIALS", "login credentials cannot be empty", nil)
 	}
 
 	res, err := a.repo.GetByAuthIdentifier(ctx, identifier)
 	if err != nil {
-		if errors.Is(err, repo.ErrUserNotFound) {
+		if errors.Is(err, errpkg.ErrUserNotFound) {
 			log.Debug("user not found", slog.String("identifier", identifier))
-			return "", fmt.Errorf("%w: user not found", ErrInvalidCredentials)
+			return "", errpkg.New("INVALID_CREDENTIALS", "user not found", err)
 		}
 		log.Error("failed to execute database query", slog.String("error", err.Error()))
-		return "", fmt.Errorf("%w: database query failure", ErrInternalServer)
+		return "", errpkg.New("INTERNAL_SERVER", "database query failure", err)
 	}
 
 	if err := bcrypt.CompareHashAndPassword(res.Password, []byte(password)); err != nil {
 		log.Debug("invalid password", slog.String("error", err.Error()))
-		return "", fmt.Errorf("%w: invalid password", ErrInvalidCredentials)
+		return "", errpkg.New("INVALID_CREDENTIALS", "invalid password", err)
 	}
 
 	token, err := a.generateToken()
 	if err != nil {
 		log.Error("failed to generate token", slog.String("error", err.Error()))
-		return "", fmt.Errorf("%w: token generation failed", ErrInternalServer)
+		return "", errpkg.New("INTERNAL_SERVER", "token generation failed", err)
 	}
 
 	return token, nil
@@ -121,23 +121,22 @@ func (a *Auth) Refresh(
 	token string,
 ) (string, error) {
 	const op = "auth.Refresh"
-
 	log := a.log.With("op", op)
 
 	if token == "" {
 		log.Error("empty token provided for refresh")
-		return "", fmt.Errorf("%w: token is empty", ErrInvalidToken)
+		return "", errpkg.New("INVALID_TOKEN", "token is empty", nil)
 	}
 
 	if err := vaulttoken.Verify(token); err != nil {
 		log.Error("failed to verify token", slog.String("error", err.Error()))
-		return "", fmt.Errorf("%w: token verification failed", ErrInvalidToken)
+		return "", errpkg.New("INVALID_TOKEN", "token verification failed", err)
 	}
 
 	newToken, err := a.generateToken()
 	if err != nil {
 		log.Error("failed to generate new token", slog.String("error", err.Error()))
-		return "", fmt.Errorf("%w: token generation failed", ErrInternalServer)
+		return "", errpkg.New("INTERNAL_SERVER", "token generation failed", err)
 	}
 
 	return newToken, nil
@@ -151,7 +150,7 @@ func (a *Auth) generateToken() (string, error) {
 		a.tokenCfg.Expires,
 	)
 	if err != nil {
-		return "", err
+		return "", errpkg.New("INTERNAL_SERVER", "failed to generate token", err)
 	}
 	return token, nil
 }

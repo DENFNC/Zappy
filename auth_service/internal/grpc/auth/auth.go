@@ -4,35 +4,18 @@ import (
 	"context"
 	"errors"
 
-	authservice "github.com/DENFNC/Zappy/internal/service/auth"
+	errpkg "github.com/DENFNC/Zappy/internal/errors"
 	v1 "github.com/DENFNC/Zappy/proto/gen/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
-var (
-	ErrInternalServer     = "Internal Server Error"
-	ErrInvalidArgument    = "Invalid argument"
-	ErrInvalidCredentials = "invalid credentials"
-)
-
+// Auth – интерфейс, который предоставляет методы аутентификации.
 type Auth interface {
-	Login(
-		ctx context.Context,
-		authType string,
-		password string,
-	) (string, error)
-	Register(
-		ctx context.Context,
-		username string,
-		email string,
-		password string,
-	) (string, uint64, error)
-	Refresh(
-		ctx context.Context,
-		token string,
-	) (string, error)
+	Login(ctx context.Context, authType string, password string) (string, error)
+	Register(ctx context.Context, username string, email string, password string) (string, uint64, error)
+	Refresh(ctx context.Context, token string) (string, error)
 }
 
 type serverAPI struct {
@@ -40,33 +23,39 @@ type serverAPI struct {
 	auth Auth
 }
 
+// ServRegister регистрирует сервер gRPC.
 func ServRegister(gRPC *grpc.Server, auth Auth) {
 	v1.RegisterAuthServer(gRPC, &serverAPI{auth: auth})
 }
 
+// Login реализует метод входа через gRPC.
 func (sa *serverAPI) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginResponse, error) {
 	if err := req.Validate(); err != nil {
-		return nil, status.Error(codes.InvalidArgument, ErrInvalidArgument)
+		return nil, status.Error(codes.InvalidArgument, errpkg.ErrInvalidArgument.Message)
 	}
 
 	var authIdentifier string
-
 	switch identifier := req.AuthType.(type) {
 	case *v1.LoginRequest_Email:
 		authIdentifier = identifier.Email.GetEmail()
 	case *v1.LoginRequest_Username:
 		authIdentifier = identifier.Username.GetUsername()
 	default:
-		return nil, status.Error(codes.InvalidArgument, "Unsupported auth type")
+		return nil, status.Error(codes.InvalidArgument, "unsupported auth type")
 	}
 
-	token, err := sa.auth.Login(
-		ctx,
-		authIdentifier,
-		req.GetPassword().Password,
-	)
+	token, err := sa.auth.Login(ctx, authIdentifier, req.GetPassword().Password)
 	if err != nil {
-		return nil, status.Error(codes.Internal, ErrInternalServer)
+		var appErr *errpkg.AppError
+		if errors.As(err, &appErr) {
+			switch appErr.Code {
+			case "INVALID_CREDENTIALS":
+				return nil, status.Error(codes.Unauthenticated, appErr.Message)
+			default:
+				return nil, status.Error(codes.Internal, appErr.Message)
+			}
+		}
+		return nil, status.Error(codes.Internal, errpkg.ErrInternalServer.Message)
 	}
 
 	return &v1.LoginResponse{
@@ -76,7 +65,7 @@ func (sa *serverAPI) Login(ctx context.Context, req *v1.LoginRequest) (*v1.Login
 
 func (sa *serverAPI) Register(ctx context.Context, req *v1.RegisterRequest) (*v1.RegisterResponse, error) {
 	if err := req.Validate(); err != nil {
-		return nil, status.Error(codes.InvalidArgument, ErrInvalidArgument)
+		return nil, status.Error(codes.InvalidArgument, errpkg.ErrInvalidArgument.Message)
 	}
 
 	token, userID, err := sa.auth.Register(
@@ -86,10 +75,11 @@ func (sa *serverAPI) Register(ctx context.Context, req *v1.RegisterRequest) (*v1
 		req.GetPassword().Password,
 	)
 	if err != nil {
-		if errors.Is(err, authservice.ErrInvalidCredentials) {
-			return nil, status.Error(codes.Unauthenticated, ErrInvalidCredentials)
+		var appErr *errpkg.AppError
+		if errors.As(err, &appErr) && appErr.Code == "INVALID_CREDENTIALS" {
+			return nil, status.Error(codes.Unauthenticated, appErr.Message)
 		}
-		return nil, status.Error(codes.Internal, ErrInternalServer)
+		return nil, status.Error(codes.Internal, errpkg.ErrInternalServer.Message)
 	}
 
 	return &v1.RegisterResponse{
@@ -100,19 +90,16 @@ func (sa *serverAPI) Register(ctx context.Context, req *v1.RegisterRequest) (*v1
 
 func (sa *serverAPI) Refresh(ctx context.Context, req *v1.RefreshRequest) (*v1.RefreshResponse, error) {
 	if err := req.Validate(); err != nil {
-		return nil, status.Error(codes.InvalidArgument, ErrInvalidArgument)
+		return nil, status.Error(codes.InvalidArgument, errpkg.ErrInvalidArgument.Message)
 	}
 
-	newToken, err := sa.auth.Refresh(
-		ctx,
-		req.GetToken(),
-	)
+	newToken, err := sa.auth.Refresh(ctx, req.GetToken())
 	if err != nil {
-		// TODO: Уменьшить связь, попробовать реализовать errors.Is немного иначе
-		if errors.Is(err, authservice.ErrInvalidToken) {
-			return nil, status.Error(codes.Unauthenticated, err.Error())
+		var appErr *errpkg.AppError
+		if errors.As(err, &appErr) && appErr.Code == "INVALID_TOKEN" {
+			return nil, status.Error(codes.Unauthenticated, appErr.Message)
 		}
-		return nil, status.Error(codes.Internal, ErrInternalServer)
+		return nil, status.Error(codes.Internal, errpkg.ErrInternalServer.Message)
 	}
 
 	return &v1.RefreshResponse{
