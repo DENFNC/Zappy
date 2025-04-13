@@ -22,7 +22,14 @@ func main() {
 
 	logger.Info("Starting application...")
 
-	db := psql.New(cfg.Postgres.URL)
+	db, err := psql.New(cfg.Postgres.URL)
+	if err != nil {
+		logger.Error(
+			"Error connection to database",
+			slog.String("error", err.Error()),
+		)
+		os.Exit(1)
+	}
 
 	// Инициализация сервиса.
 	vault, err := vault.New(cfg.Vault.URL, cfg.Vault.Token)

@@ -123,19 +123,21 @@ func (a *Auth) Refresh(
 	const op = "auth.Refresh"
 	log := a.log.With("op", op)
 
+	panic("test panic")
+
 	if token == "" {
-		log.Error("empty token provided for refresh")
+		log.Error("Empty token provided for refresh")
 		return "", errpkg.New("INVALID_TOKEN", "token is empty", nil)
 	}
 
 	if err := vaulttoken.Verify(token); err != nil {
-		log.Error("failed to verify token", slog.String("error", err.Error()))
+		log.Error("Failed to verify token", slog.String("error", err.Error()))
 		return "", errpkg.New("INVALID_TOKEN", "token verification failed", err)
 	}
 
 	newToken, err := a.generateToken()
 	if err != nil {
-		log.Error("failed to generate new token", slog.String("error", err.Error()))
+		log.Error("Failed to generate new token", slog.String("error", err.Error()))
 		return "", errpkg.New("INTERNAL_SERVER", "token generation failed", err)
 	}
 

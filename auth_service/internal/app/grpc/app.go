@@ -6,6 +6,7 @@ import (
 	"net"
 
 	authgrpc "github.com/DENFNC/Zappy/internal/grpc/auth"
+	"github.com/DENFNC/Zappy/internal/interceptor"
 	"google.golang.org/grpc"
 )
 
@@ -23,7 +24,15 @@ func New(log *slog.Logger, port int, auth authgrpc.Auth) *App {
 		panic("auth service cannot be nil")
 	}
 
-	grpcServer := grpc.NewServer()
+	loggingInterceptor := interceptor.NewLoggingInterceptor(log)
+	panicInterceptor := interceptor.NewPanicInterceptor(log)
+
+	grpcServer := grpc.NewServer(
+		grpc.ChainUnaryInterceptor(
+			loggingInterceptor,
+			panicInterceptor,
+		),
+	)
 	authgrpc.ServRegister(grpcServer, auth)
 
 	return &App{

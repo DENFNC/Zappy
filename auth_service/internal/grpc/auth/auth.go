@@ -11,7 +11,6 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-// Auth – интерфейс, который предоставляет методы аутентификации.
 type Auth interface {
 	Login(ctx context.Context, authType string, password string) (string, error)
 	Register(ctx context.Context, username string, email string, password string) (string, uint64, error)
@@ -23,12 +22,10 @@ type serverAPI struct {
 	auth Auth
 }
 
-// ServRegister регистрирует сервер gRPC.
 func ServRegister(gRPC *grpc.Server, auth Auth) {
 	v1.RegisterAuthServer(gRPC, &serverAPI{auth: auth})
 }
 
-// Login реализует метод входа через gRPC.
 func (sa *serverAPI) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginResponse, error) {
 	if err := req.Validate(); err != nil {
 		return nil, status.Error(codes.InvalidArgument, errpkg.ErrInvalidArgument.Message)
@@ -96,7 +93,7 @@ func (sa *serverAPI) Refresh(ctx context.Context, req *v1.RefreshRequest) (*v1.R
 	newToken, err := sa.auth.Refresh(ctx, req.GetToken())
 	if err != nil {
 		var appErr *errpkg.AppError
-		if errors.As(err, &appErr) && appErr.Code == "INVALID_TOKEN" {
+		if errors.As(err, &appErr) && appErr.Code == "INVALID_TOKEN" && appErr.Code != "INTERNAL_SERVER" {
 			return nil, status.Error(codes.Unauthenticated, appErr.Message)
 		}
 		return nil, status.Error(codes.Internal, errpkg.ErrInternalServer.Message)
