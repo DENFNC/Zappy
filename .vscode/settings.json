@@ -1,6 +1,8 @@
 {
     "cSpell.words": [
         "cleanenv",
-        "ilyakaznacheev"
+        "ilyakaznacheev",
+        "pgxpool",
+        "psql"
     ]
 }
