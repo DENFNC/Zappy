@@ -5,8 +5,8 @@ import (
 	"log/slog"
 	"net"
 
-	authgrpc "github.com/DENFNC/Zappy/internal/grpc/auth"
-	"github.com/DENFNC/Zappy/internal/interceptor"
+	authgrpc "github.com/DENFNC/Zappy/auth_service/internal/grpc/auth"
+	"github.com/DENFNC/Zappy/auth_service/internal/interceptor"
 	"google.golang.org/grpc"
 )
 

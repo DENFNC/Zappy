@@ -3,12 +3,12 @@ package app
 import (
 	"log/slog"
 
-	grpcapp "github.com/DENFNC/Zappy/internal/app/grpc"
-	"github.com/DENFNC/Zappy/internal/config"
-	"github.com/DENFNC/Zappy/internal/infrastructure/repo"
-	vaulttoken "github.com/DENFNC/Zappy/internal/pkg/authjwt"
-	authservice "github.com/DENFNC/Zappy/internal/service/auth"
-	psql "github.com/DENFNC/Zappy/internal/storage/postgres"
+	grpcapp "github.com/DENFNC/Zappy/auth_service/internal/app/grpc"
+	"github.com/DENFNC/Zappy/auth_service/internal/config"
+	"github.com/DENFNC/Zappy/auth_service/internal/infrastructure/repo"
+	vaulttoken "github.com/DENFNC/Zappy/auth_service/internal/pkg/authjwt"
+	authservice "github.com/DENFNC/Zappy/auth_service/internal/service/auth"
+	psql "github.com/DENFNC/Zappy/auth_service/internal/storage/postgres"
 )
 
 type App struct {

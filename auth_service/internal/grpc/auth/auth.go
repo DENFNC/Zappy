@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
-	errpkg "github.com/DENFNC/Zappy/internal/errors"
-	v1 "github.com/DENFNC/Zappy/proto/gen/v1"
+	errpkg "github.com/DENFNC/Zappy/auth_service/internal/errors"
+	v1 "github.com/DENFNC/Zappy/auth_service/proto/gen/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
