@@ -6,10 +6,10 @@ import (
 
 	"log/slog"
 
-	"github.com/DENFNC/Zappy/internal/config"
-	"github.com/DENFNC/Zappy/internal/domain/models"
-	errpkg "github.com/DENFNC/Zappy/internal/errors"
-	vaulttoken "github.com/DENFNC/Zappy/internal/pkg/authjwt"
+	"github.com/DENFNC/Zappy/auth_service/internal/config"
+	"github.com/DENFNC/Zappy/auth_service/internal/domain/models"
+	errpkg "github.com/DENFNC/Zappy/auth_service/internal/errors"
+	vaulttoken "github.com/DENFNC/Zappy/auth_service/internal/pkg/authjwt"
 	"golang.org/x/crypto/bcrypt"
 )
 

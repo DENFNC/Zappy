@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 
-	"github.com/DENFNC/Zappy/internal/domain/models"
-	errpkg "github.com/DENFNC/Zappy/internal/errors"
-	psql "github.com/DENFNC/Zappy/internal/storage/postgres"
+	"github.com/DENFNC/Zappy/auth_service/internal/domain/models"
+	errpkg "github.com/DENFNC/Zappy/auth_service/internal/errors"
+	psql "github.com/DENFNC/Zappy/auth_service/internal/storage/postgres"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )

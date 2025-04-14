@@ -1,4 +1,4 @@
-module github.com/DENFNC/Zappy
+module github.com/DENFNC/Zappy/auth_service
 
 go 1.23.5
 
