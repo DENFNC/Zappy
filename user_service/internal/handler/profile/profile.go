@@ -15,10 +15,15 @@ type serverAPI struct {
 	service Profile
 }
 
-func Register(grpc *grpc.Server, profile Profile) {
-	v1.RegisterUserProfileServiceServer(grpc, &serverAPI{service: profile})
+func New(service Profile) *serverAPI {
+	return &serverAPI{
+		service: service,
+	}
 }
 
+func (sa *serverAPI) Register(grpc *grpc.Server) {
+	v1.RegisterUserProfileServiceServer(grpc, sa)
+}
 func (sa *serverAPI) CreateProfile(context.Context, *v1.CreateProfileRequest) (*v1.Profile, error) {
 	panic("implement me!")
 }

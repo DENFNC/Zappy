@@ -15,8 +15,14 @@ type serverAPI struct {
 	service Wishlist
 }
 
-func Register(grpc *grpc.Server, wishlist Wishlist) {
-	v1.RegisterWishlistItemServiceServer(grpc, &serverAPI{service: wishlist})
+func New(service Wishlist) *serverAPI {
+	return &serverAPI{
+		service: service,
+	}
+}
+
+func (sa *serverAPI) Register(grpc *grpc.Server) {
+	v1.RegisterWishlistItemServiceServer(grpc, sa)
 }
 
 func (sa *serverAPI) CreateWishlistItem(context.Context, *v1.CreateWishlistItemRequest) (*v1.WishlistItem, error) {

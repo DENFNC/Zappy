@@ -15,8 +15,14 @@ type serverAPI struct {
 	service Payment
 }
 
-func Register(grpc *grpc.Server, payment Payment) {
-	v1.RegisterPaymentMethodServiceServer(grpc, &serverAPI{service: payment})
+func New(service Payment) *serverAPI {
+	return &serverAPI{
+		service: service,
+	}
+}
+
+func (sa *serverAPI) Register(grpc *grpc.Server) {
+	v1.RegisterPaymentMethodServiceServer(grpc, sa)
 }
 
 func (sa *serverAPI) CreatePaymentMethod(context.Context, *v1.CreatePaymentMethodRequest) (*v1.PaymentMethod, error) {

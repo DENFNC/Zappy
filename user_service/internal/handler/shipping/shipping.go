@@ -15,8 +15,14 @@ type serverAPI struct {
 	service Shipping
 }
 
-func Register(grpc *grpc.Server, shipping Shipping) {
-	v1.RegisterShippingAddressServiceServer(grpc, &serverAPI{service: shipping})
+func New(service Shipping) *serverAPI {
+	return &serverAPI{
+		service: service,
+	}
+}
+
+func (sa *serverAPI) Register(grpc *grpc.Server) {
+	v1.RegisterShippingAddressServiceServer(grpc, sa)
 }
 
 func (sa *serverAPI) CreateShippingAddress(context.Context, *v1.CreateShippingAddressRequest) (*v1.ShippingAddress, error) {
