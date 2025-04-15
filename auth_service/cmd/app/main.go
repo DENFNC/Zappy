@@ -6,11 +6,11 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/DENFNC/Zappy/internal/app"
-	"github.com/DENFNC/Zappy/internal/config"
-	"github.com/DENFNC/Zappy/internal/pkg/logger"
-	"github.com/DENFNC/Zappy/internal/pkg/vault"
-	psql "github.com/DENFNC/Zappy/internal/storage/postgres"
+	"github.com/DENFNC/Zappy/auth_service/internal/app"
+	"github.com/DENFNC/Zappy/auth_service/internal/config"
+	"github.com/DENFNC/Zappy/auth_service/internal/pkg/logger"
+	"github.com/DENFNC/Zappy/auth_service/internal/pkg/vault"
+	psql "github.com/DENFNC/Zappy/auth_service/internal/storage/postgres"
 )
 
 func main() {

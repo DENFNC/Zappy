@@ -6,8 +6,8 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/DENFNC/Zappy/internal/config"
-	"github.com/DENFNC/Zappy/internal/pkg/logger"
+	"github.com/DENFNC/Zappy/auth_service/internal/config"
+	"github.com/DENFNC/Zappy/auth_service/internal/pkg/logger"
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres" // postgres driver
 	_ "github.com/golang-migrate/migrate/v4/source/file"
