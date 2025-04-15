@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package user.v1;
+option go_package = "github.com/DENFNC/Zappy/user_service/proto/gen/v1;v1";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+import "validate/validate.proto";
+
+message WishlistItem {
+  int64 item_id = 1;
+  int64 profile_id = 2 [(validate.rules).int64 = {gt: 0}];
+  int64 product_id = 3 [(validate.rules).int64 = {gt: 0}];
+  google.protobuf.Timestamp added_at = 4;
+  bool is_active = 5;
+}
+
+message CreateWishlistItemRequest {
+  WishlistItem wishlist_item = 1;
+}
+message GetWishlistItemRequest {
+  int64 item_id = 1 [(validate.rules).int64 = {gt: 0}];
+}
+message UpdateWishlistItemRequest {
+  WishlistItem wishlist_item = 1;
+}
+message DeleteWishlistItemRequest {
+  int64 item_id = 1 [(validate.rules).int64 = {gt: 0}];
+}
+message ListWishlistItemsRequest {
+  int64 profile_id = 1 [(validate.rules).int64 = {gt: 0}];
+}
+
+service WishlistItemService {
+  rpc CreateWishlistItem(CreateWishlistItemRequest) returns (WishlistItem);
+  rpc GetWishlistItem(GetWishlistItemRequest) returns (WishlistItem);
+  rpc UpdateWishlistItem(UpdateWishlistItemRequest) returns (WishlistItem);
+  rpc DeleteWishlistItem(DeleteWishlistItemRequest) returns (google.protobuf.Empty);
+  rpc ListWishlistItems(ListWishlistItemsRequest) returns (stream WishlistItem);
+}

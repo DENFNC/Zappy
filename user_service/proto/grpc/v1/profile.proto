@@ -1,63 +1,52 @@
 syntax = "proto3";
 
-
-package profile;
-
-
+package user.v1;
 option go_package = "github.com/DENFNC/Zappy/user_service/proto/gen/v1;v1";
 
-
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+import "validate/validate.proto";
 
 
 message FullName {
-    string first_name = 1;
-    string last_name = 2;
+  string first_name = 1 [(validate.rules).string = {min_len: 1, max_len: 50}];
+  string last_name = 2 [(validate.rules).string = {min_len: 1, max_len: 50}];
 }
 
-
-message ProfileDefault {
-    int64 id = 1;
-    FullName user = 2;
-    repeated string avatar_url = 3;
-    google.protobuf.Timestamp created_at = 4;
-    google.protobuf.Timestamp updated_at = 5;
+message Profile {
+  int64 profile_id = 1;
+  int64 auth_user_id = 2 [(validate.rules).int64 = {gt: 0}];
+  FullName name = 3;
+  string phone = 4 [(validate.rules).string = {max_len: 20}];
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
+  bool is_active = 7;
 }
 
-
-message ProfileRequest {
-    uint64 id = 1;
+message CreateProfileRequest {
+  Profile profile = 1;
 }
-
-
-message ProfileResponse {
-    ProfileDefault profile = 1;
+message GetProfileRequest {
+  int64 profile_id = 1 [(validate.rules).int64 = {gt: 0}];
 }
-
-
 message UpdateProfileRequest {
-    FullName user = 1;
-    string avatar_url = 2;
+  Profile profile = 1;
 }
-
-
-message UpdateProfileResponse {
-    string message = 1;
-}
-
-
 message DeleteProfileRequest {
-    uint64 id = 1;
+  int64 profile_id = 1 [(validate.rules).int64 = {gt: 0}];
+}
+message ListProfilesRequest {
+  int32 limit = 1 [(validate.rules).int32 = {gt: 0}];
+  int32 offset = 2 [(validate.rules).int32 = {gte: 0}];
+}
+message ListProfilesResponse {
+  repeated Profile profiles = 1;
 }
 
-
-message DeleteProfileResponse {
-    string message = 1;
-}
-
-
-service Profile {
-    rpc GetProfile(ProfileRequest) returns (ProfileResponse) {}
-    rpc UpdateProfile(UpdateProfileRequest) returns (UpdateProfileResponse) {}
-    rpc DeleteProfile(DeleteProfileRequest) returns (DeleteProfileResponse) {}
+service UserProfileService {
+  rpc CreateProfile(CreateProfileRequest) returns (Profile);
+  rpc GetProfile(GetProfileRequest) returns (Profile);
+  rpc UpdateProfile(UpdateProfileRequest) returns (Profile);
+  rpc DeleteProfile(DeleteProfileRequest) returns (google.protobuf.Empty);
+  rpc ListProfiles(ListProfilesRequest) returns (ListProfilesResponse);
 }
