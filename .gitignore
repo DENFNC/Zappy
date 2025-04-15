@@ -28,7 +28,7 @@ vendor/
 *.jsonl
 
 # Если внутри third_party есть вложенный .git, можно игнорировать его
-third_party/
+protoc-gen-validate/
 
 # Go workspace file
 go.work
