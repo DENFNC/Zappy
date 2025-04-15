@@ -31,19 +31,11 @@ CREATE TABLE
         is_default BOOLEAN DEFAULT FALSE
     );
 
--- 2.4. wishlists
-CREATE TABLE
-    wishlists (
-        wishlist_id SERIAL PRIMARY KEY,
-        profile_id INTEGER NOT NULL UNIQUE REFERENCES profiles (profile_id),
-        created_at TIMESTAMP DEFAULT NOW ()
-    );
-
--- 2.5. wishlist_items
+-- 2.4. wishlist_items (привязка к profile_id напрямую)
 CREATE TABLE
     wishlist_items (
         item_id SERIAL PRIMARY KEY,
-        wishlist_id INTEGER NOT NULL REFERENCES wishlists (wishlist_id),
+        profile_id INTEGER NOT NULL REFERENCES profiles (profile_id),
         product_id INTEGER NOT NULL,
         added_at TIMESTAMP DEFAULT NOW ()
     );
