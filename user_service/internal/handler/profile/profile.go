@@ -56,7 +56,19 @@ func (sa *serverAPI) CreateProfile(ctx context.Context, req *v1.CreateProfileReq
 }
 
 func (sa *serverAPI) DeleteProfile(ctx context.Context, req *v1.DeleteProfileRequest) (*v1.ProfileIDResponse, error) {
-	panic("implement me!")
+	profileID, err := sa.service.Delete(
+		ctx,
+		req.GetProfileId(),
+	)
+
+	if err != nil {
+		return nil, status.Error(codes.Internal, "Internal server error")
+	}
+
+	return &v1.ProfileIDResponse{
+		ProfileId: profileID,
+		Message:   "Пользователь удалён",
+	}, nil
 }
 
 func (sa *serverAPI) GetProfile(ctx context.Context, req *v1.GetProfileRequest) (*v1.Profile, error) {

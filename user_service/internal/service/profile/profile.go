@@ -45,7 +45,12 @@ func (p *Profile) Create(
 }
 
 func (p *Profile) Delete(ctx context.Context, profileID uint32) (uint32, error) {
-	panic("Implement me!")
+	profileID, err := p.repo.Delete(ctx, profileID)
+	if err != nil {
+		return emptyValue, err
+	}
+
+	return profileID, nil
 }
 
 func (p *Profile) GetByID(ctx context.Context, profileID uint32) (*models.Profile, error) {

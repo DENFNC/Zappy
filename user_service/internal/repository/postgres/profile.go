@@ -111,5 +111,20 @@ func (r *ProfileRepo) Update(ctx context.Context, profile *models.Profile) (uint
 }
 
 func (r *ProfileRepo) Delete(ctx context.Context, id uint32) (uint32, error) {
-	panic("implement me!")
+	stmt, args, err := r.goqu.Delete("profile").
+		Returning(goqu.C("profile_id")).
+		Where(goqu.C("profile_id").Eq(id)).
+		Prepared(true).
+		ToSQL()
+
+	if err != nil {
+		return 0, err
+	}
+
+	var profileID uint32
+	if err := r.DB.QueryRow(ctx, stmt, args...).Scan(&profileID); err != nil {
+		return 0, err
+	}
+
+	return profileID, nil
 }
