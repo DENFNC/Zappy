@@ -2,10 +2,14 @@ package profileservice
 
 import (
 	"context"
+	"errors"
+	"log/slog"
 	"time"
 
 	"github.com/DENFNC/Zappy/user_service/internal/domain/models"
 	"github.com/DENFNC/Zappy/user_service/internal/domain/repositories"
+	errpkg "github.com/DENFNC/Zappy/user_service/internal/errors"
+	"github.com/jackc/pgx/v5"
 )
 
 const (
@@ -13,13 +17,16 @@ const (
 )
 
 type Profile struct {
+	log  *slog.Logger
 	repo repositories.ProfileRepository
 }
 
 func New(
+	log *slog.Logger,
 	repo repositories.ProfileRepository,
 ) *Profile {
 	return &Profile{
+		log:  log,
 		repo: repo,
 	}
 }
@@ -45,9 +52,23 @@ func (p *Profile) Create(
 }
 
 func (p *Profile) Delete(ctx context.Context, profileID uint32) (uint32, error) {
+	const op = "service.Profile.Delete"
+
+	log := p.log.With("op", op)
+
 	profileID, err := p.repo.Delete(ctx, profileID)
+
 	if err != nil {
-		return emptyValue, err
+		if errors.Is(err, pgx.ErrNoRows) {
+			log.Error("Not found")
+			return emptyValue, errpkg.ErrNotFound
+		}
+		log.Error(
+			"Critical error",
+			slog.Any("error", err),
+		)
+
+		return emptyValue, errpkg.New("DELETE_ERROR", "couldn't delete value", err)
 	}
 
 	return profileID, nil

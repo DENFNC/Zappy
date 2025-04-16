@@ -2,9 +2,11 @@ package profile
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/DENFNC/Zappy/user_service/internal/domain/models"
+	errpkg "github.com/DENFNC/Zappy/user_service/internal/errors"
 	v1 "github.com/DENFNC/Zappy/user_service/proto/gen/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -62,6 +64,10 @@ func (sa *serverAPI) DeleteProfile(ctx context.Context, req *v1.DeleteProfileReq
 	)
 
 	if err != nil {
+		if errors.Is(err, errpkg.ErrNotFound) {
+			return nil, status.Error(codes.NotFound, "Not found")
+		}
+
 		return nil, status.Error(codes.Internal, "Internal server error")
 	}
 

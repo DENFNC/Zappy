@@ -19,6 +19,7 @@ import (
 // сообщений с цветовой подсветкой в зависимости от уровня лога.
 type PrettyHandler struct {
 	slog.Handler
+	extraAttrs []slog.Attr
 }
 
 // Handle обрабатывает запись лога slog.Record.
@@ -51,6 +52,10 @@ func (h *PrettyHandler) Handle(ctx context.Context, r slog.Record) error {
 		return true
 	})
 
+	for _, a := range h.extraAttrs {
+		fields[a.Key] = a.Value.Any()
+	}
+
 	var fieldJSON []byte
 	if len(fields) > 0 {
 		var err error
@@ -78,8 +83,13 @@ func (h *PrettyHandler) Handle(ctx context.Context, r slog.Record) error {
 // WithAttrs возвращает новый обработчик с добавленными атрибутами.
 // Переданные атрибуты объединяются с базовыми атрибутами обработчика.
 func (h *PrettyHandler) WithAttrs(attrs []slog.Attr) slog.Handler {
+	newAttrs := make([]slog.Attr, len(h.extraAttrs))
+	copy(newAttrs, h.extraAttrs)
+	newAttrs = append(newAttrs, attrs...)
+
 	return &PrettyHandler{
-		Handler: h.Handler.WithAttrs(attrs),
+		Handler:    h.Handler.WithAttrs(attrs), // можно сохранить вызов для совместимости
+		extraAttrs: newAttrs,
 	}
 }
 
@@ -87,7 +97,8 @@ func (h *PrettyHandler) WithAttrs(attrs []slog.Attr) slog.Handler {
 // Это позволяет структурировать атрибуты логов по группам.
 func (h *PrettyHandler) WithGroup(name string) slog.Handler {
 	return &PrettyHandler{
-		Handler: h.Handler.WithGroup(name),
+		Handler:    h.Handler.WithGroup(name),
+		extraAttrs: h.extraAttrs,
 	}
 }
 

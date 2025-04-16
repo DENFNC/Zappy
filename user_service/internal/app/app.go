@@ -21,7 +21,7 @@ func New(
 ) *App {
 
 	profileRepository := psqlrepoprofile.New(db, db.Dial)
-	profileService := profileservice.New(profileRepository)
+	profileService := profileservice.New(log, profileRepository)
 	profileHandle := profile.New(profileService)
 
 	return &App{
