@@ -67,7 +67,6 @@ func (sa *serverAPI) DeleteProfile(ctx context.Context, req *v1.DeleteProfileReq
 		if errors.Is(err, errpkg.ErrNotFound) {
 			return nil, status.Error(codes.NotFound, "Not found")
 		}
-
 		return nil, status.Error(codes.Internal, "Internal server error")
 	}
 
@@ -80,9 +79,10 @@ func (sa *serverAPI) DeleteProfile(ctx context.Context, req *v1.DeleteProfileReq
 func (sa *serverAPI) GetProfile(ctx context.Context, req *v1.GetProfileRequest) (*v1.Profile, error) {
 	profile, err := sa.service.GetByID(ctx, req.GetProfileId())
 
-	fmt.Println(err)
-
 	if err != nil {
+		if errors.Is(err, errpkg.ErrNotFound) {
+			return nil, status.Error(codes.NotFound, "Not found")
+		}
 		return nil, status.Error(codes.Internal, "Internal server error")
 	}
 
@@ -110,9 +110,10 @@ func (sa *serverAPI) UpdateProfile(ctx context.Context, req *v1.UpdateProfileReq
 		req.GetProfile().LastName,
 	)
 
-	fmt.Println(err)
-
 	if err != nil {
+		if errors.Is(err, errpkg.ErrNotFound) {
+			return nil, status.Error(codes.NotFound, "Not found")
+		}
 		return nil, status.Error(codes.Internal, "Internal server error")
 	}
 
