@@ -1,5 +1,14 @@
 {
     "cSpell.words": [
-        "grpcapp"
+        "dbpool",
+        "DENFNC",
+        "errpkg",
+        "grpcapp",
+        "jackc",
+        "pgxpool",
+        "profileservice",
+        "psql",
+        "psqlrepo",
+        "psqlrepoprofile"
     ]
 }
