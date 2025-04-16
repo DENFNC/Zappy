@@ -739,6 +739,8 @@ func (m *UpdateProfileRequest) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for ProfileId
+
 	if all {
 		switch v := interface{}(m.GetProfile()).(type) {
 		case interface{ ValidateAll() error }:

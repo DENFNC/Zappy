@@ -309,7 +309,8 @@ func (x *GetProfileRequest) GetProfileId() uint32 {
 
 type UpdateProfileRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Profile       *Profile               `protobuf:"bytes,1,opt,name=profile,proto3" json:"profile,omitempty"`
+	ProfileId     uint32                 `protobuf:"varint,1,opt,name=profile_id,json=profileId,proto3" json:"profile_id,omitempty"`
+	Profile       *FullName              `protobuf:"bytes,2,opt,name=profile,proto3" json:"profile,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -344,7 +345,14 @@ func (*UpdateProfileRequest) Descriptor() ([]byte, []int) {
 	return file_profile_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *UpdateProfileRequest) GetProfile() *Profile {
+func (x *UpdateProfileRequest) GetProfileId() uint32 {
+	if x != nil {
+		return x.ProfileId
+	}
+	return 0
+}
+
+func (x *UpdateProfileRequest) GetProfile() *FullName {
 	if x != nil {
 		return x.Profile
 	}
@@ -520,9 +528,11 @@ const file_profile_proto_rawDesc = "" +
 	"\aprofile\x18\x01 \x01(\v2\x10.user.v1.ProfileR\aprofile\";\n" +
 	"\x11GetProfileRequest\x12&\n" +
 	"\n" +
-	"profile_id\x18\x01 \x01(\rB\a\xfaB\x04*\x02 \x00R\tprofileId\"B\n" +
-	"\x14UpdateProfileRequest\x12*\n" +
-	"\aprofile\x18\x01 \x01(\v2\x10.user.v1.ProfileR\aprofile\">\n" +
+	"profile_id\x18\x01 \x01(\rB\a\xfaB\x04*\x02 \x00R\tprofileId\"b\n" +
+	"\x14UpdateProfileRequest\x12\x1d\n" +
+	"\n" +
+	"profile_id\x18\x01 \x01(\rR\tprofileId\x12+\n" +
+	"\aprofile\x18\x02 \x01(\v2\x11.user.v1.FullNameR\aprofile\">\n" +
 	"\x14DeleteProfileRequest\x12&\n" +
 	"\n" +
 	"profile_id\x18\x01 \x01(\rB\a\xfaB\x04*\x02 \x00R\tprofileId\"U\n" +
@@ -569,7 +579,7 @@ var file_profile_proto_depIdxs = []int32{
 	9,  // 1: user.v1.Profile.created_at:type_name -> google.protobuf.Timestamp
 	9,  // 2: user.v1.Profile.updated_at:type_name -> google.protobuf.Timestamp
 	1,  // 3: user.v1.CreateProfileRequest.profile:type_name -> user.v1.Profile
-	1,  // 4: user.v1.UpdateProfileRequest.profile:type_name -> user.v1.Profile
+	0,  // 4: user.v1.UpdateProfileRequest.profile:type_name -> user.v1.FullName
 	1,  // 5: user.v1.ListProfilesResponse.profiles:type_name -> user.v1.Profile
 	3,  // 6: user.v1.UserProfileService.CreateProfile:input_type -> user.v1.CreateProfileRequest
 	4,  // 7: user.v1.UserProfileService.GetProfile:input_type -> user.v1.GetProfileRequest

@@ -40,7 +40,8 @@ message GetProfileRequest {
 
 
 message UpdateProfileRequest {
-  Profile profile = 1;
+  uint32 profile_id = 1;
+  FullName profile = 2;
 }
 
 

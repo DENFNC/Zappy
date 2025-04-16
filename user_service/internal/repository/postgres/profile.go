@@ -57,27 +57,32 @@ func (r *ProfileRepo) GetByID(
 ) (*models.Profile, error) {
 	var profile models.Profile
 
-	err := r.DB.QueryRow(
-		ctx,
-		`SELECT profile_id,
-				auth_user_id,
-				first_name,
-				last_name,
-				created_at,
-				updated_at
-			FROM profile
-		WHERE profile_id = $1`,
-		id,
-	).Scan(
+	stmt, args, err := r.goqu.
+		Select(
+			"profile_id",
+			"auth_user_id",
+			"first_name",
+			"last_name",
+			"created_at",
+			"updated_at",
+		).
+		From("profile").
+		Where(goqu.C("profile_id").Eq(id)).
+		Prepared(true).
+		ToSQL()
+
+	if err != nil {
+		return nil, err
+	}
+
+	if err := r.DB.QueryRow(ctx, stmt, args...).Scan(
 		&profile.ProfileID,
 		&profile.AuthUserID,
 		&profile.FirstName,
 		&profile.LastName,
 		&profile.CreatedAt,
 		&profile.UpdatedAt,
-	)
-
-	if err != nil {
+	); err != nil {
 		return nil, err
 	}
 
@@ -85,8 +90,24 @@ func (r *ProfileRepo) GetByID(
 }
 
 func (r *ProfileRepo) Update(ctx context.Context, profile *models.Profile) (uint32, error) {
-	panic("implement me!")
+	stmt, args, err := r.goqu.Update("profile").Returning(goqu.C("profile_id")).Set(
+		goqu.Record{
+			"first_name": profile.FirstName,
+			"last_name":  profile.LastName,
+			"updated_at": profile.UpdatedAt,
+		},
+	).Where(goqu.C("profile_id").Eq(profile.ProfileID)).Prepared(true).ToSQL()
 
+	if err != nil {
+		return 0, err
+	}
+
+	var profileID uint32
+	if err := r.DB.QueryRow(ctx, stmt, args...).Scan(&profileID); err != nil {
+		return 0, err
+	}
+
+	return profileID, nil
 }
 
 func (r *ProfileRepo) Delete(ctx context.Context, id uint32) (uint32, error) {

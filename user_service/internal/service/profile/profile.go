@@ -2,6 +2,7 @@ package profileservice
 
 import (
 	"context"
+	"time"
 
 	"github.com/DENFNC/Zappy/user_service/internal/domain/models"
 	"github.com/DENFNC/Zappy/user_service/internal/domain/repositories"
@@ -48,13 +49,34 @@ func (p *Profile) Delete(ctx context.Context, profileID uint32) (uint32, error) 
 }
 
 func (p *Profile) GetByID(ctx context.Context, profileID uint32) (*models.Profile, error) {
-	panic("Implement me!")
+	profile, err := p.repo.GetByID(ctx, profileID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return profile, nil
 }
 
 func (p *Profile) List(ctx context.Context) ([]*models.Profile, error) {
 	panic("Implement me!")
 }
 
-func (p *Profile) Update(ctx context.Context, profileID uint32, firstName, lastName, phone string) (uint32, error) {
-	panic("Implement me!")
+func (p *Profile) Update(ctx context.Context, profileID uint32, firstName, lastName string) (uint32, error) {
+	profile := &models.Profile{
+		ProfileID: profileID,
+		FirstName: firstName,
+		LastName:  lastName,
+		UpdatedAt: time.Now(),
+	}
+
+	profileID, err := p.repo.Update(
+		ctx,
+		profile,
+	)
+	if err != nil {
+		return emptyValue, err
+	}
+
+	return profileID, nil
 }

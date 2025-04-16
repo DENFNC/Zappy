@@ -10,6 +10,7 @@
         "profileservice",
         "psql",
         "psqlrepo",
-        "psqlrepoprofile"
+        "psqlrepoprofile",
+        "timestamppb"
     ]
 }

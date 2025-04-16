@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type Profile interface {
@@ -16,7 +17,7 @@ type Profile interface {
 	Delete(ctx context.Context, profileID uint32) (uint32, error)
 	GetByID(ctx context.Context, profileID uint32) (*models.Profile, error)
 	List(ctx context.Context) ([]*models.Profile, error)
-	Update(ctx context.Context, profileID uint32, firstName, lastName, phone string) (uint32, error)
+	Update(ctx context.Context, profileID uint32, firstName, lastName string) (uint32, error)
 }
 
 type serverAPI struct {
@@ -59,7 +60,24 @@ func (sa *serverAPI) DeleteProfile(ctx context.Context, req *v1.DeleteProfileReq
 }
 
 func (sa *serverAPI) GetProfile(ctx context.Context, req *v1.GetProfileRequest) (*v1.Profile, error) {
-	panic("implement me!")
+	profile, err := sa.service.GetByID(ctx, req.GetProfileId())
+
+	fmt.Println(err)
+
+	if err != nil {
+		return nil, status.Error(codes.Internal, "Internal server error")
+	}
+
+	return &v1.Profile{
+		ProfileId:  profile.ProfileID,
+		AuthUserId: profile.AuthUserID,
+		Name: &v1.FullName{
+			FirstName: profile.FirstName,
+			LastName:  profile.LastName,
+		},
+		CreatedAt: timestamppb.New(profile.CreatedAt),
+		UpdatedAt: timestamppb.New(profile.UpdatedAt),
+	}, nil
 }
 
 func (sa *serverAPI) ListProfiles(ctx context.Context, req *v1.ListProfilesRequest) (*v1.ListProfilesResponse, error) {
@@ -67,5 +85,21 @@ func (sa *serverAPI) ListProfiles(ctx context.Context, req *v1.ListProfilesReque
 }
 
 func (sa *serverAPI) UpdateProfile(ctx context.Context, req *v1.UpdateProfileRequest) (*v1.ProfileIDResponse, error) {
-	panic("implement me!")
+	profileID, err := sa.service.Update(
+		ctx,
+		req.GetProfileId(),
+		req.GetProfile().FirstName,
+		req.GetProfile().LastName,
+	)
+
+	fmt.Println(err)
+
+	if err != nil {
+		return nil, status.Error(codes.Internal, "Internal server error")
+	}
+
+	return &v1.ProfileIDResponse{
+		ProfileId: profileID,
+		Message:   "Пользователь обновлён",
+	}, nil
 }
