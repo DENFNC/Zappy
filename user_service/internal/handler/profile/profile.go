@@ -12,11 +12,11 @@ import (
 )
 
 type Profile interface {
-	Create(ctx context.Context, authUserID uint64, firstName, lastName string) (uint64, error)
-	Delete(ctx context.Context, profileID int) (uint64, error)
-	GetByID(ctx context.Context, profileID int) (*models.Profile, error)
+	Create(ctx context.Context, authUserID uint32, firstName, lastName string) (uint32, error)
+	Delete(ctx context.Context, profileID uint32) (uint32, error)
+	GetByID(ctx context.Context, profileID uint32) (*models.Profile, error)
 	List(ctx context.Context) ([]*models.Profile, error)
-	Update(ctx context.Context, profileID int, firstName, lastName, phone string) (uint64, error)
+	Update(ctx context.Context, profileID uint32, firstName, lastName, phone string) (uint32, error)
 }
 
 type serverAPI struct {

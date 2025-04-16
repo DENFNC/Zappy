@@ -3,6 +3,7 @@
         "dbpool",
         "DENFNC",
         "errpkg",
+        "goqu",
         "grpcapp",
         "jackc",
         "pgxpool",

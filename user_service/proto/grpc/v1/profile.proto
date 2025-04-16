@@ -12,9 +12,11 @@ message FullName {
   string last_name = 2 [(validate.rules).string = {min_len: 1, max_len: 50}];
 }
 
+
+
 message Profile {
-  uint64 profile_id = 1;
-  uint64 auth_user_id = 2 [(validate.rules).uint64 = {gt: 0}];
+  uint32 profile_id = 1;
+  uint32 auth_user_id = 2 [(validate.rules).uint32 = {gt: 0}];
   FullName name = 3;
   string phone = 4 [(validate.rules).string = {max_len: 20}];
   google.protobuf.Timestamp created_at = 5;
@@ -23,7 +25,7 @@ message Profile {
 }
 
 message ProfileIDResponse {
-  uint64 profile_id = 1;
+  uint32 profile_id = 1;
   string message = 2;
 }
 
@@ -33,7 +35,7 @@ message CreateProfileRequest {
 
 
 message GetProfileRequest {
-  uint64 profile_id = 1 [(validate.rules).uint64 = {gt: 0}];
+  uint32 profile_id = 1 [(validate.rules).uint32 = {gt: 0}];
 }
 
 
@@ -43,7 +45,7 @@ message UpdateProfileRequest {
 
 
 message DeleteProfileRequest {
-  uint64 profile_id = 1 [(validate.rules).uint64 = {gt: 0}];
+  uint32 profile_id = 1 [(validate.rules).uint32 = {gt: 0}];
 }
 
 

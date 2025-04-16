@@ -2,42 +2,50 @@ package psqlrepoprofile
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/DENFNC/Zappy/user_service/internal/domain/models"
 	psql "github.com/DENFNC/Zappy/user_service/internal/storage/postgres"
+	"github.com/doug-martin/goqu/v9"
 )
 
 type ProfileRepo struct {
 	*psql.Storage
+	goqu *goqu.DialectWrapper
 }
 
 func New(
 	db *psql.Storage,
+	goqu *goqu.DialectWrapper,
 ) *ProfileRepo {
 	return &ProfileRepo{
 		db,
+		goqu,
 	}
 }
 
-func (r *ProfileRepo) Create(ctx context.Context, profile *models.Profile) (uint64, error) {
-	var profileID uint64
+func (r *ProfileRepo) Create(ctx context.Context, profile *models.Profile) (uint32, error) {
+	var profileID uint32
 
-	err := r.DB.QueryRow(
-		ctx,
-		`INSERT INTO profile (
-			auth_user_id,
-			first_name,
-			last_name
-		) VALUES ($1, $2, $3)
-		RETURNING profile_id;
-		`,
-		profile.AuthUserID,
-		profile.FirstName,
-		profile.LastName,
-	).Scan(&profileID)
+	stmt, args, err := r.goqu.Insert("profile").
+		Returning(goqu.C("profile_id")).
+		Rows(goqu.Record{
+			"auth_user_id": profile.AuthUserID,
+			"first_name":   profile.FirstName,
+			"last_name":    profile.LastName,
+		}).
+		Prepared(true).
+		ToSQL()
+
+	fmt.Println(stmt)
 
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("failed to build SQL: %w", err)
+	}
+
+	err = r.DB.QueryRow(ctx, stmt, args...).Scan(&profileID)
+	if err != nil {
+		return 0, fmt.Errorf("failed to insert profile: %w", err)
 	}
 
 	return profileID, nil
@@ -45,7 +53,7 @@ func (r *ProfileRepo) Create(ctx context.Context, profile *models.Profile) (uint
 
 func (r *ProfileRepo) GetByID(
 	ctx context.Context,
-	id uint64,
+	id uint32,
 ) (*models.Profile, error) {
 	var profile models.Profile
 
@@ -76,10 +84,11 @@ func (r *ProfileRepo) GetByID(
 	return &profile, nil
 }
 
-func (r *ProfileRepo) Update(ctx context.Context, profile *models.Profile) (uint64, error) {
+func (r *ProfileRepo) Update(ctx context.Context, profile *models.Profile) (uint32, error) {
 	panic("implement me!")
+
 }
 
-func (r *ProfileRepo) Delete(ctx context.Context, id int) (uint64, error) {
+func (r *ProfileRepo) Delete(ctx context.Context, id uint32) (uint32, error) {
 	panic("implement me!")
 }

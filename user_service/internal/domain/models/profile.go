@@ -3,8 +3,8 @@ package models
 import "time"
 
 type Profile struct {
-	ProfileID  uint64
-	AuthUserID uint64
+	ProfileID  uint32
+	AuthUserID uint32
 	FirstName  string
 	LastName   string
 	CreatedAt  time.Time
@@ -12,7 +12,7 @@ type Profile struct {
 }
 
 func NewProfile(
-	authUserID uint64,
+	authUserID uint32,
 	firstName string,
 	lastName string,
 ) *Profile {

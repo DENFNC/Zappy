@@ -20,7 +20,7 @@ func New(
 	port int,
 ) *App {
 
-	profileRepository := psqlrepoprofile.New(db)
+	profileRepository := psqlrepoprofile.New(db, db.Dial)
 	profileService := profileservice.New(profileRepository)
 	profileHandle := profile.New(profileService)
 

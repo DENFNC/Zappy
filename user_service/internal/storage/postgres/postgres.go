@@ -4,12 +4,15 @@ import (
 	"context"
 	"time"
 
+	"github.com/doug-martin/goqu/v9"
+	_ "github.com/doug-martin/goqu/v9/dialect/postgres"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type Storage struct {
-	DB *pgxpool.Pool
+	DB   *pgxpool.Pool
+	Dial *goqu.DialectWrapper
 }
 
 func New(conn string) (*Storage, error) {
@@ -25,8 +28,11 @@ func New(conn string) (*Storage, error) {
 		return nil, err
 	}
 
+	dialect := goqu.Dialect("postgres")
+
 	return &Storage{
-		DB: dbpool,
+		DB:   dbpool,
+		Dial: &dialect,
 	}, nil
 }
 

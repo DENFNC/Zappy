@@ -25,10 +25,10 @@ func New(
 
 func (p *Profile) Create(
 	ctx context.Context,
-	authUserID uint64,
+	authUserID uint32,
 	firstName string,
 	lastName string,
-) (uint64, error) {
+) (uint32, error) {
 	profile := models.NewProfile(
 		authUserID,
 		firstName,
@@ -43,11 +43,11 @@ func (p *Profile) Create(
 	return profileID, nil
 }
 
-func (p *Profile) Delete(ctx context.Context, profileID int) (uint64, error) {
+func (p *Profile) Delete(ctx context.Context, profileID uint32) (uint32, error) {
 	panic("Implement me!")
 }
 
-func (p *Profile) GetByID(ctx context.Context, profileID int) (*models.Profile, error) {
+func (p *Profile) GetByID(ctx context.Context, profileID uint32) (*models.Profile, error) {
 	panic("Implement me!")
 }
 
@@ -55,6 +55,6 @@ func (p *Profile) List(ctx context.Context) ([]*models.Profile, error) {
 	panic("Implement me!")
 }
 
-func (p *Profile) Update(ctx context.Context, profileID int, firstName, lastName, phone string) (uint64, error) {
+func (p *Profile) Update(ctx context.Context, profileID uint32, firstName, lastName, phone string) (uint32, error) {
 	panic("Implement me!")
 }

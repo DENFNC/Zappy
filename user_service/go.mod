@@ -3,7 +3,7 @@ module github.com/DENFNC/Zappy/user_service
 go 1.23.5
 
 require (
-	github.com/DENFNC/Zappy/auth_service v0.0.0-20250415172814-0e72c1f15aac
+	github.com/doug-martin/goqu/v9 v9.19.0
 	github.com/envoyproxy/protoc-gen-validate v1.2.1
 	github.com/fatih/color v1.18.0
 	github.com/golang-migrate/migrate/v4 v4.18.2
