@@ -219,17 +219,6 @@ func (m *Profile) validate(all bool) error {
 		}
 	}
 
-	if utf8.RuneCountInString(m.GetPhone()) > 20 {
-		err := ProfileValidationError{
-			field:  "Phone",
-			reason: "value length must be at most 20 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
 	if all {
 		switch v := interface{}(m.GetCreatedAt()).(type) {
 		case interface{ ValidateAll() error }:
@@ -287,8 +276,6 @@ func (m *Profile) validate(all bool) error {
 			}
 		}
 	}
-
-	// no validation rules for IsActive
 
 	if len(errors) > 0 {
 		return ProfileMultiError(errors)
@@ -390,8 +377,6 @@ func (m *ProfileIDResponse) validate(all bool) error {
 	var errors []error
 
 	// no validation rules for ProfileId
-
-	// no validation rules for Message
 
 	if len(errors) > 0 {
 		return ProfileIDResponseMultiError(errors)
@@ -985,9 +970,9 @@ func (m *ListProfilesRequest) validate(all bool) error {
 
 	var errors []error
 
-	if m.GetLimit() <= 0 {
+	if m.GetPageSize() <= 0 {
 		err := ListProfilesRequestValidationError{
-			field:  "Limit",
+			field:  "PageSize",
 			reason: "value must be greater than 0",
 		}
 		if !all {
@@ -996,16 +981,7 @@ func (m *ListProfilesRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if m.GetOffset() < 0 {
-		err := ListProfilesRequestValidationError{
-			field:  "Offset",
-			reason: "value must be greater than or equal to 0",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for PageToken
 
 	if len(errors) > 0 {
 		return ListProfilesRequestMultiError(errors)
@@ -1142,6 +1118,8 @@ func (m *ListProfilesResponse) validate(all bool) error {
 		}
 
 	}
+
+	// no validation rules for NextPageToken
 
 	if len(errors) > 0 {
 		return ListProfilesResponseMultiError(errors)

@@ -18,15 +18,12 @@ message Profile {
   uint32 profile_id = 1;
   uint32 auth_user_id = 2 [(validate.rules).uint32 = {gt: 0}];
   FullName name = 3;
-  string phone = 4 [(validate.rules).string = {max_len: 20}];
   google.protobuf.Timestamp created_at = 5;
   google.protobuf.Timestamp updated_at = 6;
-  bool is_active = 7;
 }
 
 message ProfileIDResponse {
   uint32 profile_id = 1;
-  string message = 2;
 }
 
 message CreateProfileRequest {
@@ -51,13 +48,14 @@ message DeleteProfileRequest {
 
 
 message ListProfilesRequest {
-  int32 limit = 1 [(validate.rules).int32 = {gt: 0}];
-  int32 offset = 2 [(validate.rules).int32 = {gte: 0}];
+  int32 page_size  = 1 [(validate.rules).int32 = {gt: 0}];
+  string page_token = 2;
 }
 
 
 message ListProfilesResponse {
   repeated Profile profiles = 1;
+  string next_page_token = 2;
 }
 
 service UserProfileService {

@@ -11,6 +11,7 @@
         "psql",
         "psqlrepo",
         "psqlrepoprofile",
-        "timestamppb"
+        "timestamppb",
+        "timestamptz"
     ]
 }

@@ -8,6 +8,7 @@ import (
 
 	"github.com/DENFNC/Zappy/user_service/internal/domain/models"
 	"github.com/DENFNC/Zappy/user_service/internal/domain/repositories"
+	dto "github.com/DENFNC/Zappy/user_service/internal/dto/profile"
 	errpkg "github.com/DENFNC/Zappy/user_service/internal/errors"
 	"github.com/jackc/pgx/v5"
 )
@@ -105,8 +106,13 @@ func (p *Profile) GetByID(ctx context.Context, profileID uint32) (*models.Profil
 	return profile, nil
 }
 
-func (p *Profile) List(ctx context.Context) ([]*models.Profile, error) {
-	panic("Implement me!")
+func (p *Profile) List(ctx context.Context, params *dto.ListParams) ([]*models.Profile, string, error) {
+	profiles, err := p.repo.List(ctx, params)
+	if err != nil {
+		return nil, "", err
+	}
+
+	return profiles.Items, profiles.NextPageToken, nil
 }
 
 func (p *Profile) Update(ctx context.Context, profileID uint32, firstName, lastName string) (uint32, error) {
@@ -135,7 +141,7 @@ func (p *Profile) Update(ctx context.Context, profileID uint32, firstName, lastN
 			slog.String("error", err.Error()),
 		)
 
-		return emptyValue, errpkg.New("GET_BY_ID_ERROR", "couldn't get value", err)
+		return emptyValue, errpkg.New("UPDATE_ERROR", "couldn't update value", err)
 	}
 
 	return profileID, nil

@@ -80,10 +80,8 @@ type Profile struct {
 	ProfileId     uint32                 `protobuf:"varint,1,opt,name=profile_id,json=profileId,proto3" json:"profile_id,omitempty"`
 	AuthUserId    uint32                 `protobuf:"varint,2,opt,name=auth_user_id,json=authUserId,proto3" json:"auth_user_id,omitempty"`
 	Name          *FullName              `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
-	Phone         string                 `protobuf:"bytes,4,opt,name=phone,proto3" json:"phone,omitempty"`
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	IsActive      bool                   `protobuf:"varint,7,opt,name=is_active,json=isActive,proto3" json:"is_active,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -139,13 +137,6 @@ func (x *Profile) GetName() *FullName {
 	return nil
 }
 
-func (x *Profile) GetPhone() string {
-	if x != nil {
-		return x.Phone
-	}
-	return ""
-}
-
 func (x *Profile) GetCreatedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.CreatedAt
@@ -160,17 +151,9 @@ func (x *Profile) GetUpdatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *Profile) GetIsActive() bool {
-	if x != nil {
-		return x.IsActive
-	}
-	return false
-}
-
 type ProfileIDResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ProfileId     uint32                 `protobuf:"varint,1,opt,name=profile_id,json=profileId,proto3" json:"profile_id,omitempty"`
-	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -210,13 +193,6 @@ func (x *ProfileIDResponse) GetProfileId() uint32 {
 		return x.ProfileId
 	}
 	return 0
-}
-
-func (x *ProfileIDResponse) GetMessage() string {
-	if x != nil {
-		return x.Message
-	}
-	return ""
 }
 
 type CreateProfileRequest struct {
@@ -405,8 +381,8 @@ func (x *DeleteProfileRequest) GetProfileId() uint32 {
 
 type ListProfilesRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Limit         int32                  `protobuf:"varint,1,opt,name=limit,proto3" json:"limit,omitempty"`
-	Offset        int32                  `protobuf:"varint,2,opt,name=offset,proto3" json:"offset,omitempty"`
+	PageSize      int32                  `protobuf:"varint,1,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	PageToken     string                 `protobuf:"bytes,2,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -441,23 +417,24 @@ func (*ListProfilesRequest) Descriptor() ([]byte, []int) {
 	return file_profile_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *ListProfilesRequest) GetLimit() int32 {
+func (x *ListProfilesRequest) GetPageSize() int32 {
 	if x != nil {
-		return x.Limit
+		return x.PageSize
 	}
 	return 0
 }
 
-func (x *ListProfilesRequest) GetOffset() int32 {
+func (x *ListProfilesRequest) GetPageToken() string {
 	if x != nil {
-		return x.Offset
+		return x.PageToken
 	}
-	return 0
+	return ""
 }
 
 type ListProfilesResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Profiles      []*Profile             `protobuf:"bytes,1,rep,name=profiles,proto3" json:"profiles,omitempty"`
+	NextPageToken string                 `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -499,6 +476,13 @@ func (x *ListProfilesResponse) GetProfiles() []*Profile {
 	return nil
 }
 
+func (x *ListProfilesResponse) GetNextPageToken() string {
+	if x != nil {
+		return x.NextPageToken
+	}
+	return ""
+}
+
 var File_profile_proto protoreflect.FileDescriptor
 
 const file_profile_proto_rawDesc = "" +
@@ -507,23 +491,20 @@ const file_profile_proto_rawDesc = "" +
 	"\bFullName\x12(\n" +
 	"\n" +
 	"first_name\x18\x01 \x01(\tB\t\xfaB\x06r\x04\x10\x01\x182R\tfirstName\x12&\n" +
-	"\tlast_name\x18\x02 \x01(\tB\t\xfaB\x06r\x04\x10\x01\x182R\blastName\"\xac\x02\n" +
+	"\tlast_name\x18\x02 \x01(\tB\t\xfaB\x06r\x04\x10\x01\x182R\blastName\"\xf0\x01\n" +
 	"\aProfile\x12\x1d\n" +
 	"\n" +
 	"profile_id\x18\x01 \x01(\rR\tprofileId\x12)\n" +
 	"\fauth_user_id\x18\x02 \x01(\rB\a\xfaB\x04*\x02 \x00R\n" +
 	"authUserId\x12%\n" +
-	"\x04name\x18\x03 \x01(\v2\x11.user.v1.FullNameR\x04name\x12\x1d\n" +
-	"\x05phone\x18\x04 \x01(\tB\a\xfaB\x04r\x02\x18\x14R\x05phone\x129\n" +
+	"\x04name\x18\x03 \x01(\v2\x11.user.v1.FullNameR\x04name\x129\n" +
 	"\n" +
 	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12\x1b\n" +
-	"\tis_active\x18\a \x01(\bR\bisActive\"L\n" +
+	"updated_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"2\n" +
 	"\x11ProfileIDResponse\x12\x1d\n" +
 	"\n" +
-	"profile_id\x18\x01 \x01(\rR\tprofileId\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"B\n" +
+	"profile_id\x18\x01 \x01(\rR\tprofileId\"B\n" +
 	"\x14CreateProfileRequest\x12*\n" +
 	"\aprofile\x18\x01 \x01(\v2\x10.user.v1.ProfileR\aprofile\";\n" +
 	"\x11GetProfileRequest\x12&\n" +
@@ -535,12 +516,14 @@ const file_profile_proto_rawDesc = "" +
 	"\aprofile\x18\x02 \x01(\v2\x11.user.v1.FullNameR\aprofile\">\n" +
 	"\x14DeleteProfileRequest\x12&\n" +
 	"\n" +
-	"profile_id\x18\x01 \x01(\rB\a\xfaB\x04*\x02 \x00R\tprofileId\"U\n" +
-	"\x13ListProfilesRequest\x12\x1d\n" +
-	"\x05limit\x18\x01 \x01(\x05B\a\xfaB\x04\x1a\x02 \x00R\x05limit\x12\x1f\n" +
-	"\x06offset\x18\x02 \x01(\x05B\a\xfaB\x04\x1a\x02(\x00R\x06offset\"D\n" +
+	"profile_id\x18\x01 \x01(\rB\a\xfaB\x04*\x02 \x00R\tprofileId\"Z\n" +
+	"\x13ListProfilesRequest\x12$\n" +
+	"\tpage_size\x18\x01 \x01(\x05B\a\xfaB\x04\x1a\x02 \x00R\bpageSize\x12\x1d\n" +
+	"\n" +
+	"page_token\x18\x02 \x01(\tR\tpageToken\"l\n" +
 	"\x14ListProfilesResponse\x12,\n" +
-	"\bprofiles\x18\x01 \x03(\v2\x10.user.v1.ProfileR\bprofiles2\x81\x03\n" +
+	"\bprofiles\x18\x01 \x03(\v2\x10.user.v1.ProfileR\bprofiles\x12&\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken2\x81\x03\n" +
 	"\x12UserProfileService\x12J\n" +
 	"\rCreateProfile\x12\x1d.user.v1.CreateProfileRequest\x1a\x1a.user.v1.ProfileIDResponse\x12:\n" +
 	"\n" +

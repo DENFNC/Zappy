@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/DENFNC/Zappy/user_service/internal/domain/models"
+	dto "github.com/DENFNC/Zappy/user_service/internal/dto/profile"
 	errpkg "github.com/DENFNC/Zappy/user_service/internal/errors"
 	v1 "github.com/DENFNC/Zappy/user_service/proto/gen/v1"
 	"google.golang.org/grpc"
@@ -18,7 +19,7 @@ type Profile interface {
 	Create(ctx context.Context, authUserID uint32, firstName, lastName string) (uint32, error)
 	Delete(ctx context.Context, profileID uint32) (uint32, error)
 	GetByID(ctx context.Context, profileID uint32) (*models.Profile, error)
-	List(ctx context.Context) ([]*models.Profile, error)
+	List(ctx context.Context, params *dto.ListParams) ([]*models.Profile, string, error)
 	Update(ctx context.Context, profileID uint32, firstName, lastName string) (uint32, error)
 }
 
@@ -53,7 +54,6 @@ func (sa *serverAPI) CreateProfile(ctx context.Context, req *v1.CreateProfileReq
 
 	return &v1.ProfileIDResponse{
 		ProfileId: profileID,
-		Message:   "Пользователь создан",
 	}, nil
 }
 
@@ -72,7 +72,6 @@ func (sa *serverAPI) DeleteProfile(ctx context.Context, req *v1.DeleteProfileReq
 
 	return &v1.ProfileIDResponse{
 		ProfileId: profileID,
-		Message:   "Пользователь удалён",
 	}, nil
 }
 
@@ -99,7 +98,29 @@ func (sa *serverAPI) GetProfile(ctx context.Context, req *v1.GetProfileRequest) 
 }
 
 func (sa *serverAPI) ListProfiles(ctx context.Context, req *v1.ListProfilesRequest) (*v1.ListProfilesResponse, error) {
-	panic("implement me!")
+	profilesDTO, nextToken, err := sa.service.List(ctx, &dto.ListParams{PageSize: req.GetPageSize(), PageToken: req.GetPageToken()})
+	if err != nil {
+		return nil, status.Error(codes.Internal, "Internal server error")
+	}
+
+	var profiles []*v1.Profile
+	for _, profile := range profilesDTO {
+		profiles = append(profiles, &v1.Profile{
+			ProfileId:  profile.ProfileID,
+			AuthUserId: profile.AuthUserID,
+			Name: &v1.FullName{
+				FirstName: profile.FirstName,
+				LastName:  profile.LastName,
+			},
+			CreatedAt: timestamppb.New(profile.CreatedAt),
+			UpdatedAt: timestamppb.New(profile.UpdatedAt),
+		})
+	}
+
+	return &v1.ListProfilesResponse{
+		Profiles:      profiles,
+		NextPageToken: nextToken,
+	}, nil
 }
 
 func (sa *serverAPI) UpdateProfile(ctx context.Context, req *v1.UpdateProfileRequest) (*v1.ProfileIDResponse, error) {
@@ -119,6 +140,5 @@ func (sa *serverAPI) UpdateProfile(ctx context.Context, req *v1.UpdateProfileReq
 
 	return &v1.ProfileIDResponse{
 		ProfileId: profileID,
-		Message:   "Пользователь обновлён",
 	}, nil
 }
