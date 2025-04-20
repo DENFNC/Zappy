@@ -1,4 +1,4 @@
-package profileservice
+package service
 
 import (
 	"context"
@@ -22,7 +22,7 @@ type Profile struct {
 	repo repositories.ProfileRepository
 }
 
-func New(
+func NewProfile(
 	log *slog.Logger,
 	repo repositories.ProfileRepository,
 ) *Profile {
@@ -107,8 +107,17 @@ func (p *Profile) GetByID(ctx context.Context, profileID uint32) (*models.Profil
 }
 
 func (p *Profile) List(ctx context.Context, params *dto.ListParams) ([]*models.Profile, string, error) {
+	const op = "service.Profile.List"
+
+	log := p.log.With("op", op)
+
 	profiles, err := p.repo.List(ctx, params)
 	if err != nil {
+		log.Error(
+			"Critical error",
+			slog.String("error", err.Error()),
+		)
+
 		return nil, "", err
 	}
 

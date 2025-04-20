@@ -10,7 +10,6 @@ import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -23,10 +22,11 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type ShippingAddress struct {
+// Core data model for a shipping  (response payload)
+type Shipping struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	AddressId     int64                  `protobuf:"varint,1,opt,name=address_id,json=addressId,proto3" json:"address_id,omitempty"`
-	ProfileId     int64                  `protobuf:"varint,2,opt,name=profile_id,json=profileId,proto3" json:"profile_id,omitempty"`
+	XId           uint32                 `protobuf:"varint,1,opt,name=_id,json=Id,proto3" json:"_id,omitempty"`
+	ProfileId     uint32                 `protobuf:"varint,2,opt,name=profile_id,json=profileId,proto3" json:"profile_id,omitempty"`
 	Country       string                 `protobuf:"bytes,3,opt,name=country,proto3" json:"country,omitempty"`
 	City          string                 `protobuf:"bytes,4,opt,name=city,proto3" json:"city,omitempty"`
 	Street        string                 `protobuf:"bytes,5,opt,name=street,proto3" json:"street,omitempty"`
@@ -36,20 +36,20 @@ type ShippingAddress struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ShippingAddress) Reset() {
-	*x = ShippingAddress{}
+func (x *Shipping) Reset() {
+	*x = Shipping{}
 	mi := &file_shipping_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ShippingAddress) String() string {
+func (x *Shipping) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ShippingAddress) ProtoMessage() {}
+func (*Shipping) ProtoMessage() {}
 
-func (x *ShippingAddress) ProtoReflect() protoreflect.Message {
+func (x *Shipping) ProtoReflect() protoreflect.Message {
 	mi := &file_shipping_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -61,81 +61,86 @@ func (x *ShippingAddress) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ShippingAddress.ProtoReflect.Descriptor instead.
-func (*ShippingAddress) Descriptor() ([]byte, []int) {
+// Deprecated: Use Shipping.ProtoReflect.Descriptor instead.
+func (*Shipping) Descriptor() ([]byte, []int) {
 	return file_shipping_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *ShippingAddress) GetAddressId() int64 {
+func (x *Shipping) GetXId() uint32 {
 	if x != nil {
-		return x.AddressId
+		return x.XId
 	}
 	return 0
 }
 
-func (x *ShippingAddress) GetProfileId() int64 {
+func (x *Shipping) GetProfileId() uint32 {
 	if x != nil {
 		return x.ProfileId
 	}
 	return 0
 }
 
-func (x *ShippingAddress) GetCountry() string {
+func (x *Shipping) GetCountry() string {
 	if x != nil {
 		return x.Country
 	}
 	return ""
 }
 
-func (x *ShippingAddress) GetCity() string {
+func (x *Shipping) GetCity() string {
 	if x != nil {
 		return x.City
 	}
 	return ""
 }
 
-func (x *ShippingAddress) GetStreet() string {
+func (x *Shipping) GetStreet() string {
 	if x != nil {
 		return x.Street
 	}
 	return ""
 }
 
-func (x *ShippingAddress) GetPostalCode() string {
+func (x *Shipping) GetPostalCode() string {
 	if x != nil {
 		return x.PostalCode
 	}
 	return ""
 }
 
-func (x *ShippingAddress) GetIsDefault() bool {
+func (x *Shipping) GetIsDefault() bool {
 	if x != nil {
 		return x.IsDefault
 	}
 	return false
 }
 
-type CreateShippingAddressRequest struct {
+type ShippingInput struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Address       *ShippingAddress       `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
+	ProfileId     uint32                 `protobuf:"varint,1,opt,name=profile_id,json=profileId,proto3" json:"profile_id,omitempty"`
+	Country       string                 `protobuf:"bytes,2,opt,name=country,proto3" json:"country,omitempty"`
+	City          string                 `protobuf:"bytes,3,opt,name=city,proto3" json:"city,omitempty"`
+	Street        string                 `protobuf:"bytes,4,opt,name=street,proto3" json:"street,omitempty"`
+	PostalCode    string                 `protobuf:"bytes,5,opt,name=postal_code,json=postalCode,proto3" json:"postal_code,omitempty"`
+	IsDefault     bool                   `protobuf:"varint,6,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *CreateShippingAddressRequest) Reset() {
-	*x = CreateShippingAddressRequest{}
+func (x *ShippingInput) Reset() {
+	*x = ShippingInput{}
 	mi := &file_shipping_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *CreateShippingAddressRequest) String() string {
+func (x *ShippingInput) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*CreateShippingAddressRequest) ProtoMessage() {}
+func (*ShippingInput) ProtoMessage() {}
 
-func (x *CreateShippingAddressRequest) ProtoReflect() protoreflect.Message {
+func (x *ShippingInput) ProtoReflect() protoreflect.Message {
 	mi := &file_shipping_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -147,215 +152,250 @@ func (x *CreateShippingAddressRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateShippingAddressRequest.ProtoReflect.Descriptor instead.
-func (*CreateShippingAddressRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use ShippingInput.ProtoReflect.Descriptor instead.
+func (*ShippingInput) Descriptor() ([]byte, []int) {
 	return file_shipping_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *CreateShippingAddressRequest) GetAddress() *ShippingAddress {
-	if x != nil {
-		return x.Address
-	}
-	return nil
-}
-
-type GetShippingAddressRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	AddressId     int64                  `protobuf:"varint,1,opt,name=address_id,json=addressId,proto3" json:"address_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetShippingAddressRequest) Reset() {
-	*x = GetShippingAddressRequest{}
-	mi := &file_shipping_proto_msgTypes[2]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetShippingAddressRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetShippingAddressRequest) ProtoMessage() {}
-
-func (x *GetShippingAddressRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_shipping_proto_msgTypes[2]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetShippingAddressRequest.ProtoReflect.Descriptor instead.
-func (*GetShippingAddressRequest) Descriptor() ([]byte, []int) {
-	return file_shipping_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *GetShippingAddressRequest) GetAddressId() int64 {
-	if x != nil {
-		return x.AddressId
-	}
-	return 0
-}
-
-type UpdateShippingAddressRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Address       *ShippingAddress       `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *UpdateShippingAddressRequest) Reset() {
-	*x = UpdateShippingAddressRequest{}
-	mi := &file_shipping_proto_msgTypes[3]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UpdateShippingAddressRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UpdateShippingAddressRequest) ProtoMessage() {}
-
-func (x *UpdateShippingAddressRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_shipping_proto_msgTypes[3]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UpdateShippingAddressRequest.ProtoReflect.Descriptor instead.
-func (*UpdateShippingAddressRequest) Descriptor() ([]byte, []int) {
-	return file_shipping_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *UpdateShippingAddressRequest) GetAddress() *ShippingAddress {
-	if x != nil {
-		return x.Address
-	}
-	return nil
-}
-
-type DeleteShippingAddressRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	AddressId     int64                  `protobuf:"varint,1,opt,name=address_id,json=addressId,proto3" json:"address_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *DeleteShippingAddressRequest) Reset() {
-	*x = DeleteShippingAddressRequest{}
-	mi := &file_shipping_proto_msgTypes[4]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *DeleteShippingAddressRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DeleteShippingAddressRequest) ProtoMessage() {}
-
-func (x *DeleteShippingAddressRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_shipping_proto_msgTypes[4]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DeleteShippingAddressRequest.ProtoReflect.Descriptor instead.
-func (*DeleteShippingAddressRequest) Descriptor() ([]byte, []int) {
-	return file_shipping_proto_rawDescGZIP(), []int{4}
-}
-
-func (x *DeleteShippingAddressRequest) GetAddressId() int64 {
-	if x != nil {
-		return x.AddressId
-	}
-	return 0
-}
-
-type ListShippingAddressesRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ProfileId     int64                  `protobuf:"varint,1,opt,name=profile_id,json=profileId,proto3" json:"profile_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ListShippingAddressesRequest) Reset() {
-	*x = ListShippingAddressesRequest{}
-	mi := &file_shipping_proto_msgTypes[5]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListShippingAddressesRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListShippingAddressesRequest) ProtoMessage() {}
-
-func (x *ListShippingAddressesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_shipping_proto_msgTypes[5]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ListShippingAddressesRequest.ProtoReflect.Descriptor instead.
-func (*ListShippingAddressesRequest) Descriptor() ([]byte, []int) {
-	return file_shipping_proto_rawDescGZIP(), []int{5}
-}
-
-func (x *ListShippingAddressesRequest) GetProfileId() int64 {
+func (x *ShippingInput) GetProfileId() uint32 {
 	if x != nil {
 		return x.ProfileId
 	}
 	return 0
 }
 
-type ListShippingAddressesResponse struct {
+func (x *ShippingInput) GetCountry() string {
+	if x != nil {
+		return x.Country
+	}
+	return ""
+}
+
+func (x *ShippingInput) GetCity() string {
+	if x != nil {
+		return x.City
+	}
+	return ""
+}
+
+func (x *ShippingInput) GetStreet() string {
+	if x != nil {
+		return x.Street
+	}
+	return ""
+}
+
+func (x *ShippingInput) GetPostalCode() string {
+	if x != nil {
+		return x.PostalCode
+	}
+	return ""
+}
+
+func (x *ShippingInput) GetIsDefault() bool {
+	if x != nil {
+		return x.IsDefault
+	}
+	return false
+}
+
+type ShippingId struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Addresses     []*ShippingAddress     `protobuf:"bytes,1,rep,name=addresses,proto3" json:"addresses,omitempty"`
+	XId           uint32                 `protobuf:"varint,1,opt,name=_id,json=Id,proto3" json:"_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ListShippingAddressesResponse) Reset() {
-	*x = ListShippingAddressesResponse{}
+func (x *ShippingId) Reset() {
+	*x = ShippingId{}
+	mi := &file_shipping_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ShippingId) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ShippingId) ProtoMessage() {}
+
+func (x *ShippingId) ProtoReflect() protoreflect.Message {
+	mi := &file_shipping_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ShippingId.ProtoReflect.Descriptor instead.
+func (*ShippingId) Descriptor() ([]byte, []int) {
+	return file_shipping_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *ShippingId) GetXId() uint32 {
+	if x != nil {
+		return x.XId
+	}
+	return 0
+}
+
+type CreateShippingRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Address       *ShippingInput         `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateShippingRequest) Reset() {
+	*x = CreateShippingRequest{}
+	mi := &file_shipping_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateShippingRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateShippingRequest) ProtoMessage() {}
+
+func (x *CreateShippingRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_shipping_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateShippingRequest.ProtoReflect.Descriptor instead.
+func (*CreateShippingRequest) Descriptor() ([]byte, []int) {
+	return file_shipping_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *CreateShippingRequest) GetAddress() *ShippingInput {
+	if x != nil {
+		return x.Address
+	}
+	return nil
+}
+
+type CreateShippingResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            *ShippingId            `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateShippingResponse) Reset() {
+	*x = CreateShippingResponse{}
+	mi := &file_shipping_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateShippingResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateShippingResponse) ProtoMessage() {}
+
+func (x *CreateShippingResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_shipping_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateShippingResponse.ProtoReflect.Descriptor instead.
+func (*CreateShippingResponse) Descriptor() ([]byte, []int) {
+	return file_shipping_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *CreateShippingResponse) GetId() *ShippingId {
+	if x != nil {
+		return x.Id
+	}
+	return nil
+}
+
+type GetShippingRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            *ShippingId            `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetShippingRequest) Reset() {
+	*x = GetShippingRequest{}
+	mi := &file_shipping_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetShippingRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetShippingRequest) ProtoMessage() {}
+
+func (x *GetShippingRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_shipping_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetShippingRequest.ProtoReflect.Descriptor instead.
+func (*GetShippingRequest) Descriptor() ([]byte, []int) {
+	return file_shipping_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *GetShippingRequest) GetId() *ShippingId {
+	if x != nil {
+		return x.Id
+	}
+	return nil
+}
+
+type GetShippingResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Address       *Shipping              `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetShippingResponse) Reset() {
+	*x = GetShippingResponse{}
 	mi := &file_shipping_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ListShippingAddressesResponse) String() string {
+func (x *GetShippingResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ListShippingAddressesResponse) ProtoMessage() {}
+func (*GetShippingResponse) ProtoMessage() {}
 
-func (x *ListShippingAddressesResponse) ProtoReflect() protoreflect.Message {
+func (x *GetShippingResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_shipping_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -367,14 +407,286 @@ func (x *ListShippingAddressesResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListShippingAddressesResponse.ProtoReflect.Descriptor instead.
-func (*ListShippingAddressesResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetShippingResponse.ProtoReflect.Descriptor instead.
+func (*GetShippingResponse) Descriptor() ([]byte, []int) {
 	return file_shipping_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *ListShippingAddressesResponse) GetAddresses() []*ShippingAddress {
+func (x *GetShippingResponse) GetAddress() *Shipping {
 	if x != nil {
-		return x.Addresses
+		return x.Address
+	}
+	return nil
+}
+
+type UpdateShippingRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            *ShippingId            `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Address       *ShippingInput         `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateShippingRequest) Reset() {
+	*x = UpdateShippingRequest{}
+	mi := &file_shipping_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateShippingRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateShippingRequest) ProtoMessage() {}
+
+func (x *UpdateShippingRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_shipping_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateShippingRequest.ProtoReflect.Descriptor instead.
+func (*UpdateShippingRequest) Descriptor() ([]byte, []int) {
+	return file_shipping_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *UpdateShippingRequest) GetId() *ShippingId {
+	if x != nil {
+		return x.Id
+	}
+	return nil
+}
+
+func (x *UpdateShippingRequest) GetAddress() *ShippingInput {
+	if x != nil {
+		return x.Address
+	}
+	return nil
+}
+
+type UpdateShippingResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            *ShippingId            `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateShippingResponse) Reset() {
+	*x = UpdateShippingResponse{}
+	mi := &file_shipping_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateShippingResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateShippingResponse) ProtoMessage() {}
+
+func (x *UpdateShippingResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_shipping_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateShippingResponse.ProtoReflect.Descriptor instead.
+func (*UpdateShippingResponse) Descriptor() ([]byte, []int) {
+	return file_shipping_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *UpdateShippingResponse) GetId() *ShippingId {
+	if x != nil {
+		return x.Id
+	}
+	return nil
+}
+
+type DeleteShippingRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            *ShippingId            `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteShippingRequest) Reset() {
+	*x = DeleteShippingRequest{}
+	mi := &file_shipping_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteShippingRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteShippingRequest) ProtoMessage() {}
+
+func (x *DeleteShippingRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_shipping_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteShippingRequest.ProtoReflect.Descriptor instead.
+func (*DeleteShippingRequest) Descriptor() ([]byte, []int) {
+	return file_shipping_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *DeleteShippingRequest) GetId() *ShippingId {
+	if x != nil {
+		return x.Id
+	}
+	return nil
+}
+
+type DeleteShippingResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            *ShippingId            `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteShippingResponse) Reset() {
+	*x = DeleteShippingResponse{}
+	mi := &file_shipping_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteShippingResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteShippingResponse) ProtoMessage() {}
+
+func (x *DeleteShippingResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_shipping_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteShippingResponse.ProtoReflect.Descriptor instead.
+func (*DeleteShippingResponse) Descriptor() ([]byte, []int) {
+	return file_shipping_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *DeleteShippingResponse) GetId() *ShippingId {
+	if x != nil {
+		return x.Id
+	}
+	return nil
+}
+
+type ListShippingRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ProfileId     uint32                 `protobuf:"varint,1,opt,name=profile_id,json=profileId,proto3" json:"profile_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListShippingRequest) Reset() {
+	*x = ListShippingRequest{}
+	mi := &file_shipping_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListShippingRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListShippingRequest) ProtoMessage() {}
+
+func (x *ListShippingRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_shipping_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListShippingRequest.ProtoReflect.Descriptor instead.
+func (*ListShippingRequest) Descriptor() ([]byte, []int) {
+	return file_shipping_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *ListShippingRequest) GetProfileId() uint32 {
+	if x != nil {
+		return x.ProfileId
+	}
+	return 0
+}
+
+type ListShippingResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Es            []*Shipping            `protobuf:"bytes,1,rep,name=es,proto3" json:"es,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListShippingResponse) Reset() {
+	*x = ListShippingResponse{}
+	mi := &file_shipping_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListShippingResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListShippingResponse) ProtoMessage() {}
+
+func (x *ListShippingResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_shipping_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListShippingResponse.ProtoReflect.Descriptor instead.
+func (*ListShippingResponse) Descriptor() ([]byte, []int) {
+	return file_shipping_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *ListShippingResponse) GetEs() []*Shipping {
+	if x != nil {
+		return x.Es
 	}
 	return nil
 }
@@ -383,40 +695,61 @@ var File_shipping_proto protoreflect.FileDescriptor
 
 const file_shipping_proto_rawDesc = "" +
 	"\n" +
-	"\x0eshipping.proto\x12\auser.v1\x1a\x1bgoogle/protobuf/empty.proto\x1a\x17validate/validate.proto\"\x8a\x02\n" +
-	"\x0fShippingAddress\x12\x1d\n" +
+	"\x0eshipping.proto\x12\auser.v1\x1a\x17validate/validate.proto\"\xf5\x01\n" +
+	"\bShipping\x12\x0f\n" +
+	"\x03_id\x18\x01 \x01(\rR\x02Id\x12&\n" +
 	"\n" +
-	"address_id\x18\x01 \x01(\x03R\taddressId\x12&\n" +
-	"\n" +
-	"profile_id\x18\x02 \x01(\x03B\a\xfaB\x04\"\x02 \x00R\tprofileId\x12#\n" +
+	"profile_id\x18\x02 \x01(\rB\a\xfaB\x04*\x02 \x00R\tprofileId\x12#\n" +
 	"\acountry\x18\x03 \x01(\tB\t\xfaB\x06r\x04\x10\x01\x182R\acountry\x12\x1d\n" +
 	"\x04city\x18\x04 \x01(\tB\t\xfaB\x06r\x04\x10\x01\x182R\x04city\x12!\n" +
 	"\x06street\x18\x05 \x01(\tB\t\xfaB\x06r\x04\x10\x01\x18dR\x06street\x12*\n" +
 	"\vpostal_code\x18\x06 \x01(\tB\t\xfaB\x06r\x04\x10\x01\x18\x14R\n" +
 	"postalCode\x12\x1d\n" +
 	"\n" +
-	"is_default\x18\a \x01(\bR\tisDefault\"R\n" +
-	"\x1cCreateShippingAddressRequest\x122\n" +
-	"\aaddress\x18\x01 \x01(\v2\x18.user.v1.ShippingAddressR\aaddress\"C\n" +
-	"\x19GetShippingAddressRequest\x12&\n" +
+	"is_default\x18\a \x01(\bR\tisDefault\"\xe9\x01\n" +
+	"\rShippingInput\x12&\n" +
 	"\n" +
-	"address_id\x18\x01 \x01(\x03B\a\xfaB\x04\"\x02 \x00R\taddressId\"R\n" +
-	"\x1cUpdateShippingAddressRequest\x122\n" +
-	"\aaddress\x18\x01 \x01(\v2\x18.user.v1.ShippingAddressR\aaddress\"F\n" +
-	"\x1cDeleteShippingAddressRequest\x12&\n" +
+	"profile_id\x18\x01 \x01(\rB\a\xfaB\x04*\x02 \x00R\tprofileId\x12#\n" +
+	"\acountry\x18\x02 \x01(\tB\t\xfaB\x06r\x04\x10\x01\x182R\acountry\x12\x1d\n" +
+	"\x04city\x18\x03 \x01(\tB\t\xfaB\x06r\x04\x10\x01\x182R\x04city\x12!\n" +
+	"\x06street\x18\x04 \x01(\tB\t\xfaB\x06r\x04\x10\x01\x18dR\x06street\x12*\n" +
+	"\vpostal_code\x18\x05 \x01(\tB\t\xfaB\x06r\x04\x10\x01\x18\x14R\n" +
+	"postalCode\x12\x1d\n" +
 	"\n" +
-	"address_id\x18\x01 \x01(\x03B\a\xfaB\x04\"\x02 \x00R\taddressId\"F\n" +
-	"\x1cListShippingAddressesRequest\x12&\n" +
+	"is_default\x18\x06 \x01(\bR\tisDefault\",\n" +
 	"\n" +
-	"profile_id\x18\x01 \x01(\x03B\a\xfaB\x04\"\x02 \x00R\tprofileId\"W\n" +
-	"\x1dListShippingAddressesResponse\x126\n" +
-	"\taddresses\x18\x01 \x03(\v2\x18.user.v1.ShippingAddressR\taddresses2\xe0\x03\n" +
-	"\x16ShippingAddressService\x12X\n" +
-	"\x15CreateShippingAddress\x12%.user.v1.CreateShippingAddressRequest\x1a\x18.user.v1.ShippingAddress\x12R\n" +
-	"\x12GetShippingAddress\x12\".user.v1.GetShippingAddressRequest\x1a\x18.user.v1.ShippingAddress\x12X\n" +
-	"\x15UpdateShippingAddress\x12%.user.v1.UpdateShippingAddressRequest\x1a\x18.user.v1.ShippingAddress\x12V\n" +
-	"\x15DeleteShippingAddress\x12%.user.v1.DeleteShippingAddressRequest\x1a\x16.google.protobuf.Empty\x12f\n" +
-	"\x15ListShippingAddresses\x12%.user.v1.ListShippingAddressesRequest\x1a&.user.v1.ListShippingAddressesResponseB6Z4github.com/DENFNC/Zappy/user_service/proto/gen/v1;v1b\x06proto3"
+	"ShippingId\x12\x1e\n" +
+	"\x03_id\x18\x01 \x01(\rB\r\xfaB\n" +
+	"*\b\x10\xff\xff\xff\xff\a \x00R\x02Id\"I\n" +
+	"\x15CreateShippingRequest\x120\n" +
+	"\aaddress\x18\x01 \x01(\v2\x16.user.v1.ShippingInputR\aaddress\"=\n" +
+	"\x16CreateShippingResponse\x12#\n" +
+	"\x02id\x18\x01 \x01(\v2\x13.user.v1.ShippingIdR\x02id\"9\n" +
+	"\x12GetShippingRequest\x12#\n" +
+	"\x02id\x18\x01 \x01(\v2\x13.user.v1.ShippingIdR\x02id\"B\n" +
+	"\x13GetShippingResponse\x12+\n" +
+	"\aaddress\x18\x01 \x01(\v2\x11.user.v1.ShippingR\aaddress\"n\n" +
+	"\x15UpdateShippingRequest\x12#\n" +
+	"\x02id\x18\x01 \x01(\v2\x13.user.v1.ShippingIdR\x02id\x120\n" +
+	"\aaddress\x18\x02 \x01(\v2\x16.user.v1.ShippingInputR\aaddress\"=\n" +
+	"\x16UpdateShippingResponse\x12#\n" +
+	"\x02id\x18\x01 \x01(\v2\x13.user.v1.ShippingIdR\x02id\"<\n" +
+	"\x15DeleteShippingRequest\x12#\n" +
+	"\x02id\x18\x01 \x01(\v2\x13.user.v1.ShippingIdR\x02id\"=\n" +
+	"\x16DeleteShippingResponse\x12#\n" +
+	"\x02id\x18\x01 \x01(\v2\x13.user.v1.ShippingIdR\x02id\"C\n" +
+	"\x13ListShippingRequest\x12,\n" +
+	"\n" +
+	"profile_id\x18\x01 \x01(\rB\r\xfaB\n" +
+	"*\b\x10\xff\xff\xff\xff\a \x00R\tprofileId\"9\n" +
+	"\x14ListShippingResponse\x12!\n" +
+	"\x02es\x18\x01 \x03(\v2\x11.user.v1.ShippingR\x02es2\xa1\x03\n" +
+	"\x0fShippingService\x12Q\n" +
+	"\x0eCreateShipping\x12\x1e.user.v1.CreateShippingRequest\x1a\x1f.user.v1.CreateShippingResponse\x12H\n" +
+	"\vGetShipping\x12\x1b.user.v1.GetShippingRequest\x1a\x1c.user.v1.GetShippingResponse\x12Q\n" +
+	"\x0eUpdateShipping\x12\x1e.user.v1.UpdateShippingRequest\x1a\x1f.user.v1.UpdateShippingResponse\x12Q\n" +
+	"\x0eDeleteShipping\x12\x1e.user.v1.DeleteShippingRequest\x1a\x1f.user.v1.DeleteShippingResponse\x12K\n" +
+	"\fListShipping\x12\x1c.user.v1.ListShippingRequest\x1a\x1d.user.v1.ListShippingResponseB6Z4github.com/DENFNC/Zappy/user_service/proto/gen/v1;v1b\x06proto3"
 
 var (
 	file_shipping_proto_rawDescOnce sync.Once
@@ -430,36 +763,48 @@ func file_shipping_proto_rawDescGZIP() []byte {
 	return file_shipping_proto_rawDescData
 }
 
-var file_shipping_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_shipping_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
 var file_shipping_proto_goTypes = []any{
-	(*ShippingAddress)(nil),               // 0: user.v1.ShippingAddress
-	(*CreateShippingAddressRequest)(nil),  // 1: user.v1.CreateShippingAddressRequest
-	(*GetShippingAddressRequest)(nil),     // 2: user.v1.GetShippingAddressRequest
-	(*UpdateShippingAddressRequest)(nil),  // 3: user.v1.UpdateShippingAddressRequest
-	(*DeleteShippingAddressRequest)(nil),  // 4: user.v1.DeleteShippingAddressRequest
-	(*ListShippingAddressesRequest)(nil),  // 5: user.v1.ListShippingAddressesRequest
-	(*ListShippingAddressesResponse)(nil), // 6: user.v1.ListShippingAddressesResponse
-	(*emptypb.Empty)(nil),                 // 7: google.protobuf.Empty
+	(*Shipping)(nil),               // 0: user.v1.Shipping
+	(*ShippingInput)(nil),          // 1: user.v1.ShippingInput
+	(*ShippingId)(nil),             // 2: user.v1.ShippingId
+	(*CreateShippingRequest)(nil),  // 3: user.v1.CreateShippingRequest
+	(*CreateShippingResponse)(nil), // 4: user.v1.CreateShippingResponse
+	(*GetShippingRequest)(nil),     // 5: user.v1.GetShippingRequest
+	(*GetShippingResponse)(nil),    // 6: user.v1.GetShippingResponse
+	(*UpdateShippingRequest)(nil),  // 7: user.v1.UpdateShippingRequest
+	(*UpdateShippingResponse)(nil), // 8: user.v1.UpdateShippingResponse
+	(*DeleteShippingRequest)(nil),  // 9: user.v1.DeleteShippingRequest
+	(*DeleteShippingResponse)(nil), // 10: user.v1.DeleteShippingResponse
+	(*ListShippingRequest)(nil),    // 11: user.v1.ListShippingRequest
+	(*ListShippingResponse)(nil),   // 12: user.v1.ListShippingResponse
 }
 var file_shipping_proto_depIdxs = []int32{
-	0, // 0: user.v1.CreateShippingAddressRequest.address:type_name -> user.v1.ShippingAddress
-	0, // 1: user.v1.UpdateShippingAddressRequest.address:type_name -> user.v1.ShippingAddress
-	0, // 2: user.v1.ListShippingAddressesResponse.addresses:type_name -> user.v1.ShippingAddress
-	1, // 3: user.v1.ShippingAddressService.CreateShippingAddress:input_type -> user.v1.CreateShippingAddressRequest
-	2, // 4: user.v1.ShippingAddressService.GetShippingAddress:input_type -> user.v1.GetShippingAddressRequest
-	3, // 5: user.v1.ShippingAddressService.UpdateShippingAddress:input_type -> user.v1.UpdateShippingAddressRequest
-	4, // 6: user.v1.ShippingAddressService.DeleteShippingAddress:input_type -> user.v1.DeleteShippingAddressRequest
-	5, // 7: user.v1.ShippingAddressService.ListShippingAddresses:input_type -> user.v1.ListShippingAddressesRequest
-	0, // 8: user.v1.ShippingAddressService.CreateShippingAddress:output_type -> user.v1.ShippingAddress
-	0, // 9: user.v1.ShippingAddressService.GetShippingAddress:output_type -> user.v1.ShippingAddress
-	0, // 10: user.v1.ShippingAddressService.UpdateShippingAddress:output_type -> user.v1.ShippingAddress
-	7, // 11: user.v1.ShippingAddressService.DeleteShippingAddress:output_type -> google.protobuf.Empty
-	6, // 12: user.v1.ShippingAddressService.ListShippingAddresses:output_type -> user.v1.ListShippingAddressesResponse
-	8, // [8:13] is the sub-list for method output_type
-	3, // [3:8] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	1,  // 0: user.v1.CreateShippingRequest.address:type_name -> user.v1.ShippingInput
+	2,  // 1: user.v1.CreateShippingResponse.id:type_name -> user.v1.ShippingId
+	2,  // 2: user.v1.GetShippingRequest.id:type_name -> user.v1.ShippingId
+	0,  // 3: user.v1.GetShippingResponse.address:type_name -> user.v1.Shipping
+	2,  // 4: user.v1.UpdateShippingRequest.id:type_name -> user.v1.ShippingId
+	1,  // 5: user.v1.UpdateShippingRequest.address:type_name -> user.v1.ShippingInput
+	2,  // 6: user.v1.UpdateShippingResponse.id:type_name -> user.v1.ShippingId
+	2,  // 7: user.v1.DeleteShippingRequest.id:type_name -> user.v1.ShippingId
+	2,  // 8: user.v1.DeleteShippingResponse.id:type_name -> user.v1.ShippingId
+	0,  // 9: user.v1.ListShippingResponse.es:type_name -> user.v1.Shipping
+	3,  // 10: user.v1.ShippingService.CreateShipping:input_type -> user.v1.CreateShippingRequest
+	5,  // 11: user.v1.ShippingService.GetShipping:input_type -> user.v1.GetShippingRequest
+	7,  // 12: user.v1.ShippingService.UpdateShipping:input_type -> user.v1.UpdateShippingRequest
+	9,  // 13: user.v1.ShippingService.DeleteShipping:input_type -> user.v1.DeleteShippingRequest
+	11, // 14: user.v1.ShippingService.ListShipping:input_type -> user.v1.ListShippingRequest
+	4,  // 15: user.v1.ShippingService.CreateShipping:output_type -> user.v1.CreateShippingResponse
+	6,  // 16: user.v1.ShippingService.GetShipping:output_type -> user.v1.GetShippingResponse
+	8,  // 17: user.v1.ShippingService.UpdateShipping:output_type -> user.v1.UpdateShippingResponse
+	10, // 18: user.v1.ShippingService.DeleteShipping:output_type -> user.v1.DeleteShippingResponse
+	12, // 19: user.v1.ShippingService.ListShipping:output_type -> user.v1.ListShippingResponse
+	15, // [15:20] is the sub-list for method output_type
+	10, // [10:15] is the sub-list for method input_type
+	10, // [10:10] is the sub-list for extension type_name
+	10, // [10:10] is the sub-list for extension extendee
+	0,  // [0:10] is the sub-list for field type_name
 }
 
 func init() { file_shipping_proto_init() }
@@ -473,7 +818,7 @@ func file_shipping_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_shipping_proto_rawDesc), len(file_shipping_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   7,
+			NumMessages:   13,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

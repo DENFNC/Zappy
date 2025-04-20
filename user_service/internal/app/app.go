@@ -5,8 +5,9 @@ import (
 
 	grpcapp "github.com/DENFNC/Zappy/user_service/internal/app/grpc"
 	"github.com/DENFNC/Zappy/user_service/internal/handler/profile"
-	psqlrepoprofile "github.com/DENFNC/Zappy/user_service/internal/repository/postgres"
-	profileservice "github.com/DENFNC/Zappy/user_service/internal/service/profile"
+	"github.com/DENFNC/Zappy/user_service/internal/handler/shipping"
+	repo "github.com/DENFNC/Zappy/user_service/internal/repository/postgres"
+	"github.com/DENFNC/Zappy/user_service/internal/service"
 	psql "github.com/DENFNC/Zappy/user_service/internal/storage/postgres"
 )
 
@@ -20,15 +21,20 @@ func New(
 	port int,
 ) *App {
 
-	profileRepository := psqlrepoprofile.New(db, db.Dial)
-	profileService := profileservice.New(log, profileRepository)
-	profileHandle := profile.New(profileService)
+	profileRepo := repo.NewProfileRepo(db, db.Dial)
+	profileSvc := service.NewProfile(log, profileRepo)
+	profileHandle := profile.New(profileSvc)
+
+	shippingRepo := repo.NewShippingRepo(db, db.Dial)
+	shippingSvc := service.NewShipping(shippingRepo, log)
+	shippingHandle := shipping.New(shippingSvc)
 
 	return &App{
 		App: *grpcapp.New(
 			log,
 			port,
 			profileHandle,
+			shippingHandle,
 		),
 	}
 }

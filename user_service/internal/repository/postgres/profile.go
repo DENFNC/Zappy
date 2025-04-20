@@ -1,4 +1,4 @@
-package psqlrepoprofile
+package repo
 
 import (
 	"context"
@@ -23,7 +23,7 @@ type cursor struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
-func New(
+func NewProfileRepo(
 	db *psql.Storage,
 	goqu *goqu.DialectWrapper,
 ) *ProfileRepo {
@@ -98,7 +98,7 @@ func (r *ProfileRepo) List(
 	ctx context.Context,
 	params *dto.ListParams,
 ) (
-	*dto.ListResult,
+	*dto.ListResult[models.Profile],
 	error,
 ) {
 	var cur cursor
@@ -165,7 +165,7 @@ func (r *ProfileRepo) List(
 		raw, _ := json.Marshal(lastCur)
 		nextToken = base64.RawURLEncoding.EncodeToString(raw)
 	}
-	return &dto.ListResult{
+	return &dto.ListResult[models.Profile]{
 		Items:         profiles,
 		NextPageToken: nextToken,
 	}, nil

@@ -6,6 +6,7 @@
         "goqu",
         "grpcapp",
         "jackc",
+        "pgconn",
         "pgxpool",
         "profileservice",
         "psql",

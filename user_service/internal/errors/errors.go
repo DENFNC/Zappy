@@ -27,6 +27,9 @@ func New(
 }
 
 var (
-	ErrNotFound        = New("NOT_FOUND", "user not found", nil)
+	ErrNotFound        = New("NOT_FOUND", "not found", nil)
 	ErrInvalidArgument = New("INVALID_ARGUMENT", "invalid argument", nil)
+	ErrInternal        = New("INTERNAL", "internal server error", nil)
+	ErrConstraint      = New("ERR_FOREIGN_KEY_VIOLATION", "external switch violation", nil)
+	ErrUniqueViolation = New("ERR_UNIQUE_VIOLATION", "violation of uniqueness", nil)
 )

@@ -3,12 +3,12 @@ syntax = "proto3";
 package user.v1;
 option go_package = "github.com/DENFNC/Zappy/user_service/proto/gen/v1;v1";
 
-import "google/protobuf/empty.proto";
 import "validate/validate.proto";
 
-message ShippingAddress {
-  int64 address_id = 1;
-  int64 profile_id = 2 [(validate.rules).int64 = {gt: 0}];
+// Core data model for a shipping  (response payload)
+message Shipping {
+  uint32 _id = 1;
+  uint32 profile_id = 2 [(validate.rules).uint32 = {gt: 0}];
   string country = 3 [(validate.rules).string = {min_len: 1, max_len: 50}];
   string city = 4 [(validate.rules).string = {min_len: 1, max_len: 50}];
   string street = 5 [(validate.rules).string = {min_len: 1, max_len: 100}];
@@ -16,29 +16,70 @@ message ShippingAddress {
   bool is_default = 7;
 }
 
-message CreateShippingAddressRequest {
-  ShippingAddress address = 1;
-}
-message GetShippingAddressRequest {
-  int64 address_id = 1 [(validate.rules).int64 = {gt: 0}];
-}
-message UpdateShippingAddressRequest {
-  ShippingAddress address = 1;
-}
-message DeleteShippingAddressRequest {
-  int64 address_id = 1 [(validate.rules).int64 = {gt: 0}];
-}
-message ListShippingAddressesRequest {
-  int64 profile_id = 1 [(validate.rules).int64 = {gt: 0}];
-}
-message ListShippingAddressesResponse {
-  repeated ShippingAddress addresses = 1;
+message ShippingInput {
+  uint32 profile_id = 1 [(validate.rules).uint32 = {gt: 0}];
+  string country = 2 [(validate.rules).string = {min_len: 1, max_len: 50}];
+  string city = 3 [(validate.rules).string = {min_len: 1, max_len: 50}];
+  string street = 4 [(validate.rules).string = {min_len: 1, max_len: 100}];
+  string postal_code = 5 [(validate.rules).string = {min_len: 1, max_len: 20}];
+  bool is_default = 6;
 }
 
-service ShippingAddressService {
-  rpc CreateShippingAddress(CreateShippingAddressRequest) returns (ShippingAddress);
-  rpc GetShippingAddress(GetShippingAddressRequest) returns (ShippingAddress);
-  rpc UpdateShippingAddress(UpdateShippingAddressRequest) returns (ShippingAddress);
-  rpc DeleteShippingAddress(DeleteShippingAddressRequest) returns (google.protobuf.Empty);
-  rpc ListShippingAddresses(ListShippingAddressesRequest) returns (ListShippingAddressesResponse);
+message ShippingId {
+  uint32 _id = 1 [(validate.rules).uint32 = {
+    gt: 0,
+    lt: 2147483647,
+  }];
+}
+
+
+message CreateShippingRequest {
+  ShippingInput address = 1;
+}
+message CreateShippingResponse {
+  ShippingId id = 1;
+}
+
+
+message GetShippingRequest {
+  ShippingId id = 1;
+}
+message GetShippingResponse {
+  Shipping address = 1;
+}
+
+
+message UpdateShippingRequest {
+  ShippingId id = 1;
+  ShippingInput address = 2;
+}
+message UpdateShippingResponse {
+  ShippingId id = 1;
+}
+
+
+message DeleteShippingRequest {
+  ShippingId id = 1;
+}
+message DeleteShippingResponse {
+  ShippingId id = 1;
+}
+
+
+message ListShippingRequest {
+  uint32 profile_id = 1 [(validate.rules).uint32 = {
+    gt: 0,
+    lt: 2147483647
+  }];
+}
+message ListShippingResponse {
+  repeated Shipping es = 1;
+}
+
+service ShippingService {
+  rpc CreateShipping(CreateShippingRequest) returns (CreateShippingResponse);
+  rpc GetShipping(GetShippingRequest) returns (GetShippingResponse);
+  rpc UpdateShipping(UpdateShippingRequest) returns (UpdateShippingResponse);
+  rpc DeleteShipping(DeleteShippingRequest) returns (DeleteShippingResponse);
+  rpc ListShipping(ListShippingRequest) returns (ListShippingResponse);
 }
