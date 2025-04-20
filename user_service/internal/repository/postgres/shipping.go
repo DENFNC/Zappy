@@ -84,28 +84,41 @@ func (r *ShippingRepo) GetByID(ctx context.Context, id uint32) (*models.Shipping
 	return &s, nil
 }
 
-func (r *ShippingRepo) GetByProfileID(ctx context.Context, profileID int) ([]*models.Shipping, error) {
-	stmt, args, err := r.goqu.From("shipping_address").
-		Where(goqu.C("profile_id").Eq(profileID)).
-		Order(goqu.C("is_default").Desc()).Prepared(true).ToSQL()
+func (r *ShippingRepo) GetByProfileID(ctx context.Context, profileID uint32) ([]models.Shipping, error) {
+	stmt, args, err := r.goqu.
+		From("shipping_address").
+		Where(goqu.Ex{"profile_id": profileID}).
+		Order(goqu.C("is_default").Desc()).
+		Prepared(true).
+		ToSQL()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("build query GetByProfileID: %w", err)
 	}
 
-	var list []*models.Shipping
 	rows, err := r.DB.Query(ctx, stmt, args...)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("exec query GetByProfileID: %w", err)
 	}
+	defer rows.Close()
+
+	var list []models.Shipping
 	for rows.Next() {
-		var ship *models.Shipping
-		if err := rows.Scan(&ship); err != nil {
-			return nil, err
+		var ship models.Shipping
+		if err := rows.Scan(
+			&ship.AddressID,
+			&ship.ProfileID,
+			&ship.Country,
+			&ship.City,
+			&ship.Street,
+			&ship.PostalCode,
+			&ship.IsDefault,
+		); err != nil {
+			return nil, fmt.Errorf("scan row GetByProfileID: %w", err)
 		}
 		list = append(list, ship)
 	}
-	if rows.Err() != nil {
-		return nil, err
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("rows iteration GetByProfileID: %w", err)
 	}
 
 	return list, nil

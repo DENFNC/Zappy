@@ -24,7 +24,7 @@ type Shipping interface {
 	ListByProfile(
 		ctx context.Context,
 		profileID uint32,
-	) ([]*models.Shipping, error)
+	) ([]models.Shipping, error)
 	SetDefault(
 		ctx context.Context,
 		addressID, profileID uint32,
@@ -145,8 +145,28 @@ func (sa *serverAPI) GetShipping(ctx context.Context, req *v1.GetShippingRequest
 	}, nil
 }
 
-func (sa *serverAPI) ListShipping(context.Context, *v1.ListShippingRequest) (*v1.ListShippingResponse, error) {
-	panic("implement me!")
+func (sa *serverAPI) ListShipping(ctx context.Context, req *v1.ListShippingRequest) (*v1.ListShippingResponse, error) {
+	list, err := sa.service.ListByProfile(ctx, req.GetProfileId())
+	if err != nil {
+		return nil, status.Error(codes.Internal, errpkg.ErrInternal.Message)
+	}
+
+	out := make([]*v1.Shipping, len(list))
+	for i, addr := range list {
+		out[i] = &v1.Shipping{
+			XId:        addr.AddressID,
+			ProfileId:  addr.ProfileID,
+			Country:    addr.Country,
+			City:       addr.City,
+			Street:     addr.Street,
+			PostalCode: addr.PostalCode,
+			IsDefault:  addr.IsDefault,
+		}
+	}
+
+	return &v1.ListShippingResponse{
+		Es: out,
+	}, nil
 }
 
 func (sa *serverAPI) UpdateShipping(context.Context, *v1.UpdateShippingRequest) (*v1.UpdateShippingResponse, error) {

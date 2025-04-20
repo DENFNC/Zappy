@@ -68,12 +68,12 @@ func (s *ShippingService) GetByID(ctx context.Context, id uint32) (*models.Shipp
 	return address, nil
 }
 
-func (s *ShippingService) ListByProfile(ctx context.Context, profileID uint32) ([]*models.Shipping, error) {
+func (s *ShippingService) ListByProfile(ctx context.Context, profileID uint32) ([]models.Shipping, error) {
 	const op = "service.ShippingService.ListByProfile"
 
 	log := s.log.With("op", op)
 
-	addresses, err := s.repo.GetByProfileID(ctx, int(profileID))
+	addresses, err := s.repo.GetByProfileID(ctx, profileID)
 	if err != nil {
 		log.Error(
 			"Critical error",
