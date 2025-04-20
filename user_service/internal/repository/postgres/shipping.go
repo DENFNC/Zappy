@@ -2,9 +2,11 @@ package repo
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/DENFNC/Zappy/user_service/internal/domain/models"
+	errpkg "github.com/DENFNC/Zappy/user_service/internal/errors"
 	psql "github.com/DENFNC/Zappy/user_service/internal/storage/postgres"
 	"github.com/doug-martin/goqu/v9"
 	"github.com/jackc/pgx/v5"
@@ -124,8 +126,35 @@ func (r *ShippingRepo) GetByProfileID(ctx context.Context, profileID uint32) ([]
 	return list, nil
 }
 
-func (r *ShippingRepo) UpdateAddress(ctx context.Context, address *models.Shipping) (uint32, error) {
-	panic("")
+func (r *ShippingRepo) UpdateAddress(ctx context.Context, id uint32, address *models.Shipping) (uint32, error) {
+	stmt, args, err := r.goqu.
+		Update("shipping_address").
+		Set(goqu.Record{
+			"country":     address.Country,
+			"city":        address.City,
+			"street":      address.Street,
+			"postal_code": address.PostalCode,
+		}).
+		Where(goqu.Ex{
+			"address_id": id,
+			"profile_id": address.ProfileID,
+		}).
+		Returning("address_id").
+		Prepared(true).
+		ToSQL()
+	if err != nil {
+		return 0, err
+	}
+
+	var updatedID uint32
+	if err := r.DB.QueryRow(ctx, stmt, args...).Scan(&updatedID); err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return 0, errpkg.ErrNotFound
+		}
+		return 0, err
+	}
+
+	return updatedID, nil
 }
 
 func (r *ShippingRepo) SetDefault(ctx context.Context, addressID, profileID uint32) error {

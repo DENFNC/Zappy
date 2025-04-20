@@ -7,7 +7,7 @@ import "validate/validate.proto";
 
 // Core data model for a shipping  (response payload)
 message Shipping {
-  uint32 _id = 1;
+  uint32 address_id = 1;
   uint32 profile_id = 2 [(validate.rules).uint32 = {gt: 0}];
   string country = 3 [(validate.rules).string = {min_len: 1, max_len: 50}];
   string city = 4 [(validate.rules).string = {min_len: 1, max_len: 50}];
@@ -22,11 +22,10 @@ message ShippingInput {
   string city = 3 [(validate.rules).string = {min_len: 1, max_len: 50}];
   string street = 4 [(validate.rules).string = {min_len: 1, max_len: 100}];
   string postal_code = 5 [(validate.rules).string = {min_len: 1, max_len: 20}];
-  bool is_default = 6;
 }
 
 message ShippingId {
-  uint32 _id = 1 [(validate.rules).uint32 = {
+  uint32 address_id = 1 [(validate.rules).uint32 = {
     gt: 0,
     lt: 2147483647,
   }];

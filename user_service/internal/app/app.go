@@ -26,7 +26,7 @@ func New(
 	profileHandle := profile.New(profileSvc)
 
 	shippingRepo := repo.NewShippingRepo(db, db.Dial)
-	shippingSvc := service.NewShipping(shippingRepo, log)
+	shippingSvc := service.NewShipping(log, shippingRepo)
 	shippingHandle := shipping.New(shippingSvc)
 
 	return &App{

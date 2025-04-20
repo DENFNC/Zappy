@@ -57,7 +57,7 @@ func (m *Shipping) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for XId
+	// no validation rules for AddressId
 
 	if m.GetProfileId() <= 0 {
 		err := ShippingValidationError{
@@ -270,8 +270,6 @@ func (m *ShippingInput) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	// no validation rules for IsDefault
-
 	if len(errors) > 0 {
 		return ShippingInputMultiError(errors)
 	}
@@ -372,9 +370,9 @@ func (m *ShippingId) validate(all bool) error {
 
 	var errors []error
 
-	if val := m.GetXId(); val <= 0 || val >= 2147483647 {
+	if val := m.GetAddressId(); val <= 0 || val >= 2147483647 {
 		err := ShippingIdValidationError{
-			field:  "XId",
+			field:  "AddressId",
 			reason: "value must be inside range (0, 2147483647)",
 		}
 		if !all {

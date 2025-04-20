@@ -86,6 +86,27 @@ func (s *ShippingService) ListByProfile(ctx context.Context, profileID uint32) (
 	return addresses, nil
 }
 
+func (s *ShippingService) Update(ctx context.Context, id uint32, address *models.Shipping) (uint32, error) {
+	const op = "service.ShippingService.Update"
+
+	log := s.log.With("op", op)
+
+	addrID, err := s.repo.UpdateAddress(
+		ctx,
+		id,
+		address,
+	)
+	if err != nil {
+		log.Error(
+			"Critical error",
+			slog.String("error", err.Error()),
+		)
+		return emptyValue, err
+	}
+
+	return addrID, nil
+}
+
 func (s *ShippingService) SetDefault(ctx context.Context, addressID, profileID uint32) (uint32, error) {
 	const op = "service.ShippingService.SetDefault"
 

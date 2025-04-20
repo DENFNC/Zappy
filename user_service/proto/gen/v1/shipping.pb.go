@@ -25,7 +25,7 @@ const (
 // Core data model for a shipping  (response payload)
 type Shipping struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	XId           uint32                 `protobuf:"varint,1,opt,name=_id,json=Id,proto3" json:"_id,omitempty"`
+	AddressId     uint32                 `protobuf:"varint,1,opt,name=address_id,json=addressId,proto3" json:"address_id,omitempty"`
 	ProfileId     uint32                 `protobuf:"varint,2,opt,name=profile_id,json=profileId,proto3" json:"profile_id,omitempty"`
 	Country       string                 `protobuf:"bytes,3,opt,name=country,proto3" json:"country,omitempty"`
 	City          string                 `protobuf:"bytes,4,opt,name=city,proto3" json:"city,omitempty"`
@@ -66,9 +66,9 @@ func (*Shipping) Descriptor() ([]byte, []int) {
 	return file_shipping_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Shipping) GetXId() uint32 {
+func (x *Shipping) GetAddressId() uint32 {
 	if x != nil {
-		return x.XId
+		return x.AddressId
 	}
 	return 0
 }
@@ -122,7 +122,6 @@ type ShippingInput struct {
 	City          string                 `protobuf:"bytes,3,opt,name=city,proto3" json:"city,omitempty"`
 	Street        string                 `protobuf:"bytes,4,opt,name=street,proto3" json:"street,omitempty"`
 	PostalCode    string                 `protobuf:"bytes,5,opt,name=postal_code,json=postalCode,proto3" json:"postal_code,omitempty"`
-	IsDefault     bool                   `protobuf:"varint,6,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -192,16 +191,9 @@ func (x *ShippingInput) GetPostalCode() string {
 	return ""
 }
 
-func (x *ShippingInput) GetIsDefault() bool {
-	if x != nil {
-		return x.IsDefault
-	}
-	return false
-}
-
 type ShippingId struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	XId           uint32                 `protobuf:"varint,1,opt,name=_id,json=Id,proto3" json:"_id,omitempty"`
+	AddressId     uint32                 `protobuf:"varint,1,opt,name=address_id,json=addressId,proto3" json:"address_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -236,9 +228,9 @@ func (*ShippingId) Descriptor() ([]byte, []int) {
 	return file_shipping_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *ShippingId) GetXId() uint32 {
+func (x *ShippingId) GetAddressId() uint32 {
 	if x != nil {
-		return x.XId
+		return x.AddressId
 	}
 	return 0
 }
@@ -791,9 +783,10 @@ var File_shipping_proto protoreflect.FileDescriptor
 
 const file_shipping_proto_rawDesc = "" +
 	"\n" +
-	"\x0eshipping.proto\x12\auser.v1\x1a\x17validate/validate.proto\"\xf5\x01\n" +
-	"\bShipping\x12\x0f\n" +
-	"\x03_id\x18\x01 \x01(\rR\x02Id\x12&\n" +
+	"\x0eshipping.proto\x12\auser.v1\x1a\x17validate/validate.proto\"\x83\x02\n" +
+	"\bShipping\x12\x1d\n" +
+	"\n" +
+	"address_id\x18\x01 \x01(\rR\taddressId\x12&\n" +
 	"\n" +
 	"profile_id\x18\x02 \x01(\rB\a\xfaB\x04*\x02 \x00R\tprofileId\x12#\n" +
 	"\acountry\x18\x03 \x01(\tB\t\xfaB\x06r\x04\x10\x01\x182R\acountry\x12\x1d\n" +
@@ -802,7 +795,7 @@ const file_shipping_proto_rawDesc = "" +
 	"\vpostal_code\x18\x06 \x01(\tB\t\xfaB\x06r\x04\x10\x01\x18\x14R\n" +
 	"postalCode\x12\x1d\n" +
 	"\n" +
-	"is_default\x18\a \x01(\bR\tisDefault\"\xe9\x01\n" +
+	"is_default\x18\a \x01(\bR\tisDefault\"\xca\x01\n" +
 	"\rShippingInput\x12&\n" +
 	"\n" +
 	"profile_id\x18\x01 \x01(\rB\a\xfaB\x04*\x02 \x00R\tprofileId\x12#\n" +
@@ -810,13 +803,12 @@ const file_shipping_proto_rawDesc = "" +
 	"\x04city\x18\x03 \x01(\tB\t\xfaB\x06r\x04\x10\x01\x182R\x04city\x12!\n" +
 	"\x06street\x18\x04 \x01(\tB\t\xfaB\x06r\x04\x10\x01\x18dR\x06street\x12*\n" +
 	"\vpostal_code\x18\x05 \x01(\tB\t\xfaB\x06r\x04\x10\x01\x18\x14R\n" +
-	"postalCode\x12\x1d\n" +
+	"postalCode\":\n" +
 	"\n" +
-	"is_default\x18\x06 \x01(\bR\tisDefault\",\n" +
+	"ShippingId\x12,\n" +
 	"\n" +
-	"ShippingId\x12\x1e\n" +
-	"\x03_id\x18\x01 \x01(\rB\r\xfaB\n" +
-	"*\b\x10\xff\xff\xff\xff\a \x00R\x02Id\"I\n" +
+	"address_id\x18\x01 \x01(\rB\r\xfaB\n" +
+	"*\b\x10\xff\xff\xff\xff\a \x00R\taddressId\"I\n" +
 	"\x15CreateShippingRequest\x120\n" +
 	"\aaddress\x18\x01 \x01(\v2\x16.user.v1.ShippingInputR\aaddress\"=\n" +
 	"\x16CreateShippingResponse\x12#\n" +
