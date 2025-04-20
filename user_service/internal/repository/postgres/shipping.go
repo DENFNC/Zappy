@@ -124,6 +124,10 @@ func (r *ShippingRepo) GetByProfileID(ctx context.Context, profileID uint32) ([]
 	return list, nil
 }
 
+func (r *ShippingRepo) UpdateAddress(ctx context.Context, address *models.Shipping) (uint32, error) {
+	panic("")
+}
+
 func (r *ShippingRepo) SetDefault(ctx context.Context, addressID, profileID uint32) error {
 	conn, err := r.DB.Acquire(ctx)
 	if err != nil {
@@ -163,7 +167,7 @@ func (r *ShippingRepo) SetDefault(ctx context.Context, addressID, profileID uint
 	})
 }
 
-func (r *ShippingRepo) Delete(ctx context.Context, id int) (uint32, error) {
+func (r *ShippingRepo) Delete(ctx context.Context, id uint32) (uint32, error) {
 	stmt, args, err := r.goqu.Delete("shipping_address").
 		Returning(goqu.C("address_id")).
 		Where(goqu.C("address_id").Eq(id)).

@@ -1,11 +1,16 @@
 package repositories
 
-import "github.com/DENFNC/Zappy/user_service/internal/domain/models"
+import (
+	"context"
+
+	"github.com/DENFNC/Zappy/user_service/internal/domain/models"
+)
 
 type ShippingRepository interface {
-	Create(address *models.Shipping) (uint32, error)
-	GetByID(id int) (*models.Shipping, error)
-	GetByProfileID(profileID int) ([]models.Shipping, error)
-	SetDefault(addressID int, profileID int) (uint32, error)
-	Delete(id int) (uint32, error)
+	Create(ctx context.Context, address *models.Shipping) (uint32, error)
+	GetByID(ctx context.Context, id uint32) (*models.Shipping, error)
+	GetByProfileID(ctx context.Context, profileID uint32) ([]models.Shipping, error)
+	UpdateAddress(ctx context.Context, address *models.Shipping) (uint32, error)
+	SetDefault(ctx context.Context, addressID, profileID uint32) error
+	Delete(ctx context.Context, id uint32) (uint32, error)
 }

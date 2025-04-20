@@ -6,21 +6,21 @@ import (
 	"log/slog"
 
 	"github.com/DENFNC/Zappy/user_service/internal/domain/models"
+	"github.com/DENFNC/Zappy/user_service/internal/domain/repositories"
 	errpkg "github.com/DENFNC/Zappy/user_service/internal/errors"
-	repo "github.com/DENFNC/Zappy/user_service/internal/repository/postgres"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
 type ShippingService struct {
-	repo *repo.ShippingRepo
 	log  *slog.Logger
+	repo repositories.ShippingRepository
 }
 
-func NewShipping(repo *repo.ShippingRepo, log *slog.Logger) *ShippingService {
+func NewShipping(log *slog.Logger, repo repositories.ShippingRepository) *ShippingService {
 	return &ShippingService{
-		repo: repo,
 		log:  log,
+		repo: repo,
 	}
 }
 
@@ -109,7 +109,7 @@ func (s *ShippingService) Delete(ctx context.Context, id uint32) (uint32, error)
 
 	log := s.log.With("op", op)
 
-	addrID, err := s.repo.Delete(ctx, int(id))
+	addrID, err := s.repo.Delete(ctx, id)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return emptyValue, errpkg.ErrNotFound

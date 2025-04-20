@@ -515,6 +515,102 @@ func (x *UpdateShippingResponse) GetId() *ShippingId {
 	return nil
 }
 
+type SetDefaultShippingRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            *ShippingId            `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	ProfileId     uint32                 `protobuf:"varint,2,opt,name=profile_id,json=profileId,proto3" json:"profile_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SetDefaultShippingRequest) Reset() {
+	*x = SetDefaultShippingRequest{}
+	mi := &file_shipping_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SetDefaultShippingRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SetDefaultShippingRequest) ProtoMessage() {}
+
+func (x *SetDefaultShippingRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_shipping_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SetDefaultShippingRequest.ProtoReflect.Descriptor instead.
+func (*SetDefaultShippingRequest) Descriptor() ([]byte, []int) {
+	return file_shipping_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *SetDefaultShippingRequest) GetId() *ShippingId {
+	if x != nil {
+		return x.Id
+	}
+	return nil
+}
+
+func (x *SetDefaultShippingRequest) GetProfileId() uint32 {
+	if x != nil {
+		return x.ProfileId
+	}
+	return 0
+}
+
+type SetDefaultShippingResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            *ShippingId            `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SetDefaultShippingResponse) Reset() {
+	*x = SetDefaultShippingResponse{}
+	mi := &file_shipping_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SetDefaultShippingResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SetDefaultShippingResponse) ProtoMessage() {}
+
+func (x *SetDefaultShippingResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_shipping_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SetDefaultShippingResponse.ProtoReflect.Descriptor instead.
+func (*SetDefaultShippingResponse) Descriptor() ([]byte, []int) {
+	return file_shipping_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *SetDefaultShippingResponse) GetId() *ShippingId {
+	if x != nil {
+		return x.Id
+	}
+	return nil
+}
+
 type DeleteShippingRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            *ShippingId            `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -524,7 +620,7 @@ type DeleteShippingRequest struct {
 
 func (x *DeleteShippingRequest) Reset() {
 	*x = DeleteShippingRequest{}
-	mi := &file_shipping_proto_msgTypes[9]
+	mi := &file_shipping_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -536,7 +632,7 @@ func (x *DeleteShippingRequest) String() string {
 func (*DeleteShippingRequest) ProtoMessage() {}
 
 func (x *DeleteShippingRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_shipping_proto_msgTypes[9]
+	mi := &file_shipping_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -549,7 +645,7 @@ func (x *DeleteShippingRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteShippingRequest.ProtoReflect.Descriptor instead.
 func (*DeleteShippingRequest) Descriptor() ([]byte, []int) {
-	return file_shipping_proto_rawDescGZIP(), []int{9}
+	return file_shipping_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *DeleteShippingRequest) GetId() *ShippingId {
@@ -568,7 +664,7 @@ type DeleteShippingResponse struct {
 
 func (x *DeleteShippingResponse) Reset() {
 	*x = DeleteShippingResponse{}
-	mi := &file_shipping_proto_msgTypes[10]
+	mi := &file_shipping_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -580,7 +676,7 @@ func (x *DeleteShippingResponse) String() string {
 func (*DeleteShippingResponse) ProtoMessage() {}
 
 func (x *DeleteShippingResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_shipping_proto_msgTypes[10]
+	mi := &file_shipping_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -593,7 +689,7 @@ func (x *DeleteShippingResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteShippingResponse.ProtoReflect.Descriptor instead.
 func (*DeleteShippingResponse) Descriptor() ([]byte, []int) {
-	return file_shipping_proto_rawDescGZIP(), []int{10}
+	return file_shipping_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *DeleteShippingResponse) GetId() *ShippingId {
@@ -612,7 +708,7 @@ type ListShippingRequest struct {
 
 func (x *ListShippingRequest) Reset() {
 	*x = ListShippingRequest{}
-	mi := &file_shipping_proto_msgTypes[11]
+	mi := &file_shipping_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -624,7 +720,7 @@ func (x *ListShippingRequest) String() string {
 func (*ListShippingRequest) ProtoMessage() {}
 
 func (x *ListShippingRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_shipping_proto_msgTypes[11]
+	mi := &file_shipping_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -637,7 +733,7 @@ func (x *ListShippingRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListShippingRequest.ProtoReflect.Descriptor instead.
 func (*ListShippingRequest) Descriptor() ([]byte, []int) {
-	return file_shipping_proto_rawDescGZIP(), []int{11}
+	return file_shipping_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *ListShippingRequest) GetProfileId() uint32 {
@@ -656,7 +752,7 @@ type ListShippingResponse struct {
 
 func (x *ListShippingResponse) Reset() {
 	*x = ListShippingResponse{}
-	mi := &file_shipping_proto_msgTypes[12]
+	mi := &file_shipping_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -668,7 +764,7 @@ func (x *ListShippingResponse) String() string {
 func (*ListShippingResponse) ProtoMessage() {}
 
 func (x *ListShippingResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_shipping_proto_msgTypes[12]
+	mi := &file_shipping_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -681,7 +777,7 @@ func (x *ListShippingResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListShippingResponse.ProtoReflect.Descriptor instead.
 func (*ListShippingResponse) Descriptor() ([]byte, []int) {
-	return file_shipping_proto_rawDescGZIP(), []int{12}
+	return file_shipping_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *ListShippingResponse) GetEs() []*Shipping {
@@ -733,6 +829,13 @@ const file_shipping_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\v2\x13.user.v1.ShippingIdR\x02id\x120\n" +
 	"\aaddress\x18\x02 \x01(\v2\x16.user.v1.ShippingInputR\aaddress\"=\n" +
 	"\x16UpdateShippingResponse\x12#\n" +
+	"\x02id\x18\x01 \x01(\v2\x13.user.v1.ShippingIdR\x02id\"n\n" +
+	"\x19SetDefaultShippingRequest\x12#\n" +
+	"\x02id\x18\x01 \x01(\v2\x13.user.v1.ShippingIdR\x02id\x12,\n" +
+	"\n" +
+	"profile_id\x18\x02 \x01(\rB\r\xfaB\n" +
+	"*\b\x10\xff\xff\xff\xff\a \x00R\tprofileId\"A\n" +
+	"\x1aSetDefaultShippingResponse\x12#\n" +
 	"\x02id\x18\x01 \x01(\v2\x13.user.v1.ShippingIdR\x02id\"<\n" +
 	"\x15DeleteShippingRequest\x12#\n" +
 	"\x02id\x18\x01 \x01(\v2\x13.user.v1.ShippingIdR\x02id\"=\n" +
@@ -743,13 +846,14 @@ const file_shipping_proto_rawDesc = "" +
 	"profile_id\x18\x01 \x01(\rB\r\xfaB\n" +
 	"*\b\x10\xff\xff\xff\xff\a \x00R\tprofileId\"9\n" +
 	"\x14ListShippingResponse\x12!\n" +
-	"\x02es\x18\x01 \x03(\v2\x11.user.v1.ShippingR\x02es2\xa1\x03\n" +
-	"\x0fShippingService\x12Q\n" +
-	"\x0eCreateShipping\x12\x1e.user.v1.CreateShippingRequest\x1a\x1f.user.v1.CreateShippingResponse\x12H\n" +
-	"\vGetShipping\x12\x1b.user.v1.GetShippingRequest\x1a\x1c.user.v1.GetShippingResponse\x12Q\n" +
-	"\x0eUpdateShipping\x12\x1e.user.v1.UpdateShippingRequest\x1a\x1f.user.v1.UpdateShippingResponse\x12Q\n" +
-	"\x0eDeleteShipping\x12\x1e.user.v1.DeleteShippingRequest\x1a\x1f.user.v1.DeleteShippingResponse\x12K\n" +
-	"\fListShipping\x12\x1c.user.v1.ListShippingRequest\x1a\x1d.user.v1.ListShippingResponseB6Z4github.com/DENFNC/Zappy/user_service/proto/gen/v1;v1b\x06proto3"
+	"\x02es\x18\x01 \x03(\v2\x11.user.v1.ShippingR\x02es2\x8c\x04\n" +
+	"\x0fShippingService\x12S\n" +
+	"\x0eCreateShipping\x12\x1e.user.v1.CreateShippingRequest\x1a\x1f.user.v1.CreateShippingResponse\"\x00\x12J\n" +
+	"\vGetShipping\x12\x1b.user.v1.GetShippingRequest\x1a\x1c.user.v1.GetShippingResponse\"\x00\x12S\n" +
+	"\x0eUpdateShipping\x12\x1e.user.v1.UpdateShippingRequest\x1a\x1f.user.v1.UpdateShippingResponse\"\x00\x12_\n" +
+	"\x12SetDefaultShipping\x12\".user.v1.SetDefaultShippingRequest\x1a#.user.v1.SetDefaultShippingResponse\"\x00\x12S\n" +
+	"\x0eDeleteShipping\x12\x1e.user.v1.DeleteShippingRequest\x1a\x1f.user.v1.DeleteShippingResponse\"\x00\x12M\n" +
+	"\fListShipping\x12\x1c.user.v1.ListShippingRequest\x1a\x1d.user.v1.ListShippingResponse\"\x00B6Z4github.com/DENFNC/Zappy/user_service/proto/gen/v1;v1b\x06proto3"
 
 var (
 	file_shipping_proto_rawDescOnce sync.Once
@@ -763,21 +867,23 @@ func file_shipping_proto_rawDescGZIP() []byte {
 	return file_shipping_proto_rawDescData
 }
 
-var file_shipping_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
+var file_shipping_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
 var file_shipping_proto_goTypes = []any{
-	(*Shipping)(nil),               // 0: user.v1.Shipping
-	(*ShippingInput)(nil),          // 1: user.v1.ShippingInput
-	(*ShippingId)(nil),             // 2: user.v1.ShippingId
-	(*CreateShippingRequest)(nil),  // 3: user.v1.CreateShippingRequest
-	(*CreateShippingResponse)(nil), // 4: user.v1.CreateShippingResponse
-	(*GetShippingRequest)(nil),     // 5: user.v1.GetShippingRequest
-	(*GetShippingResponse)(nil),    // 6: user.v1.GetShippingResponse
-	(*UpdateShippingRequest)(nil),  // 7: user.v1.UpdateShippingRequest
-	(*UpdateShippingResponse)(nil), // 8: user.v1.UpdateShippingResponse
-	(*DeleteShippingRequest)(nil),  // 9: user.v1.DeleteShippingRequest
-	(*DeleteShippingResponse)(nil), // 10: user.v1.DeleteShippingResponse
-	(*ListShippingRequest)(nil),    // 11: user.v1.ListShippingRequest
-	(*ListShippingResponse)(nil),   // 12: user.v1.ListShippingResponse
+	(*Shipping)(nil),                   // 0: user.v1.Shipping
+	(*ShippingInput)(nil),              // 1: user.v1.ShippingInput
+	(*ShippingId)(nil),                 // 2: user.v1.ShippingId
+	(*CreateShippingRequest)(nil),      // 3: user.v1.CreateShippingRequest
+	(*CreateShippingResponse)(nil),     // 4: user.v1.CreateShippingResponse
+	(*GetShippingRequest)(nil),         // 5: user.v1.GetShippingRequest
+	(*GetShippingResponse)(nil),        // 6: user.v1.GetShippingResponse
+	(*UpdateShippingRequest)(nil),      // 7: user.v1.UpdateShippingRequest
+	(*UpdateShippingResponse)(nil),     // 8: user.v1.UpdateShippingResponse
+	(*SetDefaultShippingRequest)(nil),  // 9: user.v1.SetDefaultShippingRequest
+	(*SetDefaultShippingResponse)(nil), // 10: user.v1.SetDefaultShippingResponse
+	(*DeleteShippingRequest)(nil),      // 11: user.v1.DeleteShippingRequest
+	(*DeleteShippingResponse)(nil),     // 12: user.v1.DeleteShippingResponse
+	(*ListShippingRequest)(nil),        // 13: user.v1.ListShippingRequest
+	(*ListShippingResponse)(nil),       // 14: user.v1.ListShippingResponse
 }
 var file_shipping_proto_depIdxs = []int32{
 	1,  // 0: user.v1.CreateShippingRequest.address:type_name -> user.v1.ShippingInput
@@ -787,24 +893,28 @@ var file_shipping_proto_depIdxs = []int32{
 	2,  // 4: user.v1.UpdateShippingRequest.id:type_name -> user.v1.ShippingId
 	1,  // 5: user.v1.UpdateShippingRequest.address:type_name -> user.v1.ShippingInput
 	2,  // 6: user.v1.UpdateShippingResponse.id:type_name -> user.v1.ShippingId
-	2,  // 7: user.v1.DeleteShippingRequest.id:type_name -> user.v1.ShippingId
-	2,  // 8: user.v1.DeleteShippingResponse.id:type_name -> user.v1.ShippingId
-	0,  // 9: user.v1.ListShippingResponse.es:type_name -> user.v1.Shipping
-	3,  // 10: user.v1.ShippingService.CreateShipping:input_type -> user.v1.CreateShippingRequest
-	5,  // 11: user.v1.ShippingService.GetShipping:input_type -> user.v1.GetShippingRequest
-	7,  // 12: user.v1.ShippingService.UpdateShipping:input_type -> user.v1.UpdateShippingRequest
-	9,  // 13: user.v1.ShippingService.DeleteShipping:input_type -> user.v1.DeleteShippingRequest
-	11, // 14: user.v1.ShippingService.ListShipping:input_type -> user.v1.ListShippingRequest
-	4,  // 15: user.v1.ShippingService.CreateShipping:output_type -> user.v1.CreateShippingResponse
-	6,  // 16: user.v1.ShippingService.GetShipping:output_type -> user.v1.GetShippingResponse
-	8,  // 17: user.v1.ShippingService.UpdateShipping:output_type -> user.v1.UpdateShippingResponse
-	10, // 18: user.v1.ShippingService.DeleteShipping:output_type -> user.v1.DeleteShippingResponse
-	12, // 19: user.v1.ShippingService.ListShipping:output_type -> user.v1.ListShippingResponse
-	15, // [15:20] is the sub-list for method output_type
-	10, // [10:15] is the sub-list for method input_type
-	10, // [10:10] is the sub-list for extension type_name
-	10, // [10:10] is the sub-list for extension extendee
-	0,  // [0:10] is the sub-list for field type_name
+	2,  // 7: user.v1.SetDefaultShippingRequest.id:type_name -> user.v1.ShippingId
+	2,  // 8: user.v1.SetDefaultShippingResponse.id:type_name -> user.v1.ShippingId
+	2,  // 9: user.v1.DeleteShippingRequest.id:type_name -> user.v1.ShippingId
+	2,  // 10: user.v1.DeleteShippingResponse.id:type_name -> user.v1.ShippingId
+	0,  // 11: user.v1.ListShippingResponse.es:type_name -> user.v1.Shipping
+	3,  // 12: user.v1.ShippingService.CreateShipping:input_type -> user.v1.CreateShippingRequest
+	5,  // 13: user.v1.ShippingService.GetShipping:input_type -> user.v1.GetShippingRequest
+	7,  // 14: user.v1.ShippingService.UpdateShipping:input_type -> user.v1.UpdateShippingRequest
+	9,  // 15: user.v1.ShippingService.SetDefaultShipping:input_type -> user.v1.SetDefaultShippingRequest
+	11, // 16: user.v1.ShippingService.DeleteShipping:input_type -> user.v1.DeleteShippingRequest
+	13, // 17: user.v1.ShippingService.ListShipping:input_type -> user.v1.ListShippingRequest
+	4,  // 18: user.v1.ShippingService.CreateShipping:output_type -> user.v1.CreateShippingResponse
+	6,  // 19: user.v1.ShippingService.GetShipping:output_type -> user.v1.GetShippingResponse
+	8,  // 20: user.v1.ShippingService.UpdateShipping:output_type -> user.v1.UpdateShippingResponse
+	10, // 21: user.v1.ShippingService.SetDefaultShipping:output_type -> user.v1.SetDefaultShippingResponse
+	12, // 22: user.v1.ShippingService.DeleteShipping:output_type -> user.v1.DeleteShippingResponse
+	14, // 23: user.v1.ShippingService.ListShipping:output_type -> user.v1.ListShippingResponse
+	18, // [18:24] is the sub-list for method output_type
+	12, // [12:18] is the sub-list for method input_type
+	12, // [12:12] is the sub-list for extension type_name
+	12, // [12:12] is the sub-list for extension extendee
+	0,  // [0:12] is the sub-list for field type_name
 }
 
 func init() { file_shipping_proto_init() }
@@ -818,7 +928,7 @@ func file_shipping_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_shipping_proto_rawDesc), len(file_shipping_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   13,
+			NumMessages:   15,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

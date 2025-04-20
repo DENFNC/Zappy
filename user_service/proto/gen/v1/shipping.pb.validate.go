@@ -1275,6 +1275,279 @@ var _ interface {
 	ErrorName() string
 } = UpdateShippingResponseValidationError{}
 
+// Validate checks the field values on SetDefaultShippingRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SetDefaultShippingRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SetDefaultShippingRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SetDefaultShippingRequestMultiError, or nil if none found.
+func (m *SetDefaultShippingRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SetDefaultShippingRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetId()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, SetDefaultShippingRequestValidationError{
+					field:  "Id",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, SetDefaultShippingRequestValidationError{
+					field:  "Id",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetId()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return SetDefaultShippingRequestValidationError{
+				field:  "Id",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if val := m.GetProfileId(); val <= 0 || val >= 2147483647 {
+		err := SetDefaultShippingRequestValidationError{
+			field:  "ProfileId",
+			reason: "value must be inside range (0, 2147483647)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return SetDefaultShippingRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// SetDefaultShippingRequestMultiError is an error wrapping multiple validation
+// errors returned by SetDefaultShippingRequest.ValidateAll() if the
+// designated constraints aren't met.
+type SetDefaultShippingRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SetDefaultShippingRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SetDefaultShippingRequestMultiError) AllErrors() []error { return m }
+
+// SetDefaultShippingRequestValidationError is the validation error returned by
+// SetDefaultShippingRequest.Validate if the designated constraints aren't met.
+type SetDefaultShippingRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SetDefaultShippingRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SetDefaultShippingRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SetDefaultShippingRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SetDefaultShippingRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SetDefaultShippingRequestValidationError) ErrorName() string {
+	return "SetDefaultShippingRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SetDefaultShippingRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSetDefaultShippingRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SetDefaultShippingRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SetDefaultShippingRequestValidationError{}
+
+// Validate checks the field values on SetDefaultShippingResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SetDefaultShippingResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SetDefaultShippingResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SetDefaultShippingResponseMultiError, or nil if none found.
+func (m *SetDefaultShippingResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SetDefaultShippingResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetId()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, SetDefaultShippingResponseValidationError{
+					field:  "Id",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, SetDefaultShippingResponseValidationError{
+					field:  "Id",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetId()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return SetDefaultShippingResponseValidationError{
+				field:  "Id",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return SetDefaultShippingResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// SetDefaultShippingResponseMultiError is an error wrapping multiple
+// validation errors returned by SetDefaultShippingResponse.ValidateAll() if
+// the designated constraints aren't met.
+type SetDefaultShippingResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SetDefaultShippingResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SetDefaultShippingResponseMultiError) AllErrors() []error { return m }
+
+// SetDefaultShippingResponseValidationError is the validation error returned
+// by SetDefaultShippingResponse.Validate if the designated constraints aren't met.
+type SetDefaultShippingResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SetDefaultShippingResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SetDefaultShippingResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SetDefaultShippingResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SetDefaultShippingResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SetDefaultShippingResponseValidationError) ErrorName() string {
+	return "SetDefaultShippingResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SetDefaultShippingResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSetDefaultShippingResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SetDefaultShippingResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SetDefaultShippingResponseValidationError{}
+
 // Validate checks the field values on DeleteShippingRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.

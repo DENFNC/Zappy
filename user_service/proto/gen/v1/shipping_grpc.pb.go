@@ -19,11 +19,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ShippingService_CreateShipping_FullMethodName = "/user.v1.ShippingService/CreateShipping"
-	ShippingService_GetShipping_FullMethodName    = "/user.v1.ShippingService/GetShipping"
-	ShippingService_UpdateShipping_FullMethodName = "/user.v1.ShippingService/UpdateShipping"
-	ShippingService_DeleteShipping_FullMethodName = "/user.v1.ShippingService/DeleteShipping"
-	ShippingService_ListShipping_FullMethodName   = "/user.v1.ShippingService/ListShipping"
+	ShippingService_CreateShipping_FullMethodName     = "/user.v1.ShippingService/CreateShipping"
+	ShippingService_GetShipping_FullMethodName        = "/user.v1.ShippingService/GetShipping"
+	ShippingService_UpdateShipping_FullMethodName     = "/user.v1.ShippingService/UpdateShipping"
+	ShippingService_SetDefaultShipping_FullMethodName = "/user.v1.ShippingService/SetDefaultShipping"
+	ShippingService_DeleteShipping_FullMethodName     = "/user.v1.ShippingService/DeleteShipping"
+	ShippingService_ListShipping_FullMethodName       = "/user.v1.ShippingService/ListShipping"
 )
 
 // ShippingServiceClient is the client API for ShippingService service.
@@ -33,6 +34,7 @@ type ShippingServiceClient interface {
 	CreateShipping(ctx context.Context, in *CreateShippingRequest, opts ...grpc.CallOption) (*CreateShippingResponse, error)
 	GetShipping(ctx context.Context, in *GetShippingRequest, opts ...grpc.CallOption) (*GetShippingResponse, error)
 	UpdateShipping(ctx context.Context, in *UpdateShippingRequest, opts ...grpc.CallOption) (*UpdateShippingResponse, error)
+	SetDefaultShipping(ctx context.Context, in *SetDefaultShippingRequest, opts ...grpc.CallOption) (*SetDefaultShippingResponse, error)
 	DeleteShipping(ctx context.Context, in *DeleteShippingRequest, opts ...grpc.CallOption) (*DeleteShippingResponse, error)
 	ListShipping(ctx context.Context, in *ListShippingRequest, opts ...grpc.CallOption) (*ListShippingResponse, error)
 }
@@ -75,6 +77,16 @@ func (c *shippingServiceClient) UpdateShipping(ctx context.Context, in *UpdateSh
 	return out, nil
 }
 
+func (c *shippingServiceClient) SetDefaultShipping(ctx context.Context, in *SetDefaultShippingRequest, opts ...grpc.CallOption) (*SetDefaultShippingResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SetDefaultShippingResponse)
+	err := c.cc.Invoke(ctx, ShippingService_SetDefaultShipping_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *shippingServiceClient) DeleteShipping(ctx context.Context, in *DeleteShippingRequest, opts ...grpc.CallOption) (*DeleteShippingResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(DeleteShippingResponse)
@@ -102,6 +114,7 @@ type ShippingServiceServer interface {
 	CreateShipping(context.Context, *CreateShippingRequest) (*CreateShippingResponse, error)
 	GetShipping(context.Context, *GetShippingRequest) (*GetShippingResponse, error)
 	UpdateShipping(context.Context, *UpdateShippingRequest) (*UpdateShippingResponse, error)
+	SetDefaultShipping(context.Context, *SetDefaultShippingRequest) (*SetDefaultShippingResponse, error)
 	DeleteShipping(context.Context, *DeleteShippingRequest) (*DeleteShippingResponse, error)
 	ListShipping(context.Context, *ListShippingRequest) (*ListShippingResponse, error)
 	mustEmbedUnimplementedShippingServiceServer()
@@ -122,6 +135,9 @@ func (UnimplementedShippingServiceServer) GetShipping(context.Context, *GetShipp
 }
 func (UnimplementedShippingServiceServer) UpdateShipping(context.Context, *UpdateShippingRequest) (*UpdateShippingResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateShipping not implemented")
+}
+func (UnimplementedShippingServiceServer) SetDefaultShipping(context.Context, *SetDefaultShippingRequest) (*SetDefaultShippingResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetDefaultShipping not implemented")
 }
 func (UnimplementedShippingServiceServer) DeleteShipping(context.Context, *DeleteShippingRequest) (*DeleteShippingResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteShipping not implemented")
@@ -204,6 +220,24 @@ func _ShippingService_UpdateShipping_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ShippingService_SetDefaultShipping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetDefaultShippingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ShippingServiceServer).SetDefaultShipping(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ShippingService_SetDefaultShipping_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ShippingServiceServer).SetDefaultShipping(ctx, req.(*SetDefaultShippingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ShippingService_DeleteShipping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteShippingRequest)
 	if err := dec(in); err != nil {
@@ -258,6 +292,10 @@ var ShippingService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateShipping",
 			Handler:    _ShippingService_UpdateShipping_Handler,
+		},
+		{
+			MethodName: "SetDefaultShipping",
+			Handler:    _ShippingService_SetDefaultShipping_Handler,
 		},
 		{
 			MethodName: "DeleteShipping",

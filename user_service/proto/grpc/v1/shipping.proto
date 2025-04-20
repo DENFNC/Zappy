@@ -57,6 +57,14 @@ message UpdateShippingResponse {
   ShippingId id = 1;
 }
 
+message SetDefaultShippingRequest {
+  ShippingId id = 1;
+  uint32 profile_id = 2 [(validate.rules).uint32 = {gt: 0, lt: 2147483647}];
+}
+message SetDefaultShippingResponse {
+  ShippingId id = 1;
+}
+
 
 message DeleteShippingRequest {
   ShippingId id = 1;
@@ -77,9 +85,10 @@ message ListShippingResponse {
 }
 
 service ShippingService {
-  rpc CreateShipping(CreateShippingRequest) returns (CreateShippingResponse);
-  rpc GetShipping(GetShippingRequest) returns (GetShippingResponse);
-  rpc UpdateShipping(UpdateShippingRequest) returns (UpdateShippingResponse);
-  rpc DeleteShipping(DeleteShippingRequest) returns (DeleteShippingResponse);
-  rpc ListShipping(ListShippingRequest) returns (ListShippingResponse);
+  rpc CreateShipping(CreateShippingRequest) returns (CreateShippingResponse) {}
+  rpc GetShipping(GetShippingRequest) returns (GetShippingResponse) {}
+  rpc UpdateShipping(UpdateShippingRequest) returns (UpdateShippingResponse) {}
+  rpc SetDefaultShipping(SetDefaultShippingRequest) returns (SetDefaultShippingResponse) {}
+  rpc DeleteShipping(DeleteShippingRequest) returns (DeleteShippingResponse) {}
+  rpc ListShipping(ListShippingRequest) returns (ListShippingResponse) {}
 }
