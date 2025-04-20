@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/DENFNC/Zappy/user_service/internal/domain/models"
 	psql "github.com/DENFNC/Zappy/user_service/internal/storage/postgres"
@@ -48,15 +49,35 @@ func (r *ShippingRepo) Create(ctx context.Context, address *models.Shipping) (ui
 	return addrID, nil
 }
 
-func (r *ShippingRepo) GetByID(ctx context.Context, id int) (*models.Shipping, error) {
-	stmt, args, err := r.goqu.From("shipping_address").
-		Where(goqu.C("address_id").Eq(id)).Prepared(true).ToSQL()
+func (r *ShippingRepo) GetByID(ctx context.Context, id uint32) (*models.Shipping, error) {
+	stmt, args, err := r.goqu.Select(
+		"address_id",
+		"profile_id",
+		"country",
+		"city",
+		"street",
+		"postal_code",
+		"is_default",
+	).From("shipping_address").
+		Where(goqu.Ex{
+			"address_id": id,
+		}).Prepared(true).ToSQL()
 	if err != nil {
 		return nil, err
 	}
 
+	fmt.Println(stmt)
+
 	var s models.Shipping
-	if err := r.DB.QueryRow(ctx, stmt, args...).Scan(&s); err != nil {
+	if err := r.DB.QueryRow(ctx, stmt, args...).Scan(
+		&s.AddressID,
+		&s.ProfileID,
+		&s.Country,
+		&s.City,
+		&s.Street,
+		&s.PostalCode,
+		&s.IsDefault,
+	); err != nil {
 		return nil, err
 	}
 

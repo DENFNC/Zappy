@@ -19,7 +19,7 @@ type Shipping interface {
 	) (uint32, error)
 	GetByID(
 		ctx context.Context,
-		id int,
+		id uint32,
 	) (*models.Shipping, error)
 	ListByProfile(
 		ctx context.Context,
@@ -120,8 +120,29 @@ func (sa *serverAPI) DeleteShipping(ctx context.Context, req *v1.DeleteShippingR
 	}, nil
 }
 
-func (sa *serverAPI) GetShipping(context.Context, *v1.GetShippingRequest) (*v1.GetShippingResponse, error) {
-	panic("implement me!")
+func (sa *serverAPI) GetShipping(ctx context.Context, req *v1.GetShippingRequest) (*v1.GetShippingResponse, error) {
+	ship, err := sa.service.GetByID(
+		ctx,
+		req.GetId().XId,
+	)
+	if err != nil {
+		return nil, status.Error(
+			codes.Internal,
+			errpkg.ErrInternal.Message,
+		)
+	}
+
+	return &v1.GetShippingResponse{
+		Address: &v1.Shipping{
+			XId:        ship.AddressID,
+			ProfileId:  ship.ProfileID,
+			Country:    ship.Country,
+			City:       ship.City,
+			Street:     ship.Street,
+			PostalCode: ship.PostalCode,
+			IsDefault:  ship.IsDefault,
+		},
+	}, nil
 }
 
 func (sa *serverAPI) ListShipping(context.Context, *v1.ListShippingRequest) (*v1.ListShippingResponse, error) {

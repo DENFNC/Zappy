@@ -50,7 +50,7 @@ func (s *ShippingService) Create(ctx context.Context, address *models.Shipping) 
 	return addrID, nil
 }
 
-func (s *ShippingService) GetByID(ctx context.Context, id int) (*models.Shipping, error) {
+func (s *ShippingService) GetByID(ctx context.Context, id uint32) (*models.Shipping, error) {
 	const op = "service.ShippingService.GetByID"
 
 	log := s.log.With("op", op)
@@ -60,7 +60,7 @@ func (s *ShippingService) GetByID(ctx context.Context, id int) (*models.Shipping
 		log.Error(
 			"Critical error",
 			slog.String("error", err.Error()),
-			slog.Int("address_id", id),
+			slog.Uint64("address_id", uint64(id)),
 		)
 		return nil, err
 	}
