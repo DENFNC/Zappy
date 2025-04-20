@@ -1,39 +1,49 @@
 syntax = "proto3";
 
 package user.v1;
-option go_package = "github.com/DENFNC/Zappy/user_service/proto/gen/v1;v1";import "google/protobuf/empty.proto";
+option go_package = "github.com/DENFNC/Zappy/user_service/proto/gen/v1;v1";
+
 import "validate/validate.proto";
 
-message PaymentMethod {
-  int64 payment_id = 1;
-  int64 profile_id = 2 [(validate.rules).int64 = {gt: 0}];
-  string payment_token = 3 [(validate.rules).string = {min_len: 1, max_len: 255}];
-  bool is_default = 4;
+message PaymentInput {
+  uint32 profile_id    = 1 [(validate.rules).uint32 = {gt: 0}];
+  string payment_token = 2 [(validate.rules).string = {min_len: 1, max_len: 255}];
+  bool   is_default    = 3;
 }
 
-message CreatePaymentMethodRequest {
-  PaymentMethod payment_method = 1;
-}
-message GetPaymentMethodRequest {
-  int64 payment_id = 1 [(validate.rules).int64 = {gt: 0}];
-}
-message UpdatePaymentMethodRequest {
-  PaymentMethod payment_method = 1;
-}
-message DeletePaymentMethodRequest {
-  int64 payment_id = 1 [(validate.rules).int64 = {gt: 0}];
-}
-message ListPaymentMethodsRequest {
-  int64 profile_id = 1 [(validate.rules).int64 = {gt: 0}];
-}
-message ListPaymentMethodsResponse {
-  repeated PaymentMethod payment_methods = 1;
+message Payment {
+  uint32 payment_id    = 1;
+  uint32 profile_id    = 2;
+  string payment_token = 3;
+  bool   is_default    = 4;
 }
 
-service PaymentMethodService {
-  rpc CreatePaymentMethod(CreatePaymentMethodRequest) returns (PaymentMethod);
-  rpc GetPaymentMethod(GetPaymentMethodRequest) returns (PaymentMethod);
-  rpc UpdatePaymentMethod(UpdatePaymentMethodRequest) returns (PaymentMethod);
-  rpc DeletePaymentMethod(DeletePaymentMethodRequest) returns (google.protobuf.Empty);
-  rpc ListPaymentMethods(ListPaymentMethodsRequest) returns (ListPaymentMethodsResponse);
+message ResourceID {
+  uint32 id = 1 [(validate.rules).uint32 = {gt: 0}];
+}
+
+message ResourceByIDRequest {
+  uint32 id = 1 [(validate.rules).uint32 = {gt: 0}];
+}
+
+message ListByProfileRequest {
+  uint32 profile_id = 1 [(validate.rules).uint32 = {gt: 0}];
+}
+
+message ListPaymentResponse {
+  repeated Payment s = 1;
+}
+
+message SetDefaultPaymentRequest {
+  uint32 payment_id = 1 [(validate.rules).uint32 = {gt: 0}];
+  uint32 profile_id = 2 [(validate.rules).uint32 = {gt: 0}];
+}
+
+service PaymentService {
+  rpc CreatePayment(PaymentInput) returns (ResourceID);
+  rpc GetPayment(ResourceByIDRequest) returns (Payment);
+  rpc DeletePayment(ResourceByIDRequest) returns (ResourceID);
+  rpc UpdatePayment(Payment) returns (ResourceID);
+  rpc ListPayments(ListByProfileRequest) returns (ListPaymentResponse);
+  rpc SetDefaultPayment(SetDefaultPaymentRequest) returns (ResourceID);
 }

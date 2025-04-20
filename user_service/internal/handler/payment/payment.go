@@ -3,15 +3,22 @@ package payment
 import (
 	"context"
 
+	"github.com/DENFNC/Zappy/user_service/internal/domain/models"
 	v1 "github.com/DENFNC/Zappy/user_service/proto/gen/v1"
 	"google.golang.org/grpc"
-	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-type Payment interface{}
+type Payment interface {
+	Create(ctx context.Context, profileID uint32, paymentToken string, isDefault bool) (uint32, error)
+	GetByID(ctx context.Context, paymentID uint32) (*models.Payment, error)
+	Update(ctx context.Context, paymentID uint32, profileID uint32, paymentToken string, isDefault bool) (uint32, error)
+	Delete(ctx context.Context, paymentID uint32) (uint32, error)
+	List(ctx context.Context, profileID uint32) ([]*models.Payment, error)
+	SetDefault(ctx context.Context, paymentID uint32, profileID uint32) (uint32, error)
+}
 
 type serverAPI struct {
-	v1.UnimplementedPaymentMethodServiceServer
+	v1.UnimplementedPaymentServiceServer
 	service Payment
 }
 
@@ -22,25 +29,29 @@ func New(service Payment) *serverAPI {
 }
 
 func (sa *serverAPI) Register(grpc *grpc.Server) {
-	v1.RegisterPaymentMethodServiceServer(grpc, sa)
+	v1.RegisterPaymentServiceServer(grpc, sa)
 }
 
-func (sa *serverAPI) CreatePaymentMethod(context.Context, *v1.CreatePaymentMethodRequest) (*v1.PaymentMethod, error) {
+func (sa *serverAPI) CreatePayment(ctx context.Context, req *v1.PaymentInput) (*v1.ResourceID, error) {
 	panic("implement me!")
 }
 
-func (sa *serverAPI) DeletePaymentMethod(context.Context, *v1.DeletePaymentMethodRequest) (*emptypb.Empty, error) {
+func (sa *serverAPI) GetPayment(ctx context.Context, req *v1.ResourceByIDRequest) (*v1.Payment, error) {
 	panic("implement me!")
 }
 
-func (sa *serverAPI) GetPaymentMethod(context.Context, *v1.GetPaymentMethodRequest) (*v1.PaymentMethod, error) {
+func (sa *serverAPI) UpdatePayment(ctx context.Context, req *v1.Payment) (*v1.ResourceID, error) {
 	panic("implement me!")
 }
 
-func (sa *serverAPI) ListPaymentMethods(context.Context, *v1.ListPaymentMethodsRequest) (*v1.ListPaymentMethodsResponse, error) {
+func (sa *serverAPI) DeletePayment(ctx context.Context, req *v1.ResourceByIDRequest) (*v1.ResourceID, error) {
 	panic("implement me!")
 }
 
-func (sa *serverAPI) UpdatePaymentMethod(context.Context, *v1.UpdatePaymentMethodRequest) (*v1.PaymentMethod, error) {
+func (sa *serverAPI) ListPayments(ctx context.Context, req *v1.ListByProfileRequest) (*v1.ListPaymentResponse, error) {
+	panic("implement me!")
+}
+
+func (sa *serverAPI) SetDefaultPayment(ctx context.Context, req *v1.SetDefaultPaymentRequest) (*v1.ResourceID, error) {
 	panic("implement me!")
 }
