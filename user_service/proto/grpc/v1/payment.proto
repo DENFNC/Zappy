@@ -30,7 +30,7 @@ message ListByProfileRequest {
 }
 
 message ListPaymentResponse {
-  repeated Payment s = 1;
+  repeated Payment payments = 1;
 }
 
 message SetDefaultPaymentRequest {

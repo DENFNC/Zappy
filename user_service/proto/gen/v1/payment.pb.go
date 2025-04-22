@@ -276,7 +276,7 @@ func (x *ListByProfileRequest) GetProfileId() uint32 {
 
 type ListPaymentResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	S             []*Payment             `protobuf:"bytes,1,rep,name=s,proto3" json:"s,omitempty"`
+	Payments      []*Payment             `protobuf:"bytes,1,rep,name=payments,proto3" json:"payments,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -311,9 +311,9 @@ func (*ListPaymentResponse) Descriptor() ([]byte, []int) {
 	return file_payment_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *ListPaymentResponse) GetS() []*Payment {
+func (x *ListPaymentResponse) GetPayments() []*Payment {
 	if x != nil {
-		return x.S
+		return x.Payments
 	}
 	return nil
 }
@@ -395,9 +395,9 @@ const file_payment_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\rB\a\xfaB\x04*\x02 \x00R\x02id\">\n" +
 	"\x14ListByProfileRequest\x12&\n" +
 	"\n" +
-	"profile_id\x18\x01 \x01(\rB\a\xfaB\x04*\x02 \x00R\tprofileId\"5\n" +
-	"\x13ListPaymentResponse\x12\x1e\n" +
-	"\x01s\x18\x01 \x03(\v2\x10.user.v1.PaymentR\x01s\"j\n" +
+	"profile_id\x18\x01 \x01(\rB\a\xfaB\x04*\x02 \x00R\tprofileId\"C\n" +
+	"\x13ListPaymentResponse\x12,\n" +
+	"\bpayments\x18\x01 \x03(\v2\x10.user.v1.PaymentR\bpayments\"j\n" +
 	"\x18SetDefaultPaymentRequest\x12&\n" +
 	"\n" +
 	"payment_id\x18\x01 \x01(\rB\a\xfaB\x04*\x02 \x00R\tpaymentId\x12&\n" +
@@ -435,7 +435,7 @@ var file_payment_proto_goTypes = []any{
 	(*SetDefaultPaymentRequest)(nil), // 6: user.v1.SetDefaultPaymentRequest
 }
 var file_payment_proto_depIdxs = []int32{
-	1, // 0: user.v1.ListPaymentResponse.s:type_name -> user.v1.Payment
+	1, // 0: user.v1.ListPaymentResponse.payments:type_name -> user.v1.Payment
 	0, // 1: user.v1.PaymentService.CreatePayment:input_type -> user.v1.PaymentInput
 	3, // 2: user.v1.PaymentService.GetPayment:input_type -> user.v1.ResourceByIDRequest
 	3, // 3: user.v1.PaymentService.DeletePayment:input_type -> user.v1.ResourceByIDRequest

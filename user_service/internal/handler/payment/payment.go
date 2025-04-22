@@ -16,7 +16,7 @@ type Payment interface {
 	GetByID(ctx context.Context, paymentID uint32) (*models.Payment, error)
 	Update(ctx context.Context, paymentID uint32, profileID uint32, paymentToken string) (uint32, error)
 	Delete(ctx context.Context, paymentID uint32) (uint32, error)
-	List(ctx context.Context, profileID uint32) ([]*models.Payment, error)
+	List(ctx context.Context, profileID uint32) ([]models.Payment, error)
 	SetDefault(ctx context.Context, paymentID uint32, profileID uint32) (uint32, error)
 }
 
@@ -89,7 +89,27 @@ func (sa *serverAPI) DeletePayment(ctx context.Context, req *v1.ResourceByIDRequ
 }
 
 func (sa *serverAPI) ListPayments(ctx context.Context, req *v1.ListByProfileRequest) (*v1.ListPaymentResponse, error) {
-	panic("implement me!")
+	payments, err := sa.service.List(ctx, req.GetProfileId())
+	if err != nil {
+		return nil, status.Error(
+			codes.Internal,
+			errpkg.ErrInternal.Message,
+		)
+	}
+
+	v1Payments := make([]*v1.Payment, len(payments))
+	for i, p := range payments {
+		v1Payments[i] = &v1.Payment{
+			PaymentId:    p.PaymentID,
+			ProfileId:    p.ProfileID,
+			PaymentToken: p.PaymentToken,
+			IsDefault:    p.IsDefault,
+		}
+	}
+
+	return &v1.ListPaymentResponse{
+		Payments: v1Payments,
+	}, nil
 }
 
 func (sa *serverAPI) SetDefaultPayment(ctx context.Context, req *v1.SetDefaultPaymentRequest) (*v1.ResourceID, error) {

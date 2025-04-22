@@ -73,8 +73,45 @@ func (r *PaymentRepo) GetByID(ctx context.Context, id uint32) (*models.Payment, 
 	return &payment, nil
 }
 
-func (r *PaymentRepo) GetByProfileID(ctx context.Context, profileID uint32) ([]*models.Payment, error) {
-	panic("implement me!")
+func (r *PaymentRepo) GetByProfileID(ctx context.Context, profileID uint32) ([]models.Payment, error) {
+	stmt, args, err := r.goqu.
+		Select(
+			"payment_id",
+			"profile_id",
+			"payment_token",
+			"is_default",
+		).
+		From("payment_method").
+		Where(goqu.C("profile_id").Eq(profileID)).
+		ToSQL()
+	if err != nil {
+		return nil, err
+	}
+
+	rows, err := r.DB.Query(ctx, stmt, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var payments []models.Payment
+	for rows.Next() {
+		var p models.Payment
+		if err := rows.Scan(
+			&p.PaymentID,
+			&p.ProfileID,
+			&p.PaymentToken,
+			&p.IsDefault,
+		); err != nil {
+			return nil, err
+		}
+		payments = append(payments, p)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return payments, nil
 }
 
 func (r *PaymentRepo) SetDefault(ctx context.Context, methodID uint32, profileID uint32) (uint32, error) {

@@ -98,8 +98,21 @@ func (p *Payment) Delete(
 func (p *Payment) List(
 	ctx context.Context,
 	profileID uint32,
-) ([]*models.Payment, error) {
-	panic("implement me!")
+) ([]models.Payment, error) {
+	const op = "service.Payment.List"
+
+	log := p.log.With("op", op)
+
+	payments, err := p.repo.GetByProfileID(ctx, profileID)
+	if err != nil {
+		log.Error(
+			"Critical error",
+			slog.String("error", err.Error()),
+		)
+		return nil, err
+	}
+
+	return payments, nil
 }
 
 func (p *Payment) SetDefault(
