@@ -6,6 +6,7 @@ import (
 	"github.com/DENFNC/Zappy/user_service/internal/domain/models"
 	psql "github.com/DENFNC/Zappy/user_service/internal/storage/postgres"
 	"github.com/doug-martin/goqu/v9"
+	"github.com/jackc/pgx/v5"
 )
 
 type PaymentRepo struct {
@@ -115,7 +116,55 @@ func (r *PaymentRepo) GetByProfileID(ctx context.Context, profileID uint32) ([]m
 }
 
 func (r *PaymentRepo) SetDefault(ctx context.Context, methodID uint32, profileID uint32) (uint32, error) {
-	panic("implement me!")
+	conn, err := r.DB.Acquire(ctx)
+	if err != nil {
+		return 0, err
+	}
+	defer conn.Release()
+
+	var payID uint32
+	if err := r.WithTx(ctx, conn, func(tx pgx.Tx) error {
+		stmt, args, err := r.goqu.Update("payment_method").Set(
+			goqu.Record{
+				"is_default": false,
+			},
+		).Where(
+			goqu.Ex{
+				"profile_id": profileID,
+			},
+		).Prepared(true).ToSQL()
+		if err != nil {
+			return err
+		}
+
+		_, err = tx.Exec(ctx, stmt, args...)
+		if err != nil {
+			return err
+		}
+
+		stmt, args, err = r.goqu.Update("payment_method").Returning("payment_id").Set(
+			goqu.Record{
+				"is_default": true,
+			},
+		).Where(
+			goqu.Ex{
+				"payment_id": methodID,
+				"profile_id": profileID,
+			},
+		).Prepared(true).ToSQL()
+		if err != nil {
+			return err
+		}
+
+		if err := tx.QueryRow(ctx, stmt, args...).Scan(&payID); err != nil {
+			return err
+		}
+
+		return nil
+	}); err != nil {
+		return 0, err
+	}
+	return payID, nil
 }
 
 func (r *PaymentRepo) Update(ctx context.Context, method *models.Payment) (uint32, error) {

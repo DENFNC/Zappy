@@ -113,5 +113,19 @@ func (sa *serverAPI) ListPayments(ctx context.Context, req *v1.ListByProfileRequ
 }
 
 func (sa *serverAPI) SetDefaultPayment(ctx context.Context, req *v1.SetDefaultPaymentRequest) (*v1.ResourceID, error) {
-	panic("implement me!")
+	payID, err := sa.service.SetDefault(
+		ctx,
+		req.GetPaymentId(),
+		req.GetProfileId(),
+	)
+	if err != nil {
+		return nil, status.Error(
+			codes.Internal,
+			errpkg.ErrInternal.Message,
+		)
+	}
+
+	return &v1.ResourceID{
+		Id: payID,
+	}, nil
 }

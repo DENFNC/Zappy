@@ -120,5 +120,18 @@ func (p *Payment) SetDefault(
 	paymentID uint32,
 	profileID uint32,
 ) (uint32, error) {
-	panic("implement me!")
+	const op = "service.Payment.SetDefault"
+
+	log := p.log.With("op", op)
+
+	payID, err := p.repo.SetDefault(ctx, paymentID, profileID)
+	if err != nil {
+		log.Error(
+			"Critical error",
+			slog.String("error", err.Error()),
+		)
+		return emptyValue, nil
+	}
+
+	return payID, nil
 }
