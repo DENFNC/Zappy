@@ -86,5 +86,17 @@ func (r *PaymentRepo) Update(ctx context.Context, method *models.Payment) (uint3
 }
 
 func (r *PaymentRepo) Delete(ctx context.Context, id uint32) (uint32, error) {
-	panic("implement me!")
+	stmt, args, err := r.goqu.Delete("payment_method").Returning("payment_id").Where(
+		goqu.C("payment_id").Eq(id),
+	).Prepared(true).ToSQL()
+	if err != nil {
+		return 0, err
+	}
+
+	var payID uint32
+	if err := r.DB.QueryRow(ctx, stmt, args...).Scan(&payID); err != nil {
+		return 0, err
+	}
+
+	return payID, nil
 }

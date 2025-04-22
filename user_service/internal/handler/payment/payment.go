@@ -75,7 +75,17 @@ func (sa *serverAPI) UpdatePayment(ctx context.Context, req *v1.Payment) (*v1.Re
 }
 
 func (sa *serverAPI) DeletePayment(ctx context.Context, req *v1.ResourceByIDRequest) (*v1.ResourceID, error) {
-	panic("implement me!")
+	payID, err := sa.service.Delete(ctx, req.GetId())
+	if err != nil {
+		return nil, status.Error(
+			codes.Internal,
+			errpkg.ErrInternal.Message,
+		)
+	}
+
+	return &v1.ResourceID{
+		Id: payID,
+	}, nil
 }
 
 func (sa *serverAPI) ListPayments(ctx context.Context, req *v1.ListByProfileRequest) (*v1.ListPaymentResponse, error) {

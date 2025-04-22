@@ -79,7 +79,20 @@ func (p *Payment) Delete(
 	ctx context.Context,
 	paymentID uint32,
 ) (uint32, error) {
-	panic("implement me!")
+	const op = "service.Payment.Delete"
+
+	log := p.log.With("op", op)
+
+	payID, err := p.repo.Delete(ctx, paymentID)
+	if err != nil {
+		log.Error(
+			"Critical error",
+			slog.String("error", err.Error()),
+		)
+		return 0, err
+	}
+
+	return payID, nil
 }
 
 func (p *Payment) List(
