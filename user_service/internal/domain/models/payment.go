@@ -7,10 +7,9 @@ type Payment struct {
 	IsDefault    bool
 }
 
-func NewPayment(profileID uint32, paymentToken string, isDefault bool) *Payment {
+func NewPayment(profileID uint32, paymentToken string) *Payment {
 	return &Payment{
 		ProfileID:    profileID,
 		PaymentToken: paymentToken,
-		IsDefault:    isDefault,
 	}
 }

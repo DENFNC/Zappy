@@ -27,16 +27,43 @@ func (p *Payment) Create(
 	ctx context.Context,
 	profileID uint32,
 	paymentToken string,
-	isDefault bool,
 ) (uint32, error) {
-	panic("implement me!")
+	const op = "service.Payment.Create"
+
+	log := p.log.With("op", op)
+
+	payment := models.NewPayment(profileID, paymentToken)
+
+	payID, err := p.repo.Create(ctx, payment)
+	if err != nil {
+		log.Error(
+			"Critical error",
+			slog.String("error", err.Error()),
+		)
+		return emptyValue, err
+	}
+
+	return payID, nil
 }
 
 func (p *Payment) GetByID(
 	ctx context.Context,
 	paymentID uint32,
 ) (*models.Payment, error) {
-	panic("implement me!")
+	const op = "service.Payment.GetByID"
+
+	log := p.log.With("op", op)
+
+	payment, err := p.repo.GetByID(ctx, paymentID)
+	if err != nil {
+		log.Error(
+			"Critical error",
+			slog.String("error", err.Error()),
+		)
+		return nil, err
+	}
+
+	return payment, nil
 }
 
 func (p *Payment) Update(
@@ -44,7 +71,6 @@ func (p *Payment) Update(
 	paymentID uint32,
 	profileID uint32,
 	paymentToken string,
-	isDefault bool,
 ) (uint32, error) {
 	panic("implement me!")
 }

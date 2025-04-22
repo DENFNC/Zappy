@@ -8,7 +8,6 @@ import "validate/validate.proto";
 message PaymentInput {
   uint32 profile_id    = 1 [(validate.rules).uint32 = {gt: 0}];
   string payment_token = 2 [(validate.rules).string = {min_len: 1, max_len: 255}];
-  bool   is_default    = 3;
 }
 
 message Payment {

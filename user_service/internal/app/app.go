@@ -4,6 +4,7 @@ import (
 	"log/slog"
 
 	grpcapp "github.com/DENFNC/Zappy/user_service/internal/app/grpc"
+	"github.com/DENFNC/Zappy/user_service/internal/handler/payment"
 	"github.com/DENFNC/Zappy/user_service/internal/handler/profile"
 	"github.com/DENFNC/Zappy/user_service/internal/handler/shipping"
 	repo "github.com/DENFNC/Zappy/user_service/internal/repository/postgres"
@@ -29,12 +30,17 @@ func New(
 	shippingSvc := service.NewShipping(log, shippingRepo)
 	shippingHandle := shipping.New(shippingSvc)
 
+	paymentRepo := repo.NewPaymentRepo(db, db.Dial)
+	paymentSvc := service.NewPayment(log, paymentRepo)
+	paymentHandle := payment.New(paymentSvc)
+
 	return &App{
 		App: *grpcapp.New(
 			log,
 			port,
 			profileHandle,
 			shippingHandle,
+			paymentHandle,
 		),
 	}
 }

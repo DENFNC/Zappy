@@ -6,6 +6,7 @@ import (
 	"net"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 )
 
 type ServiceRegistrar interface {
@@ -24,6 +25,7 @@ func New(
 	services ...ServiceRegistrar,
 ) *App {
 	server := grpc.NewServer()
+	reflection.Register(server)
 
 	for _, service := range services {
 		service.Register(server)

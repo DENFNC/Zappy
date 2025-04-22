@@ -26,7 +26,6 @@ type PaymentInput struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ProfileId     uint32                 `protobuf:"varint,1,opt,name=profile_id,json=profileId,proto3" json:"profile_id,omitempty"`
 	PaymentToken  string                 `protobuf:"bytes,2,opt,name=payment_token,json=paymentToken,proto3" json:"payment_token,omitempty"`
-	IsDefault     bool                   `protobuf:"varint,3,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -73,13 +72,6 @@ func (x *PaymentInput) GetPaymentToken() string {
 		return x.PaymentToken
 	}
 	return ""
-}
-
-func (x *PaymentInput) GetIsDefault() bool {
-	if x != nil {
-		return x.IsDefault
-	}
-	return false
 }
 
 type Payment struct {
@@ -382,14 +374,12 @@ var File_payment_proto protoreflect.FileDescriptor
 
 const file_payment_proto_rawDesc = "" +
 	"\n" +
-	"\rpayment.proto\x12\auser.v1\x1a\x17validate/validate.proto\"\x86\x01\n" +
+	"\rpayment.proto\x12\auser.v1\x1a\x17validate/validate.proto\"g\n" +
 	"\fPaymentInput\x12&\n" +
 	"\n" +
 	"profile_id\x18\x01 \x01(\rB\a\xfaB\x04*\x02 \x00R\tprofileId\x12/\n" +
 	"\rpayment_token\x18\x02 \x01(\tB\n" +
-	"\xfaB\ar\x05\x10\x01\x18\xff\x01R\fpaymentToken\x12\x1d\n" +
-	"\n" +
-	"is_default\x18\x03 \x01(\bR\tisDefault\"\x8b\x01\n" +
+	"\xfaB\ar\x05\x10\x01\x18\xff\x01R\fpaymentToken\"\x8b\x01\n" +
 	"\aPayment\x12\x1d\n" +
 	"\n" +
 	"payment_id\x18\x01 \x01(\rR\tpaymentId\x12\x1d\n" +
