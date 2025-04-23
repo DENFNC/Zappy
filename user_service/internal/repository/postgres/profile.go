@@ -2,13 +2,9 @@ package repo
 
 import (
 	"context"
-	"encoding/base64"
-	"encoding/json"
 	"fmt"
-	"time"
 
 	"github.com/DENFNC/Zappy/user_service/internal/domain/models"
-	dto "github.com/DENFNC/Zappy/user_service/internal/dto/profile"
 	psql "github.com/DENFNC/Zappy/user_service/internal/storage/postgres"
 	"github.com/doug-martin/goqu/v9"
 )
@@ -16,11 +12,6 @@ import (
 type ProfileRepo struct {
 	*psql.Storage
 	goqu *goqu.DialectWrapper
-}
-
-type cursor struct {
-	ID        int32     `json:"id"`
-	CreatedAt time.Time `json:"created_at"`
 }
 
 func NewProfileRepo(
@@ -96,79 +87,12 @@ func (r *ProfileRepo) GetByID(ctx context.Context, id uint32) (*models.Profile, 
 
 func (r *ProfileRepo) List(
 	ctx context.Context,
-	params *dto.ListParams,
+	item []any,
 ) (
-	*dto.ListResult[models.Profile],
+	[]any,
 	error,
 ) {
-	var cur cursor
-	if params.PageToken != "" {
-		data, err := base64.RawURLEncoding.DecodeString(params.PageToken)
-		if err != nil {
-			return nil, err
-		}
-		if err := json.Unmarshal(data, &cur); err != nil {
-			return nil, err
-		}
-	}
-
-	stmt, args, err := r.goqu.Select(
-		"profile_id",
-		"auth_user_id",
-		"first_name",
-		"last_name",
-		"created_at",
-		"updated_at",
-	).From("profile").Where(
-		goqu.L(
-			"(?::timestamptz, ?::bigint) < (created_at, profile_id)",
-			cur.CreatedAt, cur.ID,
-		),
-	).Order(
-		goqu.I("created_at").Asc(),
-		goqu.I("profile_id").Asc(),
-	).Limit(uint(params.PageSize)).Prepared(true).ToSQL()
-	if err != nil {
-		return nil, err
-	}
-
-	rows, err := r.DB.Query(ctx, stmt, args...)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	profiles := make([]*models.Profile, 0, params.PageSize)
-
-	var lastCur cursor
-	for rows.Next() {
-		var p models.Profile
-		if err := rows.Scan(
-			&p.ProfileID,
-			&p.AuthUserID,
-			&p.FirstName,
-			&p.LastName,
-			&p.CreatedAt,
-			&p.UpdatedAt,
-		); err != nil {
-			return nil, fmt.Errorf("scan row: %w", err)
-		}
-		lastCur = cursor{CreatedAt: p.CreatedAt, ID: int32(p.ProfileID)}
-		profiles = append(profiles, &p)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("rows iteration: %w", err)
-	}
-
-	var nextToken string
-	if len(profiles) > 0 {
-		raw, _ := json.Marshal(lastCur)
-		nextToken = base64.RawURLEncoding.EncodeToString(raw)
-	}
-	return &dto.ListResult[models.Profile]{
-		Items:         profiles,
-		NextPageToken: nextToken,
-	}, nil
+	panic("implement me!")
 }
 
 func (r *ProfileRepo) Update(ctx context.Context, profile *models.Profile) (uint32, error) {

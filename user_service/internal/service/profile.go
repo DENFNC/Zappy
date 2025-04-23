@@ -8,7 +8,6 @@ import (
 
 	"github.com/DENFNC/Zappy/user_service/internal/domain/models"
 	"github.com/DENFNC/Zappy/user_service/internal/domain/repositories"
-	dto "github.com/DENFNC/Zappy/user_service/internal/dto/profile"
 	errpkg "github.com/DENFNC/Zappy/user_service/internal/errors"
 	"github.com/jackc/pgx/v5"
 )
@@ -106,22 +105,8 @@ func (p *Profile) GetByID(ctx context.Context, profileID uint32) (*models.Profil
 	return profile, nil
 }
 
-func (p *Profile) List(ctx context.Context, params *dto.ListParams) ([]*models.Profile, string, error) {
-	const op = "service.Profile.List"
-
-	log := p.log.With("op", op)
-
-	profiles, err := p.repo.List(ctx, params)
-	if err != nil {
-		log.Error(
-			"Critical error",
-			slog.String("error", err.Error()),
-		)
-
-		return nil, "", err
-	}
-
-	return profiles.Items, profiles.NextPageToken, nil
+func (p *Profile) List(context.Context, []any) ([]any, string, error) {
+	panic("implement me")
 }
 
 func (p *Profile) Update(ctx context.Context, profileID uint32, firstName, lastName string) (uint32, error) {
