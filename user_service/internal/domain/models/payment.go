@@ -1,10 +1,10 @@
 package models
 
 type Payment struct {
-	PaymentID    uint32 `db:"payment_id"`
-	ProfileID    uint32 `db:"profile_id"`
-	PaymentToken string `db:"payment_token"`
-	IsDefault    bool   `db:"is_default"`
+	PaymentID    uint32
+	ProfileID    uint32
+	PaymentToken string
+	IsDefault    bool
 }
 
 func NewPayment(profileID uint32, paymentToken string) *Payment {
