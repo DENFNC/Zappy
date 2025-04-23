@@ -21,6 +21,11 @@ message ResourceID {
   uint32 id = 1 [(validate.rules).uint32 = {gt: 0}];
 }
 
+message UpdatePaymentRequest {
+  uint32 payment_id = 1;
+  PaymentInput payment = 2;
+}
+
 message ResourceByIDRequest {
   uint32 id = 1 [(validate.rules).uint32 = {gt: 0}];
 }
@@ -42,7 +47,7 @@ service PaymentService {
   rpc CreatePayment(PaymentInput) returns (ResourceID);
   rpc GetPayment(ResourceByIDRequest) returns (Payment);
   rpc DeletePayment(ResourceByIDRequest) returns (ResourceID);
-  rpc UpdatePayment(Payment) returns (ResourceID);
+  rpc UpdatePayment(UpdatePaymentRequest) returns (ResourceID);
   rpc ListPayments(ListByProfileRequest) returns (ListPaymentResponse);
   rpc SetDefaultPayment(SetDefaultPaymentRequest) returns (ResourceID);
 }

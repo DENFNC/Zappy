@@ -2,10 +2,13 @@ package service
 
 import (
 	"context"
+	"errors"
 	"log/slog"
 
 	"github.com/DENFNC/Zappy/user_service/internal/domain/models"
 	"github.com/DENFNC/Zappy/user_service/internal/domain/repositories"
+	errpkg "github.com/DENFNC/Zappy/user_service/internal/errors"
+	"github.com/jackc/pgx/v5"
 )
 
 type Payment struct {
@@ -72,7 +75,33 @@ func (p *Payment) Update(
 	profileID uint32,
 	paymentToken string,
 ) (uint32, error) {
-	panic("implement me!")
+	const op = "service.Payment.Update"
+
+	log := p.log.With("op", op)
+
+	payment := models.Payment{
+		PaymentID:    paymentID,
+		ProfileID:    profileID,
+		PaymentToken: paymentToken,
+	}
+
+	payID, err := p.repo.Update(ctx, &payment)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			log.Error(
+				"Not found",
+				slog.String("error", err.Error()),
+			)
+			return 0, errpkg.ErrNotFound
+		}
+		log.Error(
+			"Critical error",
+			slog.String("error", err.Error()),
+		)
+		return 0, err
+	}
+
+	return payID, nil
 }
 
 func (p *Payment) Delete(

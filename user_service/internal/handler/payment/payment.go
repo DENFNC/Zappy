@@ -2,6 +2,7 @@ package payment
 
 import (
 	"context"
+	"errors"
 
 	"github.com/DENFNC/Zappy/user_service/internal/domain/models"
 	errpkg "github.com/DENFNC/Zappy/user_service/internal/errors"
@@ -70,8 +71,31 @@ func (sa *serverAPI) GetPayment(ctx context.Context, req *v1.ResourceByIDRequest
 	}, nil
 }
 
-func (sa *serverAPI) UpdatePayment(ctx context.Context, req *v1.Payment) (*v1.ResourceID, error) {
-	panic("implement me!")
+func (sa *serverAPI) UpdatePayment(ctx context.Context, req *v1.UpdatePaymentRequest) (*v1.ResourceID, error) {
+	payID, err := sa.service.Update(
+		ctx,
+		req.GetPaymentId(),
+		req.GetPayment().ProfileId,
+		req.GetPayment().PaymentToken,
+	)
+	if err != nil {
+		switch {
+		case errors.Is(err, errpkg.ErrNotFound):
+			return nil, status.Error(
+				codes.NotFound,
+				errpkg.ErrNotFound.Message,
+			)
+		default:
+			return nil, status.Error(
+				codes.Internal,
+				errpkg.ErrInternal.Message,
+			)
+		}
+	}
+
+	return &v1.ResourceID{
+		Id: payID,
+	}, nil
 }
 
 func (sa *serverAPI) DeletePayment(ctx context.Context, req *v1.ResourceByIDRequest) (*v1.ResourceID, error) {

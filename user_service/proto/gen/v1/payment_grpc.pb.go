@@ -34,7 +34,7 @@ type PaymentServiceClient interface {
 	CreatePayment(ctx context.Context, in *PaymentInput, opts ...grpc.CallOption) (*ResourceID, error)
 	GetPayment(ctx context.Context, in *ResourceByIDRequest, opts ...grpc.CallOption) (*Payment, error)
 	DeletePayment(ctx context.Context, in *ResourceByIDRequest, opts ...grpc.CallOption) (*ResourceID, error)
-	UpdatePayment(ctx context.Context, in *Payment, opts ...grpc.CallOption) (*ResourceID, error)
+	UpdatePayment(ctx context.Context, in *UpdatePaymentRequest, opts ...grpc.CallOption) (*ResourceID, error)
 	ListPayments(ctx context.Context, in *ListByProfileRequest, opts ...grpc.CallOption) (*ListPaymentResponse, error)
 	SetDefaultPayment(ctx context.Context, in *SetDefaultPaymentRequest, opts ...grpc.CallOption) (*ResourceID, error)
 }
@@ -77,7 +77,7 @@ func (c *paymentServiceClient) DeletePayment(ctx context.Context, in *ResourceBy
 	return out, nil
 }
 
-func (c *paymentServiceClient) UpdatePayment(ctx context.Context, in *Payment, opts ...grpc.CallOption) (*ResourceID, error) {
+func (c *paymentServiceClient) UpdatePayment(ctx context.Context, in *UpdatePaymentRequest, opts ...grpc.CallOption) (*ResourceID, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ResourceID)
 	err := c.cc.Invoke(ctx, PaymentService_UpdatePayment_FullMethodName, in, out, cOpts...)
@@ -114,7 +114,7 @@ type PaymentServiceServer interface {
 	CreatePayment(context.Context, *PaymentInput) (*ResourceID, error)
 	GetPayment(context.Context, *ResourceByIDRequest) (*Payment, error)
 	DeletePayment(context.Context, *ResourceByIDRequest) (*ResourceID, error)
-	UpdatePayment(context.Context, *Payment) (*ResourceID, error)
+	UpdatePayment(context.Context, *UpdatePaymentRequest) (*ResourceID, error)
 	ListPayments(context.Context, *ListByProfileRequest) (*ListPaymentResponse, error)
 	SetDefaultPayment(context.Context, *SetDefaultPaymentRequest) (*ResourceID, error)
 	mustEmbedUnimplementedPaymentServiceServer()
@@ -136,7 +136,7 @@ func (UnimplementedPaymentServiceServer) GetPayment(context.Context, *ResourceBy
 func (UnimplementedPaymentServiceServer) DeletePayment(context.Context, *ResourceByIDRequest) (*ResourceID, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeletePayment not implemented")
 }
-func (UnimplementedPaymentServiceServer) UpdatePayment(context.Context, *Payment) (*ResourceID, error) {
+func (UnimplementedPaymentServiceServer) UpdatePayment(context.Context, *UpdatePaymentRequest) (*ResourceID, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdatePayment not implemented")
 }
 func (UnimplementedPaymentServiceServer) ListPayments(context.Context, *ListByProfileRequest) (*ListPaymentResponse, error) {
@@ -221,7 +221,7 @@ func _PaymentService_DeletePayment_Handler(srv interface{}, ctx context.Context,
 }
 
 func _PaymentService_UpdatePayment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Payment)
+	in := new(UpdatePaymentRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -233,7 +233,7 @@ func _PaymentService_UpdatePayment_Handler(srv interface{}, ctx context.Context,
 		FullMethod: PaymentService_UpdatePayment_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentServiceServer).UpdatePayment(ctx, req.(*Payment))
+		return srv.(PaymentServiceServer).UpdatePayment(ctx, req.(*UpdatePaymentRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

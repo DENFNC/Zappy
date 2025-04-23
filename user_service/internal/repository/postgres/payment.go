@@ -132,7 +132,7 @@ func (r *PaymentRepo) SetDefault(ctx context.Context, methodID, profileID uint32
 		stmt, args, err = r.goqu.Update("payment_method").
 			Returning("payment_id").
 			Set(goqu.Record{"is_default": true}).
-			Where(goqu.Ex{"payment_id": methodID, "profile_id": profileID}).
+			Where(goqu.Ex{"profile_id": profileID, "payment_id": methodID}).
 			Prepared(true).
 			ToSQL()
 		if err != nil {
@@ -150,7 +150,7 @@ func (r *PaymentRepo) Update(ctx context.Context, method *models.Payment) (uint3
 	stmt, args, err := r.goqu.Update("payment_method").
 		Returning("profile_id").
 		Set(goqu.Record{"payment_token": method.PaymentToken}).
-		Where(goqu.C("payment_id").Eq(method.PaymentID)).
+		Where(goqu.Ex{"profile_id": method.ProfileID, "payment_id": method.PaymentID}).
 		Prepared(true).
 		ToSQL()
 	if err != nil {
