@@ -1,4 +1,4 @@
-module github.com/DENFNC/Zappy/user_service
+module c
 
 go 1.23.5
 
