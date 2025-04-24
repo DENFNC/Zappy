@@ -6,8 +6,11 @@ import (
 	"github.com/DENFNC/Zappy/user_service/internal/domain/models"
 	psql "github.com/DENFNC/Zappy/user_service/internal/storage/postgres"
 	"github.com/doug-martin/goqu/v9"
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 )
+
+type UUID = uuid.UUID
 
 type PaymentRepo struct {
 	*psql.Storage
@@ -21,10 +24,12 @@ func NewPaymentRepo(db *psql.Storage, g *goqu.DialectWrapper) *PaymentRepo {
 	}
 }
 
-func (r *PaymentRepo) Create(ctx context.Context, method *models.Payment) (uint32, error) {
+func (r *PaymentRepo) Create(ctx context.Context, method *models.Payment) (UUID, error) {
+	id := r.NewV7()
 	stmt, args, err := r.goqu.Insert("payment_method").
 		Returning(goqu.C("payment_id")).
 		Rows(goqu.Record{
+			"payment_id":    id,
 			"profile_id":    method.ProfileID,
 			"payment_token": method.PaymentToken,
 			"is_default":    false,
@@ -32,12 +37,12 @@ func (r *PaymentRepo) Create(ctx context.Context, method *models.Payment) (uint3
 		Prepared(true).
 		ToSQL()
 	if err != nil {
-		return 0, err
+		return uuid.Nil, err
 	}
 
-	var payID uint32
+	var payID UUID
 	if err := r.DB.QueryRow(ctx, stmt, args...).Scan(&payID); err != nil {
-		return 0, err
+		return uuid.Nil, err
 	}
 	return payID, nil
 }

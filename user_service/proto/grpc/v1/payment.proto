@@ -6,32 +6,32 @@ option go_package = "github.com/DENFNC/Zappy/user_service/proto/gen/v1;v1";
 import "validate/validate.proto";
 
 message PaymentInput {
-  uint32 profile_id    = 1 [(validate.rules).uint32 = {gt: 0}];
+  bytes profile_id    = 1 [(validate.rules).bytes = {len: 16}];
   string payment_token = 2 [(validate.rules).string = {min_len: 1, max_len: 255}];
 }
 
 message Payment {
-  uint32 payment_id    = 1;
-  uint32 profile_id    = 2;
+  bytes payment_id    = 1 [(validate.rules).bytes = {len: 16}];
+  bytes profile_id    = 2 [(validate.rules).bytes = {len: 16}];
   string payment_token = 3;
   bool   is_default    = 4;
 }
 
 message ResourceID {
-  uint32 id = 1 [(validate.rules).uint32 = {gt: 0}];
+  bytes id = 1 [(validate.rules).bytes = {len: 16}];
 }
 
 message UpdatePaymentRequest {
-  uint32 payment_id = 1;
+  bytes payment_id = 1 [(validate.rules).bytes = {len: 16}];
   PaymentInput payment = 2;
 }
 
 message ResourceByIDRequest {
-  uint32 id = 1 [(validate.rules).uint32 = {gt: 0}];
+  bytes id = 1 [(validate.rules).bytes = {len: 16}];
 }
 
 message ListByProfileRequest {
-  uint32 profile_id = 1 [(validate.rules).uint32 = {gt: 0}];
+  bytes profile_id = 1 [(validate.rules).bytes = {len: 16}];
 }
 
 message ListPaymentResponse {
@@ -39,8 +39,8 @@ message ListPaymentResponse {
 }
 
 message SetDefaultPaymentRequest {
-  uint32 payment_id = 1 [(validate.rules).uint32 = {gt: 0}];
-  uint32 profile_id = 2 [(validate.rules).uint32 = {gt: 0}];
+  bytes payment_id = 1 [(validate.rules).bytes = {len: 16}];
+  bytes profile_id = 2 [(validate.rules).bytes = {len: 16}];
 }
 
 service PaymentService {

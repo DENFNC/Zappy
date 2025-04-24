@@ -8,8 +8,11 @@ import (
 	"github.com/DENFNC/Zappy/user_service/internal/domain/models"
 	"github.com/DENFNC/Zappy/user_service/internal/domain/repositories"
 	errpkg "github.com/DENFNC/Zappy/user_service/internal/errors"
+	"github.com/gofrs/uuid"
 	"github.com/jackc/pgx/v5"
 )
+
+type UUID = uuid.UUID
 
 type Payment struct {
 	log  *slog.Logger
@@ -30,7 +33,7 @@ func (p *Payment) Create(
 	ctx context.Context,
 	profileID uint32,
 	paymentToken string,
-) (uint32, error) {
+) (UUID, error) {
 	const op = "service.Payment.Create"
 
 	log := p.log.With("op", op)
@@ -43,7 +46,7 @@ func (p *Payment) Create(
 			"Critical error",
 			slog.String("error", err.Error()),
 		)
-		return emptyValue, err
+		return uuid.Nil, err
 	}
 
 	return payID, nil

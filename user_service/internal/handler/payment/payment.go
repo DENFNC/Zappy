@@ -7,13 +7,16 @@ import (
 	"github.com/DENFNC/Zappy/user_service/internal/domain/models"
 	errpkg "github.com/DENFNC/Zappy/user_service/internal/errors"
 	v1 "github.com/DENFNC/Zappy/user_service/proto/gen/v1"
+	"github.com/google/uuid"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
+type UUID = uuid.UUID
+
 type Payment interface {
-	Create(ctx context.Context, profileID uint32, paymentToken string) (uint32, error)
+	Create(ctx context.Context, profileID uint32, paymentToken string) (UUID, error)
 	GetByID(ctx context.Context, paymentID uint32) (*models.Payment, error)
 	Update(ctx context.Context, paymentID uint32, profileID uint32, paymentToken string) (uint32, error)
 	Delete(ctx context.Context, paymentID uint32) (uint32, error)

@@ -7,6 +7,12 @@ import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
 import "validate/validate.proto";
 
+
+message ResourceId {
+  int64 id = 1 [(validate.rules).int64 = {gt: 0}];
+}
+
+
 message WishlistItem {
   int64 item_id = 1;
   int64 profile_id = 2 [(validate.rules).int64 = {gt: 0}];
@@ -36,5 +42,5 @@ service WishlistItemService {
   rpc GetWishlistItem(GetWishlistItemRequest) returns (WishlistItem);
   rpc UpdateWishlistItem(UpdateWishlistItemRequest) returns (WishlistItem);
   rpc DeleteWishlistItem(DeleteWishlistItemRequest) returns (google.protobuf.Empty);
-  rpc ListWishlistItems(ListWishlistItemsRequest) returns (stream WishlistItem);
+  rpc ListWishlistItems(ListWishlistItemsRequest) returns (WishlistItem);
 }

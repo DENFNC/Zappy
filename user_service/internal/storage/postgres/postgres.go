@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/doug-martin/goqu/v9"
-	_ "github.com/doug-martin/goqu/v9/dialect/postgres"
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -59,4 +59,9 @@ func (s *Storage) WithTx(ctx context.Context, conn *pgxpool.Conn, f func(pgx.Tx)
 	}
 
 	return tx.Commit(ctx)
+}
+
+func (s *Storage) NewV7() uuid.UUID {
+	uuid, _ := uuid.NewV7()
+	return uuid
 }
