@@ -75,6 +75,58 @@ func (x *FullName) GetLastName() string {
 	return ""
 }
 
+type ProfileInput struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          *FullName              `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	AuthUserId    string                 `protobuf:"bytes,2,opt,name=auth_user_id,json=authUserId,proto3" json:"auth_user_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ProfileInput) Reset() {
+	*x = ProfileInput{}
+	mi := &file_profile_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ProfileInput) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ProfileInput) ProtoMessage() {}
+
+func (x *ProfileInput) ProtoReflect() protoreflect.Message {
+	mi := &file_profile_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ProfileInput.ProtoReflect.Descriptor instead.
+func (*ProfileInput) Descriptor() ([]byte, []int) {
+	return file_profile_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *ProfileInput) GetName() *FullName {
+	if x != nil {
+		return x.Name
+	}
+	return nil
+}
+
+func (x *ProfileInput) GetAuthUserId() string {
+	if x != nil {
+		return x.AuthUserId
+	}
+	return ""
+}
+
 type Profile struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ProfileId     string                 `protobuf:"bytes,1,opt,name=profile_id,json=profileId,proto3" json:"profile_id,omitempty"`
@@ -88,7 +140,7 @@ type Profile struct {
 
 func (x *Profile) Reset() {
 	*x = Profile{}
-	mi := &file_profile_proto_msgTypes[1]
+	mi := &file_profile_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -100,7 +152,7 @@ func (x *Profile) String() string {
 func (*Profile) ProtoMessage() {}
 
 func (x *Profile) ProtoReflect() protoreflect.Message {
-	mi := &file_profile_proto_msgTypes[1]
+	mi := &file_profile_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -113,7 +165,7 @@ func (x *Profile) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Profile.ProtoReflect.Descriptor instead.
 func (*Profile) Descriptor() ([]byte, []int) {
-	return file_profile_proto_rawDescGZIP(), []int{1}
+	return file_profile_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *Profile) GetProfileId() string {
@@ -160,7 +212,7 @@ type ProfileIDResponse struct {
 
 func (x *ProfileIDResponse) Reset() {
 	*x = ProfileIDResponse{}
-	mi := &file_profile_proto_msgTypes[2]
+	mi := &file_profile_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -172,7 +224,7 @@ func (x *ProfileIDResponse) String() string {
 func (*ProfileIDResponse) ProtoMessage() {}
 
 func (x *ProfileIDResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_profile_proto_msgTypes[2]
+	mi := &file_profile_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -185,7 +237,7 @@ func (x *ProfileIDResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ProfileIDResponse.ProtoReflect.Descriptor instead.
 func (*ProfileIDResponse) Descriptor() ([]byte, []int) {
-	return file_profile_proto_rawDescGZIP(), []int{2}
+	return file_profile_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *ProfileIDResponse) GetProfileId() string {
@@ -197,14 +249,14 @@ func (x *ProfileIDResponse) GetProfileId() string {
 
 type CreateProfileRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Profile       *Profile               `protobuf:"bytes,1,opt,name=profile,proto3" json:"profile,omitempty"`
+	Profile       *ProfileInput          `protobuf:"bytes,1,opt,name=profile,proto3" json:"profile,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *CreateProfileRequest) Reset() {
 	*x = CreateProfileRequest{}
-	mi := &file_profile_proto_msgTypes[3]
+	mi := &file_profile_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -216,7 +268,7 @@ func (x *CreateProfileRequest) String() string {
 func (*CreateProfileRequest) ProtoMessage() {}
 
 func (x *CreateProfileRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_profile_proto_msgTypes[3]
+	mi := &file_profile_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -229,10 +281,10 @@ func (x *CreateProfileRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateProfileRequest.ProtoReflect.Descriptor instead.
 func (*CreateProfileRequest) Descriptor() ([]byte, []int) {
-	return file_profile_proto_rawDescGZIP(), []int{3}
+	return file_profile_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *CreateProfileRequest) GetProfile() *Profile {
+func (x *CreateProfileRequest) GetProfile() *ProfileInput {
 	if x != nil {
 		return x.Profile
 	}
@@ -248,7 +300,7 @@ type GetProfileRequest struct {
 
 func (x *GetProfileRequest) Reset() {
 	*x = GetProfileRequest{}
-	mi := &file_profile_proto_msgTypes[4]
+	mi := &file_profile_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -260,7 +312,7 @@ func (x *GetProfileRequest) String() string {
 func (*GetProfileRequest) ProtoMessage() {}
 
 func (x *GetProfileRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_profile_proto_msgTypes[4]
+	mi := &file_profile_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -273,7 +325,7 @@ func (x *GetProfileRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetProfileRequest.ProtoReflect.Descriptor instead.
 func (*GetProfileRequest) Descriptor() ([]byte, []int) {
-	return file_profile_proto_rawDescGZIP(), []int{4}
+	return file_profile_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *GetProfileRequest) GetProfileId() string {
@@ -293,7 +345,7 @@ type UpdateProfileRequest struct {
 
 func (x *UpdateProfileRequest) Reset() {
 	*x = UpdateProfileRequest{}
-	mi := &file_profile_proto_msgTypes[5]
+	mi := &file_profile_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -305,7 +357,7 @@ func (x *UpdateProfileRequest) String() string {
 func (*UpdateProfileRequest) ProtoMessage() {}
 
 func (x *UpdateProfileRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_profile_proto_msgTypes[5]
+	mi := &file_profile_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -318,7 +370,7 @@ func (x *UpdateProfileRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateProfileRequest.ProtoReflect.Descriptor instead.
 func (*UpdateProfileRequest) Descriptor() ([]byte, []int) {
-	return file_profile_proto_rawDescGZIP(), []int{5}
+	return file_profile_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *UpdateProfileRequest) GetProfileId() string {
@@ -344,7 +396,7 @@ type DeleteProfileRequest struct {
 
 func (x *DeleteProfileRequest) Reset() {
 	*x = DeleteProfileRequest{}
-	mi := &file_profile_proto_msgTypes[6]
+	mi := &file_profile_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -356,7 +408,7 @@ func (x *DeleteProfileRequest) String() string {
 func (*DeleteProfileRequest) ProtoMessage() {}
 
 func (x *DeleteProfileRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_profile_proto_msgTypes[6]
+	mi := &file_profile_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -369,7 +421,7 @@ func (x *DeleteProfileRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteProfileRequest.ProtoReflect.Descriptor instead.
 func (*DeleteProfileRequest) Descriptor() ([]byte, []int) {
-	return file_profile_proto_rawDescGZIP(), []int{6}
+	return file_profile_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *DeleteProfileRequest) GetProfileId() string {
@@ -389,7 +441,7 @@ type ListProfilesRequest struct {
 
 func (x *ListProfilesRequest) Reset() {
 	*x = ListProfilesRequest{}
-	mi := &file_profile_proto_msgTypes[7]
+	mi := &file_profile_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -401,7 +453,7 @@ func (x *ListProfilesRequest) String() string {
 func (*ListProfilesRequest) ProtoMessage() {}
 
 func (x *ListProfilesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_profile_proto_msgTypes[7]
+	mi := &file_profile_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -414,7 +466,7 @@ func (x *ListProfilesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListProfilesRequest.ProtoReflect.Descriptor instead.
 func (*ListProfilesRequest) Descriptor() ([]byte, []int) {
-	return file_profile_proto_rawDescGZIP(), []int{7}
+	return file_profile_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *ListProfilesRequest) GetPageSize() int32 {
@@ -441,7 +493,7 @@ type ListProfilesResponse struct {
 
 func (x *ListProfilesResponse) Reset() {
 	*x = ListProfilesResponse{}
-	mi := &file_profile_proto_msgTypes[8]
+	mi := &file_profile_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -453,7 +505,7 @@ func (x *ListProfilesResponse) String() string {
 func (*ListProfilesResponse) ProtoMessage() {}
 
 func (x *ListProfilesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_profile_proto_msgTypes[8]
+	mi := &file_profile_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -466,7 +518,7 @@ func (x *ListProfilesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListProfilesResponse.ProtoReflect.Descriptor instead.
 func (*ListProfilesResponse) Descriptor() ([]byte, []int) {
-	return file_profile_proto_rawDescGZIP(), []int{8}
+	return file_profile_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *ListProfilesResponse) GetProfiles() []*Profile {
@@ -491,7 +543,11 @@ const file_profile_proto_rawDesc = "" +
 	"\bFullName\x12(\n" +
 	"\n" +
 	"first_name\x18\x01 \x01(\tB\t\xfaB\x06r\x04\x10\x01\x182R\tfirstName\x12&\n" +
-	"\tlast_name\x18\x02 \x01(\tB\t\xfaB\x06r\x04\x10\x01\x182R\blastName\"\xfb\x01\n" +
+	"\tlast_name\x18\x02 \x01(\tB\t\xfaB\x06r\x04\x10\x01\x182R\blastName\"a\n" +
+	"\fProfileInput\x12%\n" +
+	"\x04name\x18\x01 \x01(\v2\x11.user.v1.FullNameR\x04name\x12*\n" +
+	"\fauth_user_id\x18\x02 \x01(\tB\b\xfaB\x05r\x03\x98\x01$R\n" +
+	"authUserId\"\xfb\x01\n" +
 	"\aProfile\x12'\n" +
 	"\n" +
 	"profile_id\x18\x01 \x01(\tB\b\xfaB\x05r\x03\x98\x01$R\tprofileId\x12*\n" +
@@ -504,9 +560,9 @@ const file_profile_proto_rawDesc = "" +
 	"updated_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"<\n" +
 	"\x11ProfileIDResponse\x12'\n" +
 	"\n" +
-	"profile_id\x18\x01 \x01(\tB\b\xfaB\x05r\x03\x98\x01$R\tprofileId\"B\n" +
-	"\x14CreateProfileRequest\x12*\n" +
-	"\aprofile\x18\x01 \x01(\v2\x10.user.v1.ProfileR\aprofile\"<\n" +
+	"profile_id\x18\x01 \x01(\tB\b\xfaB\x05r\x03\x98\x01$R\tprofileId\"G\n" +
+	"\x14CreateProfileRequest\x12/\n" +
+	"\aprofile\x18\x01 \x01(\v2\x15.user.v1.ProfileInputR\aprofile\"<\n" +
 	"\x11GetProfileRequest\x12'\n" +
 	"\n" +
 	"profile_id\x18\x01 \x01(\tB\b\xfaB\x05r\x03\x98\x01$R\tprofileId\"l\n" +
@@ -544,41 +600,43 @@ func file_profile_proto_rawDescGZIP() []byte {
 	return file_profile_proto_rawDescData
 }
 
-var file_profile_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_profile_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_profile_proto_goTypes = []any{
 	(*FullName)(nil),              // 0: user.v1.FullName
-	(*Profile)(nil),               // 1: user.v1.Profile
-	(*ProfileIDResponse)(nil),     // 2: user.v1.ProfileIDResponse
-	(*CreateProfileRequest)(nil),  // 3: user.v1.CreateProfileRequest
-	(*GetProfileRequest)(nil),     // 4: user.v1.GetProfileRequest
-	(*UpdateProfileRequest)(nil),  // 5: user.v1.UpdateProfileRequest
-	(*DeleteProfileRequest)(nil),  // 6: user.v1.DeleteProfileRequest
-	(*ListProfilesRequest)(nil),   // 7: user.v1.ListProfilesRequest
-	(*ListProfilesResponse)(nil),  // 8: user.v1.ListProfilesResponse
-	(*timestamppb.Timestamp)(nil), // 9: google.protobuf.Timestamp
+	(*ProfileInput)(nil),          // 1: user.v1.ProfileInput
+	(*Profile)(nil),               // 2: user.v1.Profile
+	(*ProfileIDResponse)(nil),     // 3: user.v1.ProfileIDResponse
+	(*CreateProfileRequest)(nil),  // 4: user.v1.CreateProfileRequest
+	(*GetProfileRequest)(nil),     // 5: user.v1.GetProfileRequest
+	(*UpdateProfileRequest)(nil),  // 6: user.v1.UpdateProfileRequest
+	(*DeleteProfileRequest)(nil),  // 7: user.v1.DeleteProfileRequest
+	(*ListProfilesRequest)(nil),   // 8: user.v1.ListProfilesRequest
+	(*ListProfilesResponse)(nil),  // 9: user.v1.ListProfilesResponse
+	(*timestamppb.Timestamp)(nil), // 10: google.protobuf.Timestamp
 }
 var file_profile_proto_depIdxs = []int32{
-	0,  // 0: user.v1.Profile.name:type_name -> user.v1.FullName
-	9,  // 1: user.v1.Profile.created_at:type_name -> google.protobuf.Timestamp
-	9,  // 2: user.v1.Profile.updated_at:type_name -> google.protobuf.Timestamp
-	1,  // 3: user.v1.CreateProfileRequest.profile:type_name -> user.v1.Profile
-	0,  // 4: user.v1.UpdateProfileRequest.profile:type_name -> user.v1.FullName
-	1,  // 5: user.v1.ListProfilesResponse.profiles:type_name -> user.v1.Profile
-	3,  // 6: user.v1.UserProfileService.CreateProfile:input_type -> user.v1.CreateProfileRequest
-	4,  // 7: user.v1.UserProfileService.GetProfile:input_type -> user.v1.GetProfileRequest
-	5,  // 8: user.v1.UserProfileService.UpdateProfile:input_type -> user.v1.UpdateProfileRequest
-	6,  // 9: user.v1.UserProfileService.DeleteProfile:input_type -> user.v1.DeleteProfileRequest
-	7,  // 10: user.v1.UserProfileService.ListProfiles:input_type -> user.v1.ListProfilesRequest
-	2,  // 11: user.v1.UserProfileService.CreateProfile:output_type -> user.v1.ProfileIDResponse
-	1,  // 12: user.v1.UserProfileService.GetProfile:output_type -> user.v1.Profile
-	2,  // 13: user.v1.UserProfileService.UpdateProfile:output_type -> user.v1.ProfileIDResponse
-	2,  // 14: user.v1.UserProfileService.DeleteProfile:output_type -> user.v1.ProfileIDResponse
-	8,  // 15: user.v1.UserProfileService.ListProfiles:output_type -> user.v1.ListProfilesResponse
-	11, // [11:16] is the sub-list for method output_type
-	6,  // [6:11] is the sub-list for method input_type
-	6,  // [6:6] is the sub-list for extension type_name
-	6,  // [6:6] is the sub-list for extension extendee
-	0,  // [0:6] is the sub-list for field type_name
+	0,  // 0: user.v1.ProfileInput.name:type_name -> user.v1.FullName
+	0,  // 1: user.v1.Profile.name:type_name -> user.v1.FullName
+	10, // 2: user.v1.Profile.created_at:type_name -> google.protobuf.Timestamp
+	10, // 3: user.v1.Profile.updated_at:type_name -> google.protobuf.Timestamp
+	1,  // 4: user.v1.CreateProfileRequest.profile:type_name -> user.v1.ProfileInput
+	0,  // 5: user.v1.UpdateProfileRequest.profile:type_name -> user.v1.FullName
+	2,  // 6: user.v1.ListProfilesResponse.profiles:type_name -> user.v1.Profile
+	4,  // 7: user.v1.UserProfileService.CreateProfile:input_type -> user.v1.CreateProfileRequest
+	5,  // 8: user.v1.UserProfileService.GetProfile:input_type -> user.v1.GetProfileRequest
+	6,  // 9: user.v1.UserProfileService.UpdateProfile:input_type -> user.v1.UpdateProfileRequest
+	7,  // 10: user.v1.UserProfileService.DeleteProfile:input_type -> user.v1.DeleteProfileRequest
+	8,  // 11: user.v1.UserProfileService.ListProfiles:input_type -> user.v1.ListProfilesRequest
+	3,  // 12: user.v1.UserProfileService.CreateProfile:output_type -> user.v1.ProfileIDResponse
+	2,  // 13: user.v1.UserProfileService.GetProfile:output_type -> user.v1.Profile
+	3,  // 14: user.v1.UserProfileService.UpdateProfile:output_type -> user.v1.ProfileIDResponse
+	3,  // 15: user.v1.UserProfileService.DeleteProfile:output_type -> user.v1.ProfileIDResponse
+	9,  // 16: user.v1.UserProfileService.ListProfiles:output_type -> user.v1.ListProfilesResponse
+	12, // [12:17] is the sub-list for method output_type
+	7,  // [7:12] is the sub-list for method input_type
+	7,  // [7:7] is the sub-list for extension type_name
+	7,  // [7:7] is the sub-list for extension extendee
+	0,  // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_profile_proto_init() }
@@ -592,7 +650,7 @@ func file_profile_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_profile_proto_rawDesc), len(file_profile_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   9,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

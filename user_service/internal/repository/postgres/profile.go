@@ -2,7 +2,7 @@ package repo
 
 import (
 	"context"
-	"fmt"
+	"time"
 
 	"github.com/DENFNC/Zappy/user_service/internal/domain/models"
 	psql "github.com/DENFNC/Zappy/user_service/internal/storage/postgres"
@@ -34,18 +34,19 @@ func (r *ProfileRepo) Create(ctx context.Context, profile *models.Profile) (stri
 			"auth_user_id": profile.AuthUserID,
 			"first_name":   profile.FirstName,
 			"last_name":    profile.LastName,
+			"created_at":   time.Now(),
+			"updated_at":   time.Now(),
 		}).
 		Prepared(true).
 		ToSQL()
-
 	if err != nil {
-		return "", fmt.Errorf("failed to build SQL: %w", err)
+		return "", err
 	}
 
 	var profileID string
 	err = r.DB.QueryRow(ctx, stmt, args...).Scan(&profileID)
 	if err != nil {
-		return "", fmt.Errorf("failed to insert profile: %w", err)
+		return "", err
 	}
 
 	return profileID, nil
@@ -67,9 +68,8 @@ func (r *ProfileRepo) GetByID(ctx context.Context, id string) (*models.Profile, 
 		Where(goqu.C("profile_id").Eq(id)).
 		Prepared(true).
 		ToSQL()
-
 	if err != nil {
-		return nil, fmt.Errorf("failed to build SQL: %w", err)
+		return nil, err
 	}
 
 	err = r.DB.QueryRow(ctx, stmt, args...).Scan(
@@ -81,7 +81,7 @@ func (r *ProfileRepo) GetByID(ctx context.Context, id string) (*models.Profile, 
 		&profile.UpdatedAt,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("failed to fetch profile: %w", err)
+		return nil, err
 	}
 
 	return &profile, nil
@@ -111,13 +111,13 @@ func (r *ProfileRepo) Update(ctx context.Context, profile *models.Profile) (stri
 		ToSQL()
 
 	if err != nil {
-		return "", fmt.Errorf("failed to build SQL: %w", err)
+		return "", err
 	}
 
 	var profileID string
 	err = r.DB.QueryRow(ctx, stmt, args...).Scan(&profileID)
 	if err != nil {
-		return "", fmt.Errorf("failed to update profile: %w", err)
+		return "", err
 	}
 
 	return profileID, nil
@@ -132,13 +132,13 @@ func (r *ProfileRepo) Delete(ctx context.Context, id string) (string, error) {
 		ToSQL()
 
 	if err != nil {
-		return "", fmt.Errorf("failed to build SQL: %w", err)
+		return "", err
 	}
 
 	var profileID string
 	err = r.DB.QueryRow(ctx, stmt, args...).Scan(&profileID)
 	if err != nil {
-		return "", fmt.Errorf("failed to delete profile: %w", err)
+		return "", err
 	}
 
 	return profileID, nil

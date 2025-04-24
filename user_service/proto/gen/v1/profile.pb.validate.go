@@ -156,6 +156,146 @@ var _ interface {
 	ErrorName() string
 } = FullNameValidationError{}
 
+// Validate checks the field values on ProfileInput with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *ProfileInput) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ProfileInput with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in ProfileInputMultiError, or
+// nil if none found.
+func (m *ProfileInput) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ProfileInput) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetName()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ProfileInputValidationError{
+					field:  "Name",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ProfileInputValidationError{
+					field:  "Name",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetName()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ProfileInputValidationError{
+				field:  "Name",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if utf8.RuneCountInString(m.GetAuthUserId()) != 36 {
+		err := ProfileInputValidationError{
+			field:  "AuthUserId",
+			reason: "value length must be 36 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+
+	}
+
+	if len(errors) > 0 {
+		return ProfileInputMultiError(errors)
+	}
+
+	return nil
+}
+
+// ProfileInputMultiError is an error wrapping multiple validation errors
+// returned by ProfileInput.ValidateAll() if the designated constraints aren't met.
+type ProfileInputMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ProfileInputMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ProfileInputMultiError) AllErrors() []error { return m }
+
+// ProfileInputValidationError is the validation error returned by
+// ProfileInput.Validate if the designated constraints aren't met.
+type ProfileInputValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ProfileInputValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ProfileInputValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ProfileInputValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ProfileInputValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ProfileInputValidationError) ErrorName() string { return "ProfileInputValidationError" }
+
+// Error satisfies the builtin error interface
+func (e ProfileInputValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sProfileInput.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ProfileInputValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ProfileInputValidationError{}
+
 // Validate checks the field values on Profile with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.

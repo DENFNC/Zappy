@@ -11,6 +11,11 @@ message FullName {
   string last_name  = 2 [(validate.rules).string = {min_len: 1, max_len: 50}];
 }
 
+message ProfileInput {
+  FullName name = 1;
+  string auth_user_id = 2 [(validate.rules).string = {len: 36}];
+}
+
 message Profile {
   string profile_id   = 1 [(validate.rules).string = {len: 36}];
   string auth_user_id = 2 [(validate.rules).string = {len: 36}];
@@ -24,7 +29,7 @@ message ProfileIDResponse {
 }
 
 message CreateProfileRequest {
-  Profile profile = 1;
+  ProfileInput profile = 1;
 }
 
 message GetProfileRequest {

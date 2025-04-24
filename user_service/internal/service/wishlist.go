@@ -27,16 +27,6 @@ func (s *WishlistService) CreateItem(ctx context.Context, profileID, productID s
 	const op = "service.WishlistService.CreateItem"
 	log := s.log.With("op", op)
 
-	exists, err := s.repo.Exists(ctx, profileID, productID)
-	if err != nil {
-		log.Error("Failed to check if wishlist item exists", slog.String("error", err.Error()))
-		return "", errpkg.New("EXISTS_ERROR", "Failed to check if item exists", err)
-	}
-
-	if exists {
-		return "", errpkg.New("ALREADY_EXISTS", "Item already exists in wishlist", nil)
-	}
-
 	item := &models.WishlistItem{
 		ProfileID: profileID,
 		ProductID: productID,
@@ -60,7 +50,7 @@ func (s *WishlistService) GetItem(ctx context.Context, itemID string) (*models.W
 	item, err := s.repo.GetItemByID(ctx, itemID)
 	if err != nil {
 		if errors.Is(err, errpkg.ErrNotFound) {
-			log.Error("Wishlist item not found", slog.String("itemID", itemID))
+			log.Error("Not found", slog.String("itemID", itemID))
 			return nil, errpkg.ErrNotFound
 		}
 		log.Error("Failed to get wishlist item", slog.String("error", err.Error()))
@@ -90,17 +80,6 @@ func (s *WishlistService) UpdateItem(ctx context.Context, item *models.WishlistI
 func (s *WishlistService) DeleteItem(ctx context.Context, itemID string) error {
 	const op = "service.WishlistService.DeleteItem"
 	log := s.log.With("op", op)
-
-	// Проверим сначала существует ли элемент
-	_, err := s.repo.GetItemByID(ctx, itemID)
-	if err != nil {
-		if errors.Is(err, errpkg.ErrNotFound) {
-			log.Error("Wishlist item not found", slog.String("itemID", itemID))
-			return errpkg.ErrNotFound
-		}
-		log.Error("Failed to get wishlist item before deletion", slog.String("error", err.Error()))
-		return errpkg.New("GET_ERROR", "Failed to get wishlist item", err)
-	}
 
 	if err := s.repo.RemoveItem(ctx, itemID); err != nil {
 		log.Error("Failed to delete wishlist item", slog.String("error", err.Error()))
