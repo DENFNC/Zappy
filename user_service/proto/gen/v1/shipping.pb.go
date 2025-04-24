@@ -22,11 +22,10 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// Core data model for a shipping  (response payload)
 type Shipping struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	AddressId     uint32                 `protobuf:"varint,1,opt,name=address_id,json=addressId,proto3" json:"address_id,omitempty"`
-	ProfileId     uint32                 `protobuf:"varint,2,opt,name=profile_id,json=profileId,proto3" json:"profile_id,omitempty"`
+	AddressId     string                 `protobuf:"bytes,1,opt,name=address_id,json=addressId,proto3" json:"address_id,omitempty"`
+	ProfileId     string                 `protobuf:"bytes,2,opt,name=profile_id,json=profileId,proto3" json:"profile_id,omitempty"`
 	Country       string                 `protobuf:"bytes,3,opt,name=country,proto3" json:"country,omitempty"`
 	City          string                 `protobuf:"bytes,4,opt,name=city,proto3" json:"city,omitempty"`
 	Street        string                 `protobuf:"bytes,5,opt,name=street,proto3" json:"street,omitempty"`
@@ -66,18 +65,18 @@ func (*Shipping) Descriptor() ([]byte, []int) {
 	return file_shipping_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Shipping) GetAddressId() uint32 {
+func (x *Shipping) GetAddressId() string {
 	if x != nil {
 		return x.AddressId
 	}
-	return 0
+	return ""
 }
 
-func (x *Shipping) GetProfileId() uint32 {
+func (x *Shipping) GetProfileId() string {
 	if x != nil {
 		return x.ProfileId
 	}
-	return 0
+	return ""
 }
 
 func (x *Shipping) GetCountry() string {
@@ -117,7 +116,7 @@ func (x *Shipping) GetIsDefault() bool {
 
 type ShippingInput struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ProfileId     uint32                 `protobuf:"varint,1,opt,name=profile_id,json=profileId,proto3" json:"profile_id,omitempty"`
+	ProfileId     string                 `protobuf:"bytes,1,opt,name=profile_id,json=profileId,proto3" json:"profile_id,omitempty"`
 	Country       string                 `protobuf:"bytes,2,opt,name=country,proto3" json:"country,omitempty"`
 	City          string                 `protobuf:"bytes,3,opt,name=city,proto3" json:"city,omitempty"`
 	Street        string                 `protobuf:"bytes,4,opt,name=street,proto3" json:"street,omitempty"`
@@ -156,11 +155,11 @@ func (*ShippingInput) Descriptor() ([]byte, []int) {
 	return file_shipping_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *ShippingInput) GetProfileId() uint32 {
+func (x *ShippingInput) GetProfileId() string {
 	if x != nil {
 		return x.ProfileId
 	}
-	return 0
+	return ""
 }
 
 func (x *ShippingInput) GetCountry() string {
@@ -193,7 +192,7 @@ func (x *ShippingInput) GetPostalCode() string {
 
 type ShippingId struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	AddressId     uint32                 `protobuf:"varint,1,opt,name=address_id,json=addressId,proto3" json:"address_id,omitempty"`
+	AddressId     string                 `protobuf:"bytes,1,opt,name=address_id,json=addressId,proto3" json:"address_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -228,11 +227,11 @@ func (*ShippingId) Descriptor() ([]byte, []int) {
 	return file_shipping_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *ShippingId) GetAddressId() uint32 {
+func (x *ShippingId) GetAddressId() string {
 	if x != nil {
 		return x.AddressId
 	}
-	return 0
+	return ""
 }
 
 type CreateShippingRequest struct {
@@ -510,7 +509,7 @@ func (x *UpdateShippingResponse) GetId() *ShippingId {
 type SetDefaultShippingRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            *ShippingId            `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	ProfileId     uint32                 `protobuf:"varint,2,opt,name=profile_id,json=profileId,proto3" json:"profile_id,omitempty"`
+	ProfileId     string                 `protobuf:"bytes,2,opt,name=profile_id,json=profileId,proto3" json:"profile_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -552,11 +551,11 @@ func (x *SetDefaultShippingRequest) GetId() *ShippingId {
 	return nil
 }
 
-func (x *SetDefaultShippingRequest) GetProfileId() uint32 {
+func (x *SetDefaultShippingRequest) GetProfileId() string {
 	if x != nil {
 		return x.ProfileId
 	}
-	return 0
+	return ""
 }
 
 type SetDefaultShippingResponse struct {
@@ -693,7 +692,7 @@ func (x *DeleteShippingResponse) GetId() *ShippingId {
 
 type ListShippingRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ProfileId     uint32                 `protobuf:"varint,1,opt,name=profile_id,json=profileId,proto3" json:"profile_id,omitempty"`
+	ProfileId     string                 `protobuf:"bytes,1,opt,name=profile_id,json=profileId,proto3" json:"profile_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -728,16 +727,16 @@ func (*ListShippingRequest) Descriptor() ([]byte, []int) {
 	return file_shipping_proto_rawDescGZIP(), []int{13}
 }
 
-func (x *ListShippingRequest) GetProfileId() uint32 {
+func (x *ListShippingRequest) GetProfileId() string {
 	if x != nil {
 		return x.ProfileId
 	}
-	return 0
+	return ""
 }
 
 type ListShippingResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Es            []*Shipping            `protobuf:"bytes,1,rep,name=es,proto3" json:"es,omitempty"`
+	Shippings     []*Shipping            `protobuf:"bytes,1,rep,name=shippings,proto3" json:"shippings,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -772,9 +771,9 @@ func (*ListShippingResponse) Descriptor() ([]byte, []int) {
 	return file_shipping_proto_rawDescGZIP(), []int{14}
 }
 
-func (x *ListShippingResponse) GetEs() []*Shipping {
+func (x *ListShippingResponse) GetShippings() []*Shipping {
 	if x != nil {
-		return x.Es
+		return x.Shippings
 	}
 	return nil
 }
@@ -783,32 +782,31 @@ var File_shipping_proto protoreflect.FileDescriptor
 
 const file_shipping_proto_rawDesc = "" +
 	"\n" +
-	"\x0eshipping.proto\x12\auser.v1\x1a\x17validate/validate.proto\"\x83\x02\n" +
-	"\bShipping\x12\x1d\n" +
+	"\x0eshipping.proto\x12\auser.v1\x1a\x17validate/validate.proto\"\x8e\x02\n" +
+	"\bShipping\x12'\n" +
 	"\n" +
-	"address_id\x18\x01 \x01(\rR\taddressId\x12&\n" +
+	"address_id\x18\x01 \x01(\tB\b\xfaB\x05r\x03\x98\x01$R\taddressId\x12'\n" +
 	"\n" +
-	"profile_id\x18\x02 \x01(\rB\a\xfaB\x04*\x02 \x00R\tprofileId\x12#\n" +
+	"profile_id\x18\x02 \x01(\tB\b\xfaB\x05r\x03\x98\x01$R\tprofileId\x12#\n" +
 	"\acountry\x18\x03 \x01(\tB\t\xfaB\x06r\x04\x10\x01\x182R\acountry\x12\x1d\n" +
 	"\x04city\x18\x04 \x01(\tB\t\xfaB\x06r\x04\x10\x01\x182R\x04city\x12!\n" +
 	"\x06street\x18\x05 \x01(\tB\t\xfaB\x06r\x04\x10\x01\x18dR\x06street\x12*\n" +
 	"\vpostal_code\x18\x06 \x01(\tB\t\xfaB\x06r\x04\x10\x01\x18\x14R\n" +
 	"postalCode\x12\x1d\n" +
 	"\n" +
-	"is_default\x18\a \x01(\bR\tisDefault\"\xca\x01\n" +
-	"\rShippingInput\x12&\n" +
+	"is_default\x18\a \x01(\bR\tisDefault\"\xcb\x01\n" +
+	"\rShippingInput\x12'\n" +
 	"\n" +
-	"profile_id\x18\x01 \x01(\rB\a\xfaB\x04*\x02 \x00R\tprofileId\x12#\n" +
+	"profile_id\x18\x01 \x01(\tB\b\xfaB\x05r\x03\x98\x01$R\tprofileId\x12#\n" +
 	"\acountry\x18\x02 \x01(\tB\t\xfaB\x06r\x04\x10\x01\x182R\acountry\x12\x1d\n" +
 	"\x04city\x18\x03 \x01(\tB\t\xfaB\x06r\x04\x10\x01\x182R\x04city\x12!\n" +
 	"\x06street\x18\x04 \x01(\tB\t\xfaB\x06r\x04\x10\x01\x18dR\x06street\x12*\n" +
 	"\vpostal_code\x18\x05 \x01(\tB\t\xfaB\x06r\x04\x10\x01\x18\x14R\n" +
-	"postalCode\":\n" +
+	"postalCode\"5\n" +
 	"\n" +
-	"ShippingId\x12,\n" +
+	"ShippingId\x12'\n" +
 	"\n" +
-	"address_id\x18\x01 \x01(\rB\r\xfaB\n" +
-	"*\b\x10\xff\xff\xff\xff\a \x00R\taddressId\"I\n" +
+	"address_id\x18\x01 \x01(\tB\b\xfaB\x05r\x03\x98\x01$R\taddressId\"I\n" +
 	"\x15CreateShippingRequest\x120\n" +
 	"\aaddress\x18\x01 \x01(\v2\x16.user.v1.ShippingInputR\aaddress\"=\n" +
 	"\x16CreateShippingResponse\x12#\n" +
@@ -821,31 +819,29 @@ const file_shipping_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\v2\x13.user.v1.ShippingIdR\x02id\x120\n" +
 	"\aaddress\x18\x02 \x01(\v2\x16.user.v1.ShippingInputR\aaddress\"=\n" +
 	"\x16UpdateShippingResponse\x12#\n" +
-	"\x02id\x18\x01 \x01(\v2\x13.user.v1.ShippingIdR\x02id\"n\n" +
+	"\x02id\x18\x01 \x01(\v2\x13.user.v1.ShippingIdR\x02id\"i\n" +
 	"\x19SetDefaultShippingRequest\x12#\n" +
-	"\x02id\x18\x01 \x01(\v2\x13.user.v1.ShippingIdR\x02id\x12,\n" +
+	"\x02id\x18\x01 \x01(\v2\x13.user.v1.ShippingIdR\x02id\x12'\n" +
 	"\n" +
-	"profile_id\x18\x02 \x01(\rB\r\xfaB\n" +
-	"*\b\x10\xff\xff\xff\xff\a \x00R\tprofileId\"A\n" +
+	"profile_id\x18\x02 \x01(\tB\b\xfaB\x05r\x03\x98\x01$R\tprofileId\"A\n" +
 	"\x1aSetDefaultShippingResponse\x12#\n" +
 	"\x02id\x18\x01 \x01(\v2\x13.user.v1.ShippingIdR\x02id\"<\n" +
 	"\x15DeleteShippingRequest\x12#\n" +
 	"\x02id\x18\x01 \x01(\v2\x13.user.v1.ShippingIdR\x02id\"=\n" +
 	"\x16DeleteShippingResponse\x12#\n" +
-	"\x02id\x18\x01 \x01(\v2\x13.user.v1.ShippingIdR\x02id\"C\n" +
-	"\x13ListShippingRequest\x12,\n" +
+	"\x02id\x18\x01 \x01(\v2\x13.user.v1.ShippingIdR\x02id\">\n" +
+	"\x13ListShippingRequest\x12'\n" +
 	"\n" +
-	"profile_id\x18\x01 \x01(\rB\r\xfaB\n" +
-	"*\b\x10\xff\xff\xff\xff\a \x00R\tprofileId\"9\n" +
-	"\x14ListShippingResponse\x12!\n" +
-	"\x02es\x18\x01 \x03(\v2\x11.user.v1.ShippingR\x02es2\x8c\x04\n" +
-	"\x0fShippingService\x12S\n" +
-	"\x0eCreateShipping\x12\x1e.user.v1.CreateShippingRequest\x1a\x1f.user.v1.CreateShippingResponse\"\x00\x12J\n" +
-	"\vGetShipping\x12\x1b.user.v1.GetShippingRequest\x1a\x1c.user.v1.GetShippingResponse\"\x00\x12S\n" +
-	"\x0eUpdateShipping\x12\x1e.user.v1.UpdateShippingRequest\x1a\x1f.user.v1.UpdateShippingResponse\"\x00\x12_\n" +
-	"\x12SetDefaultShipping\x12\".user.v1.SetDefaultShippingRequest\x1a#.user.v1.SetDefaultShippingResponse\"\x00\x12S\n" +
-	"\x0eDeleteShipping\x12\x1e.user.v1.DeleteShippingRequest\x1a\x1f.user.v1.DeleteShippingResponse\"\x00\x12M\n" +
-	"\fListShipping\x12\x1c.user.v1.ListShippingRequest\x1a\x1d.user.v1.ListShippingResponse\"\x00B6Z4github.com/DENFNC/Zappy/user_service/proto/gen/v1;v1b\x06proto3"
+	"profile_id\x18\x01 \x01(\tB\b\xfaB\x05r\x03\x98\x01$R\tprofileId\"G\n" +
+	"\x14ListShippingResponse\x12/\n" +
+	"\tshippings\x18\x01 \x03(\v2\x11.user.v1.ShippingR\tshippings2\x80\x04\n" +
+	"\x0fShippingService\x12Q\n" +
+	"\x0eCreateShipping\x12\x1e.user.v1.CreateShippingRequest\x1a\x1f.user.v1.CreateShippingResponse\x12H\n" +
+	"\vGetShipping\x12\x1b.user.v1.GetShippingRequest\x1a\x1c.user.v1.GetShippingResponse\x12Q\n" +
+	"\x0eUpdateShipping\x12\x1e.user.v1.UpdateShippingRequest\x1a\x1f.user.v1.UpdateShippingResponse\x12]\n" +
+	"\x12SetDefaultShipping\x12\".user.v1.SetDefaultShippingRequest\x1a#.user.v1.SetDefaultShippingResponse\x12Q\n" +
+	"\x0eDeleteShipping\x12\x1e.user.v1.DeleteShippingRequest\x1a\x1f.user.v1.DeleteShippingResponse\x12K\n" +
+	"\fListShipping\x12\x1c.user.v1.ListShippingRequest\x1a\x1d.user.v1.ListShippingResponseB6Z4github.com/DENFNC/Zappy/user_service/proto/gen/v1;v1b\x06proto3"
 
 var (
 	file_shipping_proto_rawDescOnce sync.Once
@@ -889,7 +885,7 @@ var file_shipping_proto_depIdxs = []int32{
 	2,  // 8: user.v1.SetDefaultShippingResponse.id:type_name -> user.v1.ShippingId
 	2,  // 9: user.v1.DeleteShippingRequest.id:type_name -> user.v1.ShippingId
 	2,  // 10: user.v1.DeleteShippingResponse.id:type_name -> user.v1.ShippingId
-	0,  // 11: user.v1.ListShippingResponse.es:type_name -> user.v1.Shipping
+	0,  // 11: user.v1.ListShippingResponse.shippings:type_name -> user.v1.Shipping
 	3,  // 12: user.v1.ShippingService.CreateShipping:input_type -> user.v1.CreateShippingRequest
 	5,  // 13: user.v1.ShippingService.GetShipping:input_type -> user.v1.GetShippingRequest
 	7,  // 14: user.v1.ShippingService.UpdateShipping:input_type -> user.v1.UpdateShippingRequest

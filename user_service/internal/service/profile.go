@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	emptyValue = 0
+	emptyStringValue = ""
 )
 
 type Profile struct {
@@ -33,10 +33,10 @@ func NewProfile(
 
 func (p *Profile) Create(
 	ctx context.Context,
-	authUserID uint32,
+	authUserID string,
 	firstName string,
 	lastName string,
-) (uint32, error) {
+) (string, error) {
 	const op = "service.Profile.Create"
 
 	log := p.log.With("op", op)
@@ -53,13 +53,13 @@ func (p *Profile) Create(
 			"Critical error",
 			slog.String("error", err.Error()),
 		)
-		return emptyValue, errpkg.New("CREATE_ERROR", "Couldn't create profile", err)
+		return emptyStringValue, errpkg.New("CREATE_ERROR", "Couldn't create profile", err)
 	}
 
 	return profileID, nil
 }
 
-func (p *Profile) Delete(ctx context.Context, profileID uint32) (uint32, error) {
+func (p *Profile) Delete(ctx context.Context, profileID string) (string, error) {
 	const op = "service.Profile.Delete"
 
 	log := p.log.With("op", op)
@@ -69,20 +69,20 @@ func (p *Profile) Delete(ctx context.Context, profileID uint32) (uint32, error) 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			log.Error("Profile not found")
-			return emptyValue, errpkg.ErrNotFound
+			return emptyStringValue, errpkg.ErrNotFound
 		}
 		log.Error(
 			"Critical error",
 			slog.String("error", err.Error()),
 		)
 
-		return emptyValue, errpkg.New("DELETE_ERROR", "couldn't delete value", err)
+		return emptyStringValue, errpkg.New("DELETE_ERROR", "couldn't delete value", err)
 	}
 
 	return profileID, nil
 }
 
-func (p *Profile) GetByID(ctx context.Context, profileID uint32) (*models.Profile, error) {
+func (p *Profile) GetByID(ctx context.Context, profileID string) (*models.Profile, error) {
 	const op = "service.Profile.GetByID"
 
 	log := p.log.With("op", op)
@@ -109,7 +109,7 @@ func (p *Profile) List(context.Context, []any) ([]any, string, error) {
 	panic("implement me")
 }
 
-func (p *Profile) Update(ctx context.Context, profileID uint32, firstName, lastName string) (uint32, error) {
+func (p *Profile) Update(ctx context.Context, profileID string, firstName, lastName string) (string, error) {
 	const op = "service.Profile.Update"
 
 	log := p.log.With("op", op)
@@ -128,14 +128,14 @@ func (p *Profile) Update(ctx context.Context, profileID uint32, firstName, lastN
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			log.Error("Profile not found")
-			return emptyValue, errpkg.ErrNotFound
+			return emptyStringValue, errpkg.ErrNotFound
 		}
 		log.Error(
 			"Critical error",
 			slog.String("error", err.Error()),
 		)
 
-		return emptyValue, errpkg.New("UPDATE_ERROR", "couldn't update value", err)
+		return emptyStringValue, errpkg.New("UPDATE_ERROR", "couldn't update value", err)
 	}
 
 	return profileID, nil

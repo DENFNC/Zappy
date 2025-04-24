@@ -1,10 +1,16 @@
 package repositories
 
-import "github.com/DENFNC/Zappy/user_service/internal/domain/models"
+import (
+	"context"
+
+	"github.com/DENFNC/Zappy/user_service/internal/domain/models"
+)
 
 type WishlistRepository interface {
-	AddItem(item *models.WishlistItem) (int, error)
-	GetItemsByProfileID(profileID int) ([]*models.WishlistItem, error)
-	RemoveItem(itemID int) error
-	Exists(profileID int, productID int) (bool, error)
+	AddItem(ctx context.Context, item *models.WishlistItem) (string, error)
+	GetItemByID(ctx context.Context, itemID string) (*models.WishlistItem, error)
+	GetItemsByProfileID(ctx context.Context, profileID string) ([]*models.WishlistItem, error)
+	RemoveItem(ctx context.Context, itemID string) error
+	UpdateItem(ctx context.Context, item *models.WishlistItem) (*models.WishlistItem, error)
+	Exists(ctx context.Context, profileID string, productID string) (bool, error)
 }

@@ -24,7 +24,7 @@ const (
 
 type PaymentInput struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ProfileId     uint32                 `protobuf:"varint,1,opt,name=profile_id,json=profileId,proto3" json:"profile_id,omitempty"`
+	ProfileId     string                 `protobuf:"bytes,1,opt,name=profile_id,json=profileId,proto3" json:"profile_id,omitempty"`
 	PaymentToken  string                 `protobuf:"bytes,2,opt,name=payment_token,json=paymentToken,proto3" json:"payment_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -60,11 +60,11 @@ func (*PaymentInput) Descriptor() ([]byte, []int) {
 	return file_payment_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *PaymentInput) GetProfileId() uint32 {
+func (x *PaymentInput) GetProfileId() string {
 	if x != nil {
 		return x.ProfileId
 	}
-	return 0
+	return ""
 }
 
 func (x *PaymentInput) GetPaymentToken() string {
@@ -76,8 +76,8 @@ func (x *PaymentInput) GetPaymentToken() string {
 
 type Payment struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	PaymentId     uint32                 `protobuf:"varint,1,opt,name=payment_id,json=paymentId,proto3" json:"payment_id,omitempty"`
-	ProfileId     uint32                 `protobuf:"varint,2,opt,name=profile_id,json=profileId,proto3" json:"profile_id,omitempty"`
+	PaymentId     string                 `protobuf:"bytes,1,opt,name=payment_id,json=paymentId,proto3" json:"payment_id,omitempty"`
+	ProfileId     string                 `protobuf:"bytes,2,opt,name=profile_id,json=profileId,proto3" json:"profile_id,omitempty"`
 	PaymentToken  string                 `protobuf:"bytes,3,opt,name=payment_token,json=paymentToken,proto3" json:"payment_token,omitempty"`
 	IsDefault     bool                   `protobuf:"varint,4,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -114,18 +114,18 @@ func (*Payment) Descriptor() ([]byte, []int) {
 	return file_payment_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *Payment) GetPaymentId() uint32 {
+func (x *Payment) GetPaymentId() string {
 	if x != nil {
 		return x.PaymentId
 	}
-	return 0
+	return ""
 }
 
-func (x *Payment) GetProfileId() uint32 {
+func (x *Payment) GetProfileId() string {
 	if x != nil {
 		return x.ProfileId
 	}
-	return 0
+	return ""
 }
 
 func (x *Payment) GetPaymentToken() string {
@@ -144,7 +144,7 @@ func (x *Payment) GetIsDefault() bool {
 
 type ResourceID struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -179,16 +179,16 @@ func (*ResourceID) Descriptor() ([]byte, []int) {
 	return file_payment_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *ResourceID) GetId() uint32 {
+func (x *ResourceID) GetId() string {
 	if x != nil {
 		return x.Id
 	}
-	return 0
+	return ""
 }
 
 type UpdatePaymentRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	PaymentId     uint32                 `protobuf:"varint,1,opt,name=payment_id,json=paymentId,proto3" json:"payment_id,omitempty"`
+	PaymentId     string                 `protobuf:"bytes,1,opt,name=payment_id,json=paymentId,proto3" json:"payment_id,omitempty"`
 	Payment       *PaymentInput          `protobuf:"bytes,2,opt,name=payment,proto3" json:"payment,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -224,11 +224,11 @@ func (*UpdatePaymentRequest) Descriptor() ([]byte, []int) {
 	return file_payment_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *UpdatePaymentRequest) GetPaymentId() uint32 {
+func (x *UpdatePaymentRequest) GetPaymentId() string {
 	if x != nil {
 		return x.PaymentId
 	}
-	return 0
+	return ""
 }
 
 func (x *UpdatePaymentRequest) GetPayment() *PaymentInput {
@@ -240,7 +240,7 @@ func (x *UpdatePaymentRequest) GetPayment() *PaymentInput {
 
 type ResourceByIDRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -275,16 +275,16 @@ func (*ResourceByIDRequest) Descriptor() ([]byte, []int) {
 	return file_payment_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *ResourceByIDRequest) GetId() uint32 {
+func (x *ResourceByIDRequest) GetId() string {
 	if x != nil {
 		return x.Id
 	}
-	return 0
+	return ""
 }
 
 type ListByProfileRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ProfileId     uint32                 `protobuf:"varint,1,opt,name=profile_id,json=profileId,proto3" json:"profile_id,omitempty"`
+	ProfileId     string                 `protobuf:"bytes,1,opt,name=profile_id,json=profileId,proto3" json:"profile_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -319,11 +319,11 @@ func (*ListByProfileRequest) Descriptor() ([]byte, []int) {
 	return file_payment_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *ListByProfileRequest) GetProfileId() uint32 {
+func (x *ListByProfileRequest) GetProfileId() string {
 	if x != nil {
 		return x.ProfileId
 	}
-	return 0
+	return ""
 }
 
 type ListPaymentResponse struct {
@@ -372,8 +372,8 @@ func (x *ListPaymentResponse) GetPayments() []*Payment {
 
 type SetDefaultPaymentRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	PaymentId     uint32                 `protobuf:"varint,1,opt,name=payment_id,json=paymentId,proto3" json:"payment_id,omitempty"`
-	ProfileId     uint32                 `protobuf:"varint,2,opt,name=profile_id,json=profileId,proto3" json:"profile_id,omitempty"`
+	PaymentId     string                 `protobuf:"bytes,1,opt,name=payment_id,json=paymentId,proto3" json:"payment_id,omitempty"`
+	ProfileId     string                 `protobuf:"bytes,2,opt,name=profile_id,json=profileId,proto3" json:"profile_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -408,57 +408,57 @@ func (*SetDefaultPaymentRequest) Descriptor() ([]byte, []int) {
 	return file_payment_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *SetDefaultPaymentRequest) GetPaymentId() uint32 {
+func (x *SetDefaultPaymentRequest) GetPaymentId() string {
 	if x != nil {
 		return x.PaymentId
 	}
-	return 0
+	return ""
 }
 
-func (x *SetDefaultPaymentRequest) GetProfileId() uint32 {
+func (x *SetDefaultPaymentRequest) GetProfileId() string {
 	if x != nil {
 		return x.ProfileId
 	}
-	return 0
+	return ""
 }
 
 var File_payment_proto protoreflect.FileDescriptor
 
 const file_payment_proto_rawDesc = "" +
 	"\n" +
-	"\rpayment.proto\x12\auser.v1\x1a\x17validate/validate.proto\"g\n" +
-	"\fPaymentInput\x12&\n" +
+	"\rpayment.proto\x12\auser.v1\x1a\x17validate/validate.proto\"h\n" +
+	"\fPaymentInput\x12'\n" +
 	"\n" +
-	"profile_id\x18\x01 \x01(\rB\a\xfaB\x04*\x02 \x00R\tprofileId\x12/\n" +
+	"profile_id\x18\x01 \x01(\tB\b\xfaB\x05r\x03\x98\x01$R\tprofileId\x12/\n" +
 	"\rpayment_token\x18\x02 \x01(\tB\n" +
-	"\xfaB\ar\x05\x10\x01\x18\xff\x01R\fpaymentToken\"\x8b\x01\n" +
-	"\aPayment\x12\x1d\n" +
+	"\xfaB\ar\x05\x10\x01\x18\xff\x01R\fpaymentToken\"\x9f\x01\n" +
+	"\aPayment\x12'\n" +
 	"\n" +
-	"payment_id\x18\x01 \x01(\rR\tpaymentId\x12\x1d\n" +
+	"payment_id\x18\x01 \x01(\tB\b\xfaB\x05r\x03\x98\x01$R\tpaymentId\x12'\n" +
 	"\n" +
-	"profile_id\x18\x02 \x01(\rR\tprofileId\x12#\n" +
+	"profile_id\x18\x02 \x01(\tB\b\xfaB\x05r\x03\x98\x01$R\tprofileId\x12#\n" +
 	"\rpayment_token\x18\x03 \x01(\tR\fpaymentToken\x12\x1d\n" +
 	"\n" +
-	"is_default\x18\x04 \x01(\bR\tisDefault\"%\n" +
+	"is_default\x18\x04 \x01(\bR\tisDefault\"&\n" +
 	"\n" +
-	"ResourceID\x12\x17\n" +
-	"\x02id\x18\x01 \x01(\rB\a\xfaB\x04*\x02 \x00R\x02id\"f\n" +
-	"\x14UpdatePaymentRequest\x12\x1d\n" +
+	"ResourceID\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xfaB\x05r\x03\x98\x01$R\x02id\"p\n" +
+	"\x14UpdatePaymentRequest\x12'\n" +
 	"\n" +
-	"payment_id\x18\x01 \x01(\rR\tpaymentId\x12/\n" +
-	"\apayment\x18\x02 \x01(\v2\x15.user.v1.PaymentInputR\apayment\".\n" +
-	"\x13ResourceByIDRequest\x12\x17\n" +
-	"\x02id\x18\x01 \x01(\rB\a\xfaB\x04*\x02 \x00R\x02id\">\n" +
-	"\x14ListByProfileRequest\x12&\n" +
+	"payment_id\x18\x01 \x01(\tB\b\xfaB\x05r\x03\x98\x01$R\tpaymentId\x12/\n" +
+	"\apayment\x18\x02 \x01(\v2\x15.user.v1.PaymentInputR\apayment\"/\n" +
+	"\x13ResourceByIDRequest\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xfaB\x05r\x03\x98\x01$R\x02id\"?\n" +
+	"\x14ListByProfileRequest\x12'\n" +
 	"\n" +
-	"profile_id\x18\x01 \x01(\rB\a\xfaB\x04*\x02 \x00R\tprofileId\"C\n" +
+	"profile_id\x18\x01 \x01(\tB\b\xfaB\x05r\x03\x98\x01$R\tprofileId\"C\n" +
 	"\x13ListPaymentResponse\x12,\n" +
-	"\bpayments\x18\x01 \x03(\v2\x10.user.v1.PaymentR\bpayments\"j\n" +
-	"\x18SetDefaultPaymentRequest\x12&\n" +
+	"\bpayments\x18\x01 \x03(\v2\x10.user.v1.PaymentR\bpayments\"l\n" +
+	"\x18SetDefaultPaymentRequest\x12'\n" +
 	"\n" +
-	"payment_id\x18\x01 \x01(\rB\a\xfaB\x04*\x02 \x00R\tpaymentId\x12&\n" +
+	"payment_id\x18\x01 \x01(\tB\b\xfaB\x05r\x03\x98\x01$R\tpaymentId\x12'\n" +
 	"\n" +
-	"profile_id\x18\x02 \x01(\rB\a\xfaB\x04*\x02 \x00R\tprofileId2\xae\x03\n" +
+	"profile_id\x18\x02 \x01(\tB\b\xfaB\x05r\x03\x98\x01$R\tprofileId2\xae\x03\n" +
 	"\x0ePaymentService\x12;\n" +
 	"\rCreatePayment\x12\x15.user.v1.PaymentInput\x1a\x13.user.v1.ResourceID\x12<\n" +
 	"\n" +

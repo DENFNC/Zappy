@@ -15,11 +15,11 @@ import (
 )
 
 type Profile interface {
-	Create(ctx context.Context, authUserID uint32, firstName, lastName string) (uint32, error)
-	Delete(ctx context.Context, profileID uint32) (uint32, error)
-	GetByID(ctx context.Context, profileID uint32) (*models.Profile, error)
+	Create(ctx context.Context, authUserID string, firstName, lastName string) (string, error)
+	Delete(ctx context.Context, profileID string) (string, error)
+	GetByID(ctx context.Context, profileID string) (*models.Profile, error)
 	List(ctx context.Context, params []any) ([]any, string, error)
-	Update(ctx context.Context, profileID uint32, firstName, lastName string) (uint32, error)
+	Update(ctx context.Context, profileID string, firstName, lastName string) (string, error)
 }
 
 type serverAPI struct {
@@ -40,9 +40,9 @@ func (sa *serverAPI) Register(grpc *grpc.Server) {
 func (sa *serverAPI) CreateProfile(ctx context.Context, req *v1.CreateProfileRequest) (*v1.ProfileIDResponse, error) {
 	profileID, err := sa.service.Create(
 		ctx,
-		req.GetProfile().AuthUserId,
-		req.GetProfile().Name.FirstName,
-		req.GetProfile().Name.LastName,
+		req.GetProfile().GetAuthUserId(),
+		req.GetProfile().GetName().GetFirstName(),
+		req.GetProfile().GetName().GetLastName(),
 	)
 
 	fmt.Println(err)
@@ -104,8 +104,8 @@ func (sa *serverAPI) UpdateProfile(ctx context.Context, req *v1.UpdateProfileReq
 	profileID, err := sa.service.Update(
 		ctx,
 		req.GetProfileId(),
-		req.GetProfile().FirstName,
-		req.GetProfile().LastName,
+		req.GetProfile().GetFirstName(),
+		req.GetProfile().GetLastName(),
 	)
 
 	if err != nil {

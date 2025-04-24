@@ -6,11 +6,8 @@ import (
 	"github.com/DENFNC/Zappy/user_service/internal/domain/models"
 	psql "github.com/DENFNC/Zappy/user_service/internal/storage/postgres"
 	"github.com/doug-martin/goqu/v9"
-	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 )
-
-type UUID = uuid.UUID
 
 type PaymentRepo struct {
 	*psql.Storage
@@ -24,8 +21,8 @@ func NewPaymentRepo(db *psql.Storage, g *goqu.DialectWrapper) *PaymentRepo {
 	}
 }
 
-func (r *PaymentRepo) Create(ctx context.Context, method *models.Payment) (UUID, error) {
-	id := r.NewV7()
+func (r *PaymentRepo) Create(ctx context.Context, method *models.Payment) (string, error) {
+	id := r.NewV7().String()
 	stmt, args, err := r.goqu.Insert("payment_method").
 		Returning(goqu.C("payment_id")).
 		Rows(goqu.Record{
@@ -37,17 +34,17 @@ func (r *PaymentRepo) Create(ctx context.Context, method *models.Payment) (UUID,
 		Prepared(true).
 		ToSQL()
 	if err != nil {
-		return uuid.Nil, err
+		return "", err
 	}
 
-	var payID UUID
+	var payID string
 	if err := r.DB.QueryRow(ctx, stmt, args...).Scan(&payID); err != nil {
-		return uuid.Nil, err
+		return "", err
 	}
 	return payID, nil
 }
 
-func (r *PaymentRepo) GetByID(ctx context.Context, id uint32) (*models.Payment, error) {
+func (r *PaymentRepo) GetByID(ctx context.Context, id string) (*models.Payment, error) {
 	stmt, args, err := r.goqu.Select(
 		"payment_id",
 		"profile_id",
@@ -74,7 +71,7 @@ func (r *PaymentRepo) GetByID(ctx context.Context, id uint32) (*models.Payment, 
 	return &p, nil
 }
 
-func (r *PaymentRepo) GetByProfileID(ctx context.Context, profileID uint32) ([]models.Payment, error) {
+func (r *PaymentRepo) GetByProfileID(ctx context.Context, profileID string) ([]models.Payment, error) {
 	stmt, args, err := r.goqu.Select(
 		"payment_id",
 		"profile_id",
@@ -113,14 +110,14 @@ func (r *PaymentRepo) GetByProfileID(ctx context.Context, profileID uint32) ([]m
 	return payments, nil
 }
 
-func (r *PaymentRepo) SetDefault(ctx context.Context, methodID, profileID uint32) (uint32, error) {
+func (r *PaymentRepo) SetDefault(ctx context.Context, methodID, profileID string) (string, error) {
 	conn, err := r.DB.Acquire(ctx)
 	if err != nil {
-		return 0, err
+		return "", err
 	}
 	defer conn.Release()
 
-	var payID uint32
+	var payID string
 	err = r.WithTx(ctx, conn, func(tx pgx.Tx) error {
 		stmt, args, err := r.goqu.Update("payment_method").
 			Set(goqu.Record{"is_default": false}).
@@ -146,43 +143,43 @@ func (r *PaymentRepo) SetDefault(ctx context.Context, methodID, profileID uint32
 		return tx.QueryRow(ctx, stmt, args...).Scan(&payID)
 	})
 	if err != nil {
-		return 0, err
+		return "", err
 	}
 	return payID, nil
 }
 
-func (r *PaymentRepo) Update(ctx context.Context, method *models.Payment) (uint32, error) {
+func (r *PaymentRepo) Update(ctx context.Context, method *models.Payment) (string, error) {
 	stmt, args, err := r.goqu.Update("payment_method").
-		Returning("profile_id").
+		Returning("payment_id").
 		Set(goqu.Record{"payment_token": method.PaymentToken}).
 		Where(goqu.Ex{"profile_id": method.ProfileID, "payment_id": method.PaymentID}).
 		Prepared(true).
 		ToSQL()
 	if err != nil {
-		return 0, err
+		return "", err
 	}
 
-	var payID uint32
+	var payID string
 	if err := r.DB.QueryRow(ctx, stmt, args...).Scan(&payID); err != nil {
-		return 0, err
+		return "", err
 	}
 
 	return payID, nil
 }
 
-func (r *PaymentRepo) Delete(ctx context.Context, id uint32) (uint32, error) {
+func (r *PaymentRepo) Delete(ctx context.Context, id string) (string, error) {
 	stmt, args, err := r.goqu.Delete("payment_method").
 		Returning("payment_id").
 		Where(goqu.C("payment_id").Eq(id)).
 		Prepared(true).
 		ToSQL()
 	if err != nil {
-		return 0, err
+		return "", err
 	}
 
-	var payID uint32
+	var payID string
 	if err := r.DB.QueryRow(ctx, stmt, args...).Scan(&payID); err != nil {
-		return 0, err
+		return "", err
 	}
 	return payID, nil
 }

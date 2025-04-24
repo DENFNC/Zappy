@@ -23,13 +23,14 @@ func NewProfileRepo(
 		goqu,
 	}
 }
-func (r *ProfileRepo) Create(ctx context.Context, profile *models.Profile) (uint32, error) {
-	var profileID uint32
+func (r *ProfileRepo) Create(ctx context.Context, profile *models.Profile) (string, error) {
+	id := r.NewV7().String()
 
 	stmt, args, err := r.goqu.
 		Insert("profile").
 		Returning(goqu.C("profile_id")).
 		Rows(goqu.Record{
+			"profile_id":   id,
 			"auth_user_id": profile.AuthUserID,
 			"first_name":   profile.FirstName,
 			"last_name":    profile.LastName,
@@ -38,18 +39,19 @@ func (r *ProfileRepo) Create(ctx context.Context, profile *models.Profile) (uint
 		ToSQL()
 
 	if err != nil {
-		return 0, fmt.Errorf("failed to build SQL: %w", err)
+		return "", fmt.Errorf("failed to build SQL: %w", err)
 	}
 
+	var profileID string
 	err = r.DB.QueryRow(ctx, stmt, args...).Scan(&profileID)
 	if err != nil {
-		return 0, fmt.Errorf("failed to insert profile: %w", err)
+		return "", fmt.Errorf("failed to insert profile: %w", err)
 	}
 
 	return profileID, nil
 }
 
-func (r *ProfileRepo) GetByID(ctx context.Context, id uint32) (*models.Profile, error) {
+func (r *ProfileRepo) GetByID(ctx context.Context, id string) (*models.Profile, error) {
 	var profile models.Profile
 
 	stmt, args, err := r.goqu.
@@ -95,7 +97,7 @@ func (r *ProfileRepo) List(
 	panic("implement me!")
 }
 
-func (r *ProfileRepo) Update(ctx context.Context, profile *models.Profile) (uint32, error) {
+func (r *ProfileRepo) Update(ctx context.Context, profile *models.Profile) (string, error) {
 	stmt, args, err := r.goqu.
 		Update("profile").
 		Returning(goqu.C("profile_id")).
@@ -109,19 +111,19 @@ func (r *ProfileRepo) Update(ctx context.Context, profile *models.Profile) (uint
 		ToSQL()
 
 	if err != nil {
-		return 0, fmt.Errorf("failed to build SQL: %w", err)
+		return "", fmt.Errorf("failed to build SQL: %w", err)
 	}
 
-	var profileID uint32
+	var profileID string
 	err = r.DB.QueryRow(ctx, stmt, args...).Scan(&profileID)
 	if err != nil {
-		return 0, fmt.Errorf("failed to update profile: %w", err)
+		return "", fmt.Errorf("failed to update profile: %w", err)
 	}
 
 	return profileID, nil
 }
 
-func (r *ProfileRepo) Delete(ctx context.Context, id uint32) (uint32, error) {
+func (r *ProfileRepo) Delete(ctx context.Context, id string) (string, error) {
 	stmt, args, err := r.goqu.
 		Delete("profile").
 		Returning(goqu.C("profile_id")).
@@ -130,13 +132,13 @@ func (r *ProfileRepo) Delete(ctx context.Context, id uint32) (uint32, error) {
 		ToSQL()
 
 	if err != nil {
-		return 0, fmt.Errorf("failed to build SQL: %w", err)
+		return "", fmt.Errorf("failed to build SQL: %w", err)
 	}
 
-	var profileID uint32
+	var profileID string
 	err = r.DB.QueryRow(ctx, stmt, args...).Scan(&profileID)
 	if err != nil {
-		return 0, fmt.Errorf("failed to delete profile: %w", err)
+		return "", fmt.Errorf("failed to delete profile: %w", err)
 	}
 
 	return profileID, nil

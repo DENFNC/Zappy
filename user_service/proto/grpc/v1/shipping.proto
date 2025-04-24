@@ -5,32 +5,27 @@ option go_package = "github.com/DENFNC/Zappy/user_service/proto/gen/v1;v1";
 
 import "validate/validate.proto";
 
-// Core data model for a shipping  (response payload)
 message Shipping {
-  uint32 address_id = 1;
-  uint32 profile_id = 2 [(validate.rules).uint32 = {gt: 0}];
-  string country = 3 [(validate.rules).string = {min_len: 1, max_len: 50}];
-  string city = 4 [(validate.rules).string = {min_len: 1, max_len: 50}];
-  string street = 5 [(validate.rules).string = {min_len: 1, max_len: 100}];
-  string postal_code = 6 [(validate.rules).string = {min_len: 1, max_len: 20}];
-  bool is_default = 7;
+  string address_id = 1 [(validate.rules).string = {len: 36}];
+  string profile_id = 2 [(validate.rules).string = {len: 36}];
+  string country    = 3 [(validate.rules).string = {min_len: 1, max_len: 50}];
+  string city       = 4 [(validate.rules).string = {min_len: 1, max_len: 50}];
+  string street     = 5 [(validate.rules).string = {min_len: 1, max_len: 100}];
+  string postal_code= 6 [(validate.rules).string = {min_len: 1, max_len: 20}];
+  bool   is_default = 7;
 }
 
 message ShippingInput {
-  uint32 profile_id = 1 [(validate.rules).uint32 = {gt: 0}];
-  string country = 2 [(validate.rules).string = {min_len: 1, max_len: 50}];
-  string city = 3 [(validate.rules).string = {min_len: 1, max_len: 50}];
-  string street = 4 [(validate.rules).string = {min_len: 1, max_len: 100}];
-  string postal_code = 5 [(validate.rules).string = {min_len: 1, max_len: 20}];
+  string profile_id = 1 [(validate.rules).string = {len: 36}];
+  string country    = 2 [(validate.rules).string = {min_len: 1, max_len: 50}];
+  string city       = 3 [(validate.rules).string = {min_len: 1, max_len: 50}];
+  string street     = 4 [(validate.rules).string = {min_len: 1, max_len: 100}];
+  string postal_code= 5 [(validate.rules).string = {min_len: 1, max_len: 20}];
 }
 
 message ShippingId {
-  uint32 address_id = 1 [(validate.rules).uint32 = {
-    gt: 0,
-    lt: 2147483647,
-  }];
+  string address_id = 1 [(validate.rules).string = {len: 36}];
 }
-
 
 message CreateShippingRequest {
   ShippingInput address = 1;
@@ -39,7 +34,6 @@ message CreateShippingResponse {
   ShippingId id = 1;
 }
 
-
 message GetShippingRequest {
   ShippingId id = 1;
 }
@@ -47,9 +41,8 @@ message GetShippingResponse {
   Shipping address = 1;
 }
 
-
 message UpdateShippingRequest {
-  ShippingId id = 1;
+  ShippingId id      = 1;
   ShippingInput address = 2;
 }
 message UpdateShippingResponse {
@@ -57,13 +50,12 @@ message UpdateShippingResponse {
 }
 
 message SetDefaultShippingRequest {
-  ShippingId id = 1;
-  uint32 profile_id = 2 [(validate.rules).uint32 = {gt: 0, lt: 2147483647}];
+  ShippingId id      = 1;
+  string    profile_id = 2 [(validate.rules).string = {len: 36}];
 }
 message SetDefaultShippingResponse {
   ShippingId id = 1;
 }
-
 
 message DeleteShippingRequest {
   ShippingId id = 1;
@@ -72,22 +64,18 @@ message DeleteShippingResponse {
   ShippingId id = 1;
 }
 
-
 message ListShippingRequest {
-  uint32 profile_id = 1 [(validate.rules).uint32 = {
-    gt: 0,
-    lt: 2147483647
-  }];
+  string profile_id = 1 [(validate.rules).string = {len: 36}];
 }
 message ListShippingResponse {
-  repeated Shipping es = 1;
+  repeated Shipping shippings = 1;
 }
 
 service ShippingService {
-  rpc CreateShipping(CreateShippingRequest) returns (CreateShippingResponse) {}
-  rpc GetShipping(GetShippingRequest) returns (GetShippingResponse) {}
-  rpc UpdateShipping(UpdateShippingRequest) returns (UpdateShippingResponse) {}
-  rpc SetDefaultShipping(SetDefaultShippingRequest) returns (SetDefaultShippingResponse) {}
-  rpc DeleteShipping(DeleteShippingRequest) returns (DeleteShippingResponse) {}
-  rpc ListShipping(ListShippingRequest) returns (ListShippingResponse) {}
+  rpc CreateShipping(CreateShippingRequest)   returns (CreateShippingResponse);
+  rpc GetShipping(GetShippingRequest)         returns (GetShippingResponse);
+  rpc UpdateShipping(UpdateShippingRequest)   returns (UpdateShippingResponse);
+  rpc SetDefaultShipping(SetDefaultShippingRequest) returns (SetDefaultShippingResponse);
+  rpc DeleteShipping(DeleteShippingRequest)   returns (DeleteShippingResponse);
+  rpc ListShipping(ListShippingRequest)       returns (ListShippingResponse);
 }

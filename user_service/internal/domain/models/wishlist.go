@@ -3,8 +3,9 @@ package models
 import "time"
 
 type WishlistItem struct {
-	ItemID    int
-	ProfileID int
-	ProductID int
+	ItemID    string
+	ProfileID string
+	ProductID string
 	AddedAt   time.Time
+	IsActive  bool
 }

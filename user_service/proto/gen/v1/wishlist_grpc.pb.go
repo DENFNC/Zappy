@@ -35,7 +35,7 @@ type WishlistItemServiceClient interface {
 	GetWishlistItem(ctx context.Context, in *GetWishlistItemRequest, opts ...grpc.CallOption) (*WishlistItem, error)
 	UpdateWishlistItem(ctx context.Context, in *UpdateWishlistItemRequest, opts ...grpc.CallOption) (*WishlistItem, error)
 	DeleteWishlistItem(ctx context.Context, in *DeleteWishlistItemRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	ListWishlistItems(ctx context.Context, in *ListWishlistItemsRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[WishlistItem], error)
+	ListWishlistItems(ctx context.Context, in *ListWishlistItemsRequest, opts ...grpc.CallOption) (*ListWishlistItemsResponse, error)
 }
 
 type wishlistItemServiceClient struct {
@@ -86,24 +86,15 @@ func (c *wishlistItemServiceClient) DeleteWishlistItem(ctx context.Context, in *
 	return out, nil
 }
 
-func (c *wishlistItemServiceClient) ListWishlistItems(ctx context.Context, in *ListWishlistItemsRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[WishlistItem], error) {
+func (c *wishlistItemServiceClient) ListWishlistItems(ctx context.Context, in *ListWishlistItemsRequest, opts ...grpc.CallOption) (*ListWishlistItemsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	stream, err := c.cc.NewStream(ctx, &WishlistItemService_ServiceDesc.Streams[0], WishlistItemService_ListWishlistItems_FullMethodName, cOpts...)
+	out := new(ListWishlistItemsResponse)
+	err := c.cc.Invoke(ctx, WishlistItemService_ListWishlistItems_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &grpc.GenericClientStream[ListWishlistItemsRequest, WishlistItem]{ClientStream: stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	return x, nil
+	return out, nil
 }
-
-// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type WishlistItemService_ListWishlistItemsClient = grpc.ServerStreamingClient[WishlistItem]
 
 // WishlistItemServiceServer is the server API for WishlistItemService service.
 // All implementations must embed UnimplementedWishlistItemServiceServer
@@ -113,7 +104,7 @@ type WishlistItemServiceServer interface {
 	GetWishlistItem(context.Context, *GetWishlistItemRequest) (*WishlistItem, error)
 	UpdateWishlistItem(context.Context, *UpdateWishlistItemRequest) (*WishlistItem, error)
 	DeleteWishlistItem(context.Context, *DeleteWishlistItemRequest) (*emptypb.Empty, error)
-	ListWishlistItems(*ListWishlistItemsRequest, grpc.ServerStreamingServer[WishlistItem]) error
+	ListWishlistItems(context.Context, *ListWishlistItemsRequest) (*ListWishlistItemsResponse, error)
 	mustEmbedUnimplementedWishlistItemServiceServer()
 }
 
@@ -136,8 +127,8 @@ func (UnimplementedWishlistItemServiceServer) UpdateWishlistItem(context.Context
 func (UnimplementedWishlistItemServiceServer) DeleteWishlistItem(context.Context, *DeleteWishlistItemRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteWishlistItem not implemented")
 }
-func (UnimplementedWishlistItemServiceServer) ListWishlistItems(*ListWishlistItemsRequest, grpc.ServerStreamingServer[WishlistItem]) error {
-	return status.Errorf(codes.Unimplemented, "method ListWishlistItems not implemented")
+func (UnimplementedWishlistItemServiceServer) ListWishlistItems(context.Context, *ListWishlistItemsRequest) (*ListWishlistItemsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListWishlistItems not implemented")
 }
 func (UnimplementedWishlistItemServiceServer) mustEmbedUnimplementedWishlistItemServiceServer() {}
 func (UnimplementedWishlistItemServiceServer) testEmbeddedByValue()                             {}
@@ -232,16 +223,23 @@ func _WishlistItemService_DeleteWishlistItem_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
-func _WishlistItemService_ListWishlistItems_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(ListWishlistItemsRequest)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
+func _WishlistItemService_ListWishlistItems_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListWishlistItemsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
 	}
-	return srv.(WishlistItemServiceServer).ListWishlistItems(m, &grpc.GenericServerStream[ListWishlistItemsRequest, WishlistItem]{ServerStream: stream})
+	if interceptor == nil {
+		return srv.(WishlistItemServiceServer).ListWishlistItems(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WishlistItemService_ListWishlistItems_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WishlistItemServiceServer).ListWishlistItems(ctx, req.(*ListWishlistItemsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
-
-// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type WishlistItemService_ListWishlistItemsServer = grpc.ServerStreamingServer[WishlistItem]
 
 // WishlistItemService_ServiceDesc is the grpc.ServiceDesc for WishlistItemService service.
 // It's only intended for direct use with grpc.RegisterService,
@@ -266,13 +264,11 @@ var WishlistItemService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "DeleteWishlistItem",
 			Handler:    _WishlistItemService_DeleteWishlistItem_Handler,
 		},
-	},
-	Streams: []grpc.StreamDesc{
 		{
-			StreamName:    "ListWishlistItems",
-			Handler:       _WishlistItemService_ListWishlistItems_Handler,
-			ServerStreams: true,
+			MethodName: "ListWishlistItems",
+			Handler:    _WishlistItemService_ListWishlistItems_Handler,
 		},
 	},
+	Streams:  []grpc.StreamDesc{},
 	Metadata: "wishlist.proto",
 }

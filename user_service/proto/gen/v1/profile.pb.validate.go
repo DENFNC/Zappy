@@ -177,17 +177,28 @@ func (m *Profile) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for ProfileId
-
-	if m.GetAuthUserId() <= 0 {
+	if utf8.RuneCountInString(m.GetProfileId()) != 36 {
 		err := ProfileValidationError{
-			field:  "AuthUserId",
-			reason: "value must be greater than 0",
+			field:  "ProfileId",
+			reason: "value length must be 36 runes",
 		}
 		if !all {
 			return err
 		}
 		errors = append(errors, err)
+
+	}
+
+	if utf8.RuneCountInString(m.GetAuthUserId()) != 36 {
+		err := ProfileValidationError{
+			field:  "AuthUserId",
+			reason: "value length must be 36 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+
 	}
 
 	if all {
@@ -376,7 +387,17 @@ func (m *ProfileIDResponse) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for ProfileId
+	if utf8.RuneCountInString(m.GetProfileId()) != 36 {
+		err := ProfileIDResponseValidationError{
+			field:  "ProfileId",
+			reason: "value length must be 36 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+
+	}
 
 	if len(errors) > 0 {
 		return ProfileIDResponseMultiError(errors)
@@ -611,15 +632,16 @@ func (m *GetProfileRequest) validate(all bool) error {
 
 	var errors []error
 
-	if m.GetProfileId() <= 0 {
+	if utf8.RuneCountInString(m.GetProfileId()) != 36 {
 		err := GetProfileRequestValidationError{
 			field:  "ProfileId",
-			reason: "value must be greater than 0",
+			reason: "value length must be 36 runes",
 		}
 		if !all {
 			return err
 		}
 		errors = append(errors, err)
+
 	}
 
 	if len(errors) > 0 {
@@ -724,7 +746,17 @@ func (m *UpdateProfileRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for ProfileId
+	if utf8.RuneCountInString(m.GetProfileId()) != 36 {
+		err := UpdateProfileRequestValidationError{
+			field:  "ProfileId",
+			reason: "value length must be 36 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+
+	}
 
 	if all {
 		switch v := interface{}(m.GetProfile()).(type) {
@@ -857,15 +889,16 @@ func (m *DeleteProfileRequest) validate(all bool) error {
 
 	var errors []error
 
-	if m.GetProfileId() <= 0 {
+	if utf8.RuneCountInString(m.GetProfileId()) != 36 {
 		err := DeleteProfileRequestValidationError{
 			field:  "ProfileId",
-			reason: "value must be greater than 0",
+			reason: "value length must be 36 runes",
 		}
 		if !all {
 			return err
 		}
 		errors = append(errors, err)
+
 	}
 
 	if len(errors) > 0 {

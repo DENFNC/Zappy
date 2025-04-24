@@ -57,17 +57,28 @@ func (m *Shipping) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for AddressId
-
-	if m.GetProfileId() <= 0 {
+	if utf8.RuneCountInString(m.GetAddressId()) != 36 {
 		err := ShippingValidationError{
-			field:  "ProfileId",
-			reason: "value must be greater than 0",
+			field:  "AddressId",
+			reason: "value length must be 36 runes",
 		}
 		if !all {
 			return err
 		}
 		errors = append(errors, err)
+
+	}
+
+	if utf8.RuneCountInString(m.GetProfileId()) != 36 {
+		err := ShippingValidationError{
+			field:  "ProfileId",
+			reason: "value length must be 36 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+
 	}
 
 	if l := utf8.RuneCountInString(m.GetCountry()); l < 1 || l > 50 {
@@ -215,15 +226,16 @@ func (m *ShippingInput) validate(all bool) error {
 
 	var errors []error
 
-	if m.GetProfileId() <= 0 {
+	if utf8.RuneCountInString(m.GetProfileId()) != 36 {
 		err := ShippingInputValidationError{
 			field:  "ProfileId",
-			reason: "value must be greater than 0",
+			reason: "value length must be 36 runes",
 		}
 		if !all {
 			return err
 		}
 		errors = append(errors, err)
+
 	}
 
 	if l := utf8.RuneCountInString(m.GetCountry()); l < 1 || l > 50 {
@@ -370,15 +382,16 @@ func (m *ShippingId) validate(all bool) error {
 
 	var errors []error
 
-	if val := m.GetAddressId(); val <= 0 || val >= 2147483647 {
+	if utf8.RuneCountInString(m.GetAddressId()) != 36 {
 		err := ShippingIdValidationError{
 			field:  "AddressId",
-			reason: "value must be inside range (0, 2147483647)",
+			reason: "value length must be 36 runes",
 		}
 		if !all {
 			return err
 		}
 		errors = append(errors, err)
+
 	}
 
 	if len(errors) > 0 {
@@ -1324,15 +1337,16 @@ func (m *SetDefaultShippingRequest) validate(all bool) error {
 		}
 	}
 
-	if val := m.GetProfileId(); val <= 0 || val >= 2147483647 {
+	if utf8.RuneCountInString(m.GetProfileId()) != 36 {
 		err := SetDefaultShippingRequestValidationError{
 			field:  "ProfileId",
-			reason: "value must be inside range (0, 2147483647)",
+			reason: "value length must be 36 runes",
 		}
 		if !all {
 			return err
 		}
 		errors = append(errors, err)
+
 	}
 
 	if len(errors) > 0 {
@@ -1830,15 +1844,16 @@ func (m *ListShippingRequest) validate(all bool) error {
 
 	var errors []error
 
-	if val := m.GetProfileId(); val <= 0 || val >= 2147483647 {
+	if utf8.RuneCountInString(m.GetProfileId()) != 36 {
 		err := ListShippingRequestValidationError{
 			field:  "ProfileId",
-			reason: "value must be inside range (0, 2147483647)",
+			reason: "value length must be 36 runes",
 		}
 		if !all {
 			return err
 		}
 		errors = append(errors, err)
+
 	}
 
 	if len(errors) > 0 {
@@ -1943,7 +1958,7 @@ func (m *ListShippingResponse) validate(all bool) error {
 
 	var errors []error
 
-	for idx, item := range m.GetEs() {
+	for idx, item := range m.GetShippings() {
 		_, _ = idx, item
 
 		if all {
@@ -1951,7 +1966,7 @@ func (m *ListShippingResponse) validate(all bool) error {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, ListShippingResponseValidationError{
-						field:  fmt.Sprintf("Es[%v]", idx),
+						field:  fmt.Sprintf("Shippings[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -1959,7 +1974,7 @@ func (m *ListShippingResponse) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, ListShippingResponseValidationError{
-						field:  fmt.Sprintf("Es[%v]", idx),
+						field:  fmt.Sprintf("Shippings[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -1968,7 +1983,7 @@ func (m *ListShippingResponse) validate(all bool) error {
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return ListShippingResponseValidationError{
-					field:  fmt.Sprintf("Es[%v]", idx),
+					field:  fmt.Sprintf("Shippings[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
 				}

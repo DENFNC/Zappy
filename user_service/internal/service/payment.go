@@ -8,11 +8,8 @@ import (
 	"github.com/DENFNC/Zappy/user_service/internal/domain/models"
 	"github.com/DENFNC/Zappy/user_service/internal/domain/repositories"
 	errpkg "github.com/DENFNC/Zappy/user_service/internal/errors"
-	"github.com/gofrs/uuid"
 	"github.com/jackc/pgx/v5"
 )
-
-type UUID = uuid.UUID
 
 type Payment struct {
 	log  *slog.Logger
@@ -31,9 +28,9 @@ func NewPayment(
 
 func (p *Payment) Create(
 	ctx context.Context,
-	profileID uint32,
+	profileID string,
 	paymentToken string,
-) (UUID, error) {
+) (string, error) {
 	const op = "service.Payment.Create"
 
 	log := p.log.With("op", op)
@@ -46,7 +43,7 @@ func (p *Payment) Create(
 			"Critical error",
 			slog.String("error", err.Error()),
 		)
-		return uuid.Nil, err
+		return "", err
 	}
 
 	return payID, nil
@@ -54,7 +51,7 @@ func (p *Payment) Create(
 
 func (p *Payment) GetByID(
 	ctx context.Context,
-	paymentID uint32,
+	paymentID string,
 ) (*models.Payment, error) {
 	const op = "service.Payment.GetByID"
 
@@ -74,10 +71,10 @@ func (p *Payment) GetByID(
 
 func (p *Payment) Update(
 	ctx context.Context,
-	paymentID uint32,
-	profileID uint32,
+	paymentID string,
+	profileID string,
 	paymentToken string,
-) (uint32, error) {
+) (string, error) {
 	const op = "service.Payment.Update"
 
 	log := p.log.With("op", op)
@@ -95,13 +92,13 @@ func (p *Payment) Update(
 				"Not found",
 				slog.String("error", err.Error()),
 			)
-			return 0, errpkg.ErrNotFound
+			return "", errpkg.ErrNotFound
 		}
 		log.Error(
 			"Critical error",
 			slog.String("error", err.Error()),
 		)
-		return 0, err
+		return "", err
 	}
 
 	return payID, nil
@@ -109,8 +106,8 @@ func (p *Payment) Update(
 
 func (p *Payment) Delete(
 	ctx context.Context,
-	paymentID uint32,
-) (uint32, error) {
+	paymentID string,
+) (string, error) {
 	const op = "service.Payment.Delete"
 
 	log := p.log.With("op", op)
@@ -121,7 +118,7 @@ func (p *Payment) Delete(
 			"Critical error",
 			slog.String("error", err.Error()),
 		)
-		return 0, err
+		return "", err
 	}
 
 	return payID, nil
@@ -129,7 +126,7 @@ func (p *Payment) Delete(
 
 func (p *Payment) List(
 	ctx context.Context,
-	profileID uint32,
+	profileID string,
 ) ([]models.Payment, error) {
 	const op = "service.Payment.List"
 
@@ -149,9 +146,9 @@ func (p *Payment) List(
 
 func (p *Payment) SetDefault(
 	ctx context.Context,
-	paymentID uint32,
-	profileID uint32,
-) (uint32, error) {
+	paymentID string,
+	profileID string,
+) (string, error) {
 	const op = "service.Payment.SetDefault"
 
 	log := p.log.With("op", op)
@@ -162,7 +159,7 @@ func (p *Payment) SetDefault(
 			"Critical error",
 			slog.String("error", err.Error()),
 		)
-		return emptyValue, nil
+		return "", nil
 	}
 
 	return payID, nil

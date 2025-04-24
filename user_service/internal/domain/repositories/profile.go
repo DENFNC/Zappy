@@ -7,9 +7,9 @@ import (
 )
 
 type ProfileRepository interface {
-	Create(ctx context.Context, profile *models.Profile) (uint32, error)
-	GetByID(ctx context.Context, id uint32) (*models.Profile, error)
+	Create(ctx context.Context, profile *models.Profile) (string, error)
+	GetByID(ctx context.Context, id string) (*models.Profile, error)
 	List(ctx context.Context, params []any) ([]any, error)
-	Update(ctx context.Context, profile *models.Profile) (uint32, error)
-	Delete(ctx context.Context, id uint32) (uint32, error)
+	Update(ctx context.Context, profile *models.Profile) (string, error)
+	Delete(ctx context.Context, id string) (string, error)
 }

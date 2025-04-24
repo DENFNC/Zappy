@@ -26,9 +26,9 @@ const (
 
 type WishlistItem struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ItemId        int64                  `protobuf:"varint,1,opt,name=item_id,json=itemId,proto3" json:"item_id,omitempty"`
-	ProfileId     int64                  `protobuf:"varint,2,opt,name=profile_id,json=profileId,proto3" json:"profile_id,omitempty"`
-	ProductId     int64                  `protobuf:"varint,3,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
+	ItemId        string                 `protobuf:"bytes,1,opt,name=item_id,json=itemId,proto3" json:"item_id,omitempty"`
+	ProfileId     string                 `protobuf:"bytes,2,opt,name=profile_id,json=profileId,proto3" json:"profile_id,omitempty"`
+	ProductId     string                 `protobuf:"bytes,3,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
 	AddedAt       *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=added_at,json=addedAt,proto3" json:"added_at,omitempty"`
 	IsActive      bool                   `protobuf:"varint,5,opt,name=is_active,json=isActive,proto3" json:"is_active,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -65,25 +65,25 @@ func (*WishlistItem) Descriptor() ([]byte, []int) {
 	return file_wishlist_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *WishlistItem) GetItemId() int64 {
+func (x *WishlistItem) GetItemId() string {
 	if x != nil {
 		return x.ItemId
 	}
-	return 0
+	return ""
 }
 
-func (x *WishlistItem) GetProfileId() int64 {
+func (x *WishlistItem) GetProfileId() string {
 	if x != nil {
 		return x.ProfileId
 	}
-	return 0
+	return ""
 }
 
-func (x *WishlistItem) GetProductId() int64 {
+func (x *WishlistItem) GetProductId() string {
 	if x != nil {
 		return x.ProductId
 	}
-	return 0
+	return ""
 }
 
 func (x *WishlistItem) GetAddedAt() *timestamppb.Timestamp {
@@ -146,7 +146,7 @@ func (x *CreateWishlistItemRequest) GetWishlistItem() *WishlistItem {
 
 type GetWishlistItemRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ItemId        int64                  `protobuf:"varint,1,opt,name=item_id,json=itemId,proto3" json:"item_id,omitempty"`
+	ItemId        string                 `protobuf:"bytes,1,opt,name=item_id,json=itemId,proto3" json:"item_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -181,11 +181,11 @@ func (*GetWishlistItemRequest) Descriptor() ([]byte, []int) {
 	return file_wishlist_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *GetWishlistItemRequest) GetItemId() int64 {
+func (x *GetWishlistItemRequest) GetItemId() string {
 	if x != nil {
 		return x.ItemId
 	}
-	return 0
+	return ""
 }
 
 type UpdateWishlistItemRequest struct {
@@ -234,7 +234,7 @@ func (x *UpdateWishlistItemRequest) GetWishlistItem() *WishlistItem {
 
 type DeleteWishlistItemRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ItemId        int64                  `protobuf:"varint,1,opt,name=item_id,json=itemId,proto3" json:"item_id,omitempty"`
+	ItemId        string                 `protobuf:"bytes,1,opt,name=item_id,json=itemId,proto3" json:"item_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -269,16 +269,16 @@ func (*DeleteWishlistItemRequest) Descriptor() ([]byte, []int) {
 	return file_wishlist_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *DeleteWishlistItemRequest) GetItemId() int64 {
+func (x *DeleteWishlistItemRequest) GetItemId() string {
 	if x != nil {
 		return x.ItemId
 	}
-	return 0
+	return ""
 }
 
 type ListWishlistItemsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ProfileId     int64                  `protobuf:"varint,1,opt,name=profile_id,json=profileId,proto3" json:"profile_id,omitempty"`
+	ProfileId     string                 `protobuf:"bytes,1,opt,name=profile_id,json=profileId,proto3" json:"profile_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -313,43 +313,89 @@ func (*ListWishlistItemsRequest) Descriptor() ([]byte, []int) {
 	return file_wishlist_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *ListWishlistItemsRequest) GetProfileId() int64 {
+func (x *ListWishlistItemsRequest) GetProfileId() string {
 	if x != nil {
 		return x.ProfileId
 	}
-	return 0
+	return ""
+}
+
+type ListWishlistItemsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	WishlistItems []*WishlistItem        `protobuf:"bytes,1,rep,name=wishlist_items,json=wishlistItems,proto3" json:"wishlist_items,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListWishlistItemsResponse) Reset() {
+	*x = ListWishlistItemsResponse{}
+	mi := &file_wishlist_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListWishlistItemsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListWishlistItemsResponse) ProtoMessage() {}
+
+func (x *ListWishlistItemsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_wishlist_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListWishlistItemsResponse.ProtoReflect.Descriptor instead.
+func (*ListWishlistItemsResponse) Descriptor() ([]byte, []int) {
+	return file_wishlist_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *ListWishlistItemsResponse) GetWishlistItems() []*WishlistItem {
+	if x != nil {
+		return x.WishlistItems
+	}
+	return nil
 }
 
 var File_wishlist_proto protoreflect.FileDescriptor
 
 const file_wishlist_proto_rawDesc = "" +
 	"\n" +
-	"\x0ewishlist.proto\x12\auser.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x17validate/validate.proto\"\xcb\x01\n" +
-	"\fWishlistItem\x12\x17\n" +
-	"\aitem_id\x18\x01 \x01(\x03R\x06itemId\x12&\n" +
+	"\x0ewishlist.proto\x12\auser.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x17validate/validate.proto\"\xd7\x01\n" +
+	"\fWishlistItem\x12!\n" +
+	"\aitem_id\x18\x01 \x01(\tB\b\xfaB\x05r\x03\x98\x01$R\x06itemId\x12'\n" +
 	"\n" +
-	"profile_id\x18\x02 \x01(\x03B\a\xfaB\x04\"\x02 \x00R\tprofileId\x12&\n" +
+	"profile_id\x18\x02 \x01(\tB\b\xfaB\x05r\x03\x98\x01$R\tprofileId\x12'\n" +
 	"\n" +
-	"product_id\x18\x03 \x01(\x03B\a\xfaB\x04\"\x02 \x00R\tproductId\x125\n" +
+	"product_id\x18\x03 \x01(\tB\b\xfaB\x05r\x03\x98\x01$R\tproductId\x125\n" +
 	"\badded_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\aaddedAt\x12\x1b\n" +
 	"\tis_active\x18\x05 \x01(\bR\bisActive\"W\n" +
 	"\x19CreateWishlistItemRequest\x12:\n" +
-	"\rwishlist_item\x18\x01 \x01(\v2\x15.user.v1.WishlistItemR\fwishlistItem\":\n" +
-	"\x16GetWishlistItemRequest\x12 \n" +
-	"\aitem_id\x18\x01 \x01(\x03B\a\xfaB\x04\"\x02 \x00R\x06itemId\"W\n" +
+	"\rwishlist_item\x18\x01 \x01(\v2\x15.user.v1.WishlistItemR\fwishlistItem\";\n" +
+	"\x16GetWishlistItemRequest\x12!\n" +
+	"\aitem_id\x18\x01 \x01(\tB\b\xfaB\x05r\x03\x98\x01$R\x06itemId\"W\n" +
 	"\x19UpdateWishlistItemRequest\x12:\n" +
-	"\rwishlist_item\x18\x01 \x01(\v2\x15.user.v1.WishlistItemR\fwishlistItem\"=\n" +
-	"\x19DeleteWishlistItemRequest\x12 \n" +
-	"\aitem_id\x18\x01 \x01(\x03B\a\xfaB\x04\"\x02 \x00R\x06itemId\"B\n" +
-	"\x18ListWishlistItemsRequest\x12&\n" +
+	"\rwishlist_item\x18\x01 \x01(\v2\x15.user.v1.WishlistItemR\fwishlistItem\">\n" +
+	"\x19DeleteWishlistItemRequest\x12!\n" +
+	"\aitem_id\x18\x01 \x01(\tB\b\xfaB\x05r\x03\x98\x01$R\x06itemId\"C\n" +
+	"\x18ListWishlistItemsRequest\x12'\n" +
 	"\n" +
-	"profile_id\x18\x01 \x01(\x03B\a\xfaB\x04\"\x02 \x00R\tprofileId2\xa5\x03\n" +
+	"profile_id\x18\x01 \x01(\tB\b\xfaB\x05r\x03\x98\x01$R\tprofileId\"Y\n" +
+	"\x19ListWishlistItemsResponse\x12<\n" +
+	"\x0ewishlist_items\x18\x01 \x03(\v2\x15.user.v1.WishlistItemR\rwishlistItems2\xb0\x03\n" +
 	"\x13WishlistItemService\x12O\n" +
 	"\x12CreateWishlistItem\x12\".user.v1.CreateWishlistItemRequest\x1a\x15.user.v1.WishlistItem\x12I\n" +
 	"\x0fGetWishlistItem\x12\x1f.user.v1.GetWishlistItemRequest\x1a\x15.user.v1.WishlistItem\x12O\n" +
 	"\x12UpdateWishlistItem\x12\".user.v1.UpdateWishlistItemRequest\x1a\x15.user.v1.WishlistItem\x12P\n" +
-	"\x12DeleteWishlistItem\x12\".user.v1.DeleteWishlistItemRequest\x1a\x16.google.protobuf.Empty\x12O\n" +
-	"\x11ListWishlistItems\x12!.user.v1.ListWishlistItemsRequest\x1a\x15.user.v1.WishlistItem0\x01B6Z4github.com/DENFNC/Zappy/user_service/proto/gen/v1;v1b\x06proto3"
+	"\x12DeleteWishlistItem\x12\".user.v1.DeleteWishlistItemRequest\x1a\x16.google.protobuf.Empty\x12Z\n" +
+	"\x11ListWishlistItems\x12!.user.v1.ListWishlistItemsRequest\x1a\".user.v1.ListWishlistItemsResponseB6Z4github.com/DENFNC/Zappy/user_service/proto/gen/v1;v1b\x06proto3"
 
 var (
 	file_wishlist_proto_rawDescOnce sync.Once
@@ -363,7 +409,7 @@ func file_wishlist_proto_rawDescGZIP() []byte {
 	return file_wishlist_proto_rawDescData
 }
 
-var file_wishlist_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_wishlist_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_wishlist_proto_goTypes = []any{
 	(*WishlistItem)(nil),              // 0: user.v1.WishlistItem
 	(*CreateWishlistItemRequest)(nil), // 1: user.v1.CreateWishlistItemRequest
@@ -371,28 +417,30 @@ var file_wishlist_proto_goTypes = []any{
 	(*UpdateWishlistItemRequest)(nil), // 3: user.v1.UpdateWishlistItemRequest
 	(*DeleteWishlistItemRequest)(nil), // 4: user.v1.DeleteWishlistItemRequest
 	(*ListWishlistItemsRequest)(nil),  // 5: user.v1.ListWishlistItemsRequest
-	(*timestamppb.Timestamp)(nil),     // 6: google.protobuf.Timestamp
-	(*emptypb.Empty)(nil),             // 7: google.protobuf.Empty
+	(*ListWishlistItemsResponse)(nil), // 6: user.v1.ListWishlistItemsResponse
+	(*timestamppb.Timestamp)(nil),     // 7: google.protobuf.Timestamp
+	(*emptypb.Empty)(nil),             // 8: google.protobuf.Empty
 }
 var file_wishlist_proto_depIdxs = []int32{
-	6, // 0: user.v1.WishlistItem.added_at:type_name -> google.protobuf.Timestamp
+	7, // 0: user.v1.WishlistItem.added_at:type_name -> google.protobuf.Timestamp
 	0, // 1: user.v1.CreateWishlistItemRequest.wishlist_item:type_name -> user.v1.WishlistItem
 	0, // 2: user.v1.UpdateWishlistItemRequest.wishlist_item:type_name -> user.v1.WishlistItem
-	1, // 3: user.v1.WishlistItemService.CreateWishlistItem:input_type -> user.v1.CreateWishlistItemRequest
-	2, // 4: user.v1.WishlistItemService.GetWishlistItem:input_type -> user.v1.GetWishlistItemRequest
-	3, // 5: user.v1.WishlistItemService.UpdateWishlistItem:input_type -> user.v1.UpdateWishlistItemRequest
-	4, // 6: user.v1.WishlistItemService.DeleteWishlistItem:input_type -> user.v1.DeleteWishlistItemRequest
-	5, // 7: user.v1.WishlistItemService.ListWishlistItems:input_type -> user.v1.ListWishlistItemsRequest
-	0, // 8: user.v1.WishlistItemService.CreateWishlistItem:output_type -> user.v1.WishlistItem
-	0, // 9: user.v1.WishlistItemService.GetWishlistItem:output_type -> user.v1.WishlistItem
-	0, // 10: user.v1.WishlistItemService.UpdateWishlistItem:output_type -> user.v1.WishlistItem
-	7, // 11: user.v1.WishlistItemService.DeleteWishlistItem:output_type -> google.protobuf.Empty
-	0, // 12: user.v1.WishlistItemService.ListWishlistItems:output_type -> user.v1.WishlistItem
-	8, // [8:13] is the sub-list for method output_type
-	3, // [3:8] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	0, // 3: user.v1.ListWishlistItemsResponse.wishlist_items:type_name -> user.v1.WishlistItem
+	1, // 4: user.v1.WishlistItemService.CreateWishlistItem:input_type -> user.v1.CreateWishlistItemRequest
+	2, // 5: user.v1.WishlistItemService.GetWishlistItem:input_type -> user.v1.GetWishlistItemRequest
+	3, // 6: user.v1.WishlistItemService.UpdateWishlistItem:input_type -> user.v1.UpdateWishlistItemRequest
+	4, // 7: user.v1.WishlistItemService.DeleteWishlistItem:input_type -> user.v1.DeleteWishlistItemRequest
+	5, // 8: user.v1.WishlistItemService.ListWishlistItems:input_type -> user.v1.ListWishlistItemsRequest
+	0, // 9: user.v1.WishlistItemService.CreateWishlistItem:output_type -> user.v1.WishlistItem
+	0, // 10: user.v1.WishlistItemService.GetWishlistItem:output_type -> user.v1.WishlistItem
+	0, // 11: user.v1.WishlistItemService.UpdateWishlistItem:output_type -> user.v1.WishlistItem
+	8, // 12: user.v1.WishlistItemService.DeleteWishlistItem:output_type -> google.protobuf.Empty
+	6, // 13: user.v1.WishlistItemService.ListWishlistItems:output_type -> user.v1.ListWishlistItemsResponse
+	9, // [9:14] is the sub-list for method output_type
+	4, // [4:9] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_wishlist_proto_init() }
@@ -406,7 +454,7 @@ func file_wishlist_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_wishlist_proto_rawDesc), len(file_wishlist_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   6,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

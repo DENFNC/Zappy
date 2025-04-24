@@ -7,21 +7,18 @@ import (
 	"github.com/DENFNC/Zappy/user_service/internal/domain/models"
 	errpkg "github.com/DENFNC/Zappy/user_service/internal/errors"
 	v1 "github.com/DENFNC/Zappy/user_service/proto/gen/v1"
-	"github.com/google/uuid"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
-type UUID = uuid.UUID
-
 type Payment interface {
-	Create(ctx context.Context, profileID uint32, paymentToken string) (UUID, error)
-	GetByID(ctx context.Context, paymentID uint32) (*models.Payment, error)
-	Update(ctx context.Context, paymentID uint32, profileID uint32, paymentToken string) (uint32, error)
-	Delete(ctx context.Context, paymentID uint32) (uint32, error)
-	List(ctx context.Context, profileID uint32) ([]models.Payment, error)
-	SetDefault(ctx context.Context, paymentID uint32, profileID uint32) (uint32, error)
+	Create(ctx context.Context, profileID string, paymentToken string) (string, error)
+	GetByID(ctx context.Context, paymentID string) (*models.Payment, error)
+	Update(ctx context.Context, paymentID string, profileID string, paymentToken string) (string, error)
+	Delete(ctx context.Context, paymentID string) (string, error)
+	List(ctx context.Context, profileID string) ([]models.Payment, error)
+	SetDefault(ctx context.Context, paymentID string, profileID string) (string, error)
 }
 
 type serverAPI struct {
@@ -78,8 +75,8 @@ func (sa *serverAPI) UpdatePayment(ctx context.Context, req *v1.UpdatePaymentReq
 	payID, err := sa.service.Update(
 		ctx,
 		req.GetPaymentId(),
-		req.GetPayment().ProfileId,
-		req.GetPayment().PaymentToken,
+		req.GetPayment().GetProfileId(),
+		req.GetPayment().GetPaymentToken(),
 	)
 	if err != nil {
 		switch {

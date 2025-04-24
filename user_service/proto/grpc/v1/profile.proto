@@ -6,62 +6,54 @@ option go_package = "github.com/DENFNC/Zappy/user_service/proto/gen/v1;v1";
 import "google/protobuf/timestamp.proto";
 import "validate/validate.proto";
 
-
 message FullName {
   string first_name = 1 [(validate.rules).string = {min_len: 1, max_len: 50}];
-  string last_name = 2 [(validate.rules).string = {min_len: 1, max_len: 50}];
+  string last_name  = 2 [(validate.rules).string = {min_len: 1, max_len: 50}];
 }
 
-
-
 message Profile {
-  uint32 profile_id = 1;
-  uint32 auth_user_id = 2 [(validate.rules).uint32 = {gt: 0}];
-  FullName name = 3;
-  google.protobuf.Timestamp created_at = 5;
-  google.protobuf.Timestamp updated_at = 6;
+  string profile_id   = 1 [(validate.rules).string = {len: 36}];
+  string auth_user_id = 2 [(validate.rules).string = {len: 36}];
+  FullName name       = 3;
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp updated_at = 5;
 }
 
 message ProfileIDResponse {
-  uint32 profile_id = 1;
+  string profile_id = 1 [(validate.rules).string = {len: 36}];
 }
 
 message CreateProfileRequest {
   Profile profile = 1;
 }
 
-
 message GetProfileRequest {
-  uint32 profile_id = 1 [(validate.rules).uint32 = {gt: 0}];
+  string profile_id = 1 [(validate.rules).string = {len: 36}];
 }
-
 
 message UpdateProfileRequest {
-  uint32 profile_id = 1;
-  FullName profile = 2;
+  string profile_id = 1 [(validate.rules).string = {len: 36}];
+  FullName profile  = 2;
 }
-
 
 message DeleteProfileRequest {
-  uint32 profile_id = 1 [(validate.rules).uint32 = {gt: 0}];
+  string profile_id = 1 [(validate.rules).string = {len: 36}];
 }
 
-
 message ListProfilesRequest {
-  int32 page_size  = 1 [(validate.rules).int32 = {gt: 0}];
+  int32  page_size  = 1 [(validate.rules).int32 = {gt: 0}];
   string page_token = 2;
 }
 
-
 message ListProfilesResponse {
-  repeated Profile profiles = 1;
-  string next_page_token = 2;
+  repeated Profile profiles       = 1;
+  string         next_page_token = 2;
 }
 
 service UserProfileService {
   rpc CreateProfile(CreateProfileRequest) returns (ProfileIDResponse);
-  rpc GetProfile(GetProfileRequest) returns (Profile);
+  rpc GetProfile(GetProfileRequest)       returns (Profile);
   rpc UpdateProfile(UpdateProfileRequest) returns (ProfileIDResponse);
   rpc DeleteProfile(DeleteProfileRequest) returns (ProfileIDResponse);
-  rpc ListProfiles(ListProfilesRequest) returns (ListProfilesResponse);
+  rpc ListProfiles(ListProfilesRequest)   returns (ListProfilesResponse);
 }

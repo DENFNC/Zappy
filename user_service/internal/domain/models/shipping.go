@@ -1,8 +1,8 @@
 package models
 
 type Shipping struct {
-	AddressID  uint32
-	ProfileID  uint32
+	AddressID  string
+	ProfileID  string
 	Country    string
 	City       string
 	Street     string
@@ -11,7 +11,7 @@ type Shipping struct {
 }
 
 func NewShipping(
-	profileID uint32,
+	profileID string,
 	country string,
 	city string,
 	street string,

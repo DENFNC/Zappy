@@ -6,32 +6,32 @@ option go_package = "github.com/DENFNC/Zappy/user_service/proto/gen/v1;v1";
 import "validate/validate.proto";
 
 message PaymentInput {
-  bytes profile_id    = 1 [(validate.rules).bytes = {len: 16}];
+  string profile_id    = 1 [(validate.rules).string = {len: 36}];
   string payment_token = 2 [(validate.rules).string = {min_len: 1, max_len: 255}];
 }
 
 message Payment {
-  bytes payment_id    = 1 [(validate.rules).bytes = {len: 16}];
-  bytes profile_id    = 2 [(validate.rules).bytes = {len: 16}];
+  string payment_id    = 1 [(validate.rules).string = {len: 36}];
+  string profile_id    = 2 [(validate.rules).string = {len: 36}];
   string payment_token = 3;
   bool   is_default    = 4;
 }
 
 message ResourceID {
-  bytes id = 1 [(validate.rules).bytes = {len: 16}];
+  string id = 1 [(validate.rules).string = {len: 36}];
 }
 
 message UpdatePaymentRequest {
-  bytes payment_id = 1 [(validate.rules).bytes = {len: 16}];
+  string payment_id = 1 [(validate.rules).string = {len: 36}];
   PaymentInput payment = 2;
 }
 
 message ResourceByIDRequest {
-  bytes id = 1 [(validate.rules).bytes = {len: 16}];
+  string id = 1 [(validate.rules).string = {len: 36}];
 }
 
 message ListByProfileRequest {
-  bytes profile_id = 1 [(validate.rules).bytes = {len: 16}];
+  string profile_id = 1 [(validate.rules).string = {len: 36}];
 }
 
 message ListPaymentResponse {
@@ -39,15 +39,15 @@ message ListPaymentResponse {
 }
 
 message SetDefaultPaymentRequest {
-  bytes payment_id = 1 [(validate.rules).bytes = {len: 16}];
-  bytes profile_id = 2 [(validate.rules).bytes = {len: 16}];
+  string payment_id  = 1 [(validate.rules).string = {len: 36}];
+  string profile_id  = 2 [(validate.rules).string = {len: 36}];
 }
 
 service PaymentService {
-  rpc CreatePayment(PaymentInput) returns (ResourceID);
-  rpc GetPayment(ResourceByIDRequest) returns (Payment);
-  rpc DeletePayment(ResourceByIDRequest) returns (ResourceID);
+  rpc CreatePayment(PaymentInput)         returns (ResourceID);
+  rpc GetPayment(ResourceByIDRequest)     returns (Payment);
+  rpc DeletePayment(ResourceByIDRequest)  returns (ResourceID);
   rpc UpdatePayment(UpdatePaymentRequest) returns (ResourceID);
-  rpc ListPayments(ListByProfileRequest) returns (ListPaymentResponse);
+  rpc ListPayments(ListByProfileRequest)  returns (ListPaymentResponse);
   rpc SetDefaultPayment(SetDefaultPaymentRequest) returns (ResourceID);
 }

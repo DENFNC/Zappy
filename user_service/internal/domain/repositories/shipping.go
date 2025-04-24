@@ -10,26 +10,26 @@ type ShippingRepository interface {
 	Create(
 		ctx context.Context,
 		address *models.Shipping,
-	) (uint32, error)
+	) (string, error)
 	GetByID(
 		ctx context.Context,
-		id uint32,
+		id string,
 	) (*models.Shipping, error)
 	GetByProfileID(
 		ctx context.Context,
-		profileID uint32,
+		profileID string,
 	) ([]models.Shipping, error)
 	UpdateAddress(
 		ctx context.Context,
-		id uint32,
+		id string,
 		address *models.Shipping,
-	) (uint32, error)
+	) (string, error)
 	SetDefault(
 		ctx context.Context,
-		addressID, profileID uint32,
+		addressID, profileID string,
 	) error
 	Delete(
 		ctx context.Context,
-		id uint32,
-	) (uint32, error)
+		id string,
+	) (string, error)
 }

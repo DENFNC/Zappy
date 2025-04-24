@@ -16,28 +16,28 @@ type Shipping interface {
 	Create(
 		ctx context.Context,
 		address *models.Shipping,
-	) (uint32, error)
+	) (string, error)
 	GetByID(
 		ctx context.Context,
-		id uint32,
+		id string,
 	) (*models.Shipping, error)
 	ListByProfile(
 		ctx context.Context,
-		profileID uint32,
+		profileID string,
 	) ([]models.Shipping, error)
 	Update(
 		ctx context.Context,
-		id uint32,
+		id string,
 		address *models.Shipping,
-	) (uint32, error)
+	) (string, error)
 	SetDefault(
 		ctx context.Context,
-		addressID, profileID uint32,
-	) (uint32, error)
+		addressID, profileID string,
+	) (string, error)
 	Delete(
 		ctx context.Context,
-		id uint32,
-	) (uint32, error)
+		id string,
+	) (string, error)
 }
 
 type serverAPI struct {
@@ -64,11 +64,11 @@ func (sa *serverAPI) CreateShipping(ctx context.Context, req *v1.CreateShippingR
 	}
 
 	ship := models.NewShipping(
-		req.GetAddress().ProfileId,
-		req.GetAddress().Country,
-		req.GetAddress().City,
-		req.GetAddress().Street,
-		req.GetAddress().PostalCode,
+		req.GetAddress().GetProfileId(),
+		req.GetAddress().GetCountry(),
+		req.GetAddress().GetCity(),
+		req.GetAddress().GetStreet(),
+		req.GetAddress().GetPostalCode(),
 	)
 
 	addrID, err := sa.service.Create(ctx, ship)
@@ -102,7 +102,7 @@ func (sa *serverAPI) CreateShipping(ctx context.Context, req *v1.CreateShippingR
 func (sa *serverAPI) DeleteShipping(ctx context.Context, req *v1.DeleteShippingRequest) (*v1.DeleteShippingResponse, error) {
 	addrID, err := sa.service.Delete(
 		ctx,
-		req.GetId().AddressId,
+		req.GetId().GetAddressId(),
 	)
 	if err != nil {
 		switch {
@@ -128,7 +128,7 @@ func (sa *serverAPI) DeleteShipping(ctx context.Context, req *v1.DeleteShippingR
 func (sa *serverAPI) GetShipping(ctx context.Context, req *v1.GetShippingRequest) (*v1.GetShippingResponse, error) {
 	ship, err := sa.service.GetByID(
 		ctx,
-		req.GetId().AddressId,
+		req.GetId().GetAddressId(),
 	)
 	if err != nil {
 		return nil, status.Error(
@@ -173,22 +173,22 @@ func (sa *serverAPI) ListShipping(ctx context.Context, req *v1.ListShippingReque
 	}
 
 	return &v1.ListShippingResponse{
-		Es: out,
+		Shippings: out,
 	}, nil
 }
 
 func (sa *serverAPI) UpdateShipping(ctx context.Context, req *v1.UpdateShippingRequest) (*v1.UpdateShippingResponse, error) {
 	address := models.NewShipping(
-		req.GetAddress().ProfileId,
-		req.GetAddress().Country,
-		req.GetAddress().City,
-		req.GetAddress().Street,
-		req.GetAddress().PostalCode,
+		req.GetAddress().GetProfileId(),
+		req.GetAddress().GetCountry(),
+		req.GetAddress().GetCity(),
+		req.GetAddress().GetStreet(),
+		req.GetAddress().GetPostalCode(),
 	)
 
 	addrID, err := sa.service.Update(
 		ctx,
-		req.GetId().AddressId,
+		req.GetId().GetAddressId(),
 		address,
 	)
 	if err != nil {
@@ -208,7 +208,7 @@ func (sa *serverAPI) UpdateShipping(ctx context.Context, req *v1.UpdateShippingR
 func (sa *serverAPI) SetDefaultShipping(ctx context.Context, req *v1.SetDefaultShippingRequest) (*v1.SetDefaultShippingResponse, error) {
 	addrID, err := sa.service.SetDefault(
 		ctx,
-		req.GetId().AddressId,
+		req.GetId().GetAddressId(),
 		req.GetProfileId(),
 	)
 	if err != nil {

@@ -12,6 +12,8 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
+const emptyStringAddr = ""
+
 type ShippingService struct {
 	log  *slog.Logger
 	repo repositories.ShippingRepository
@@ -24,7 +26,7 @@ func NewShipping(log *slog.Logger, repo repositories.ShippingRepository) *Shippi
 	}
 }
 
-func (s *ShippingService) Create(ctx context.Context, address *models.Shipping) (uint32, error) {
+func (s *ShippingService) Create(ctx context.Context, address *models.Shipping) (string, error) {
 	const op = "service.ShippingService.Create"
 
 	log := s.log.With("op", op)
@@ -35,22 +37,22 @@ func (s *ShippingService) Create(ctx context.Context, address *models.Shipping) 
 		if errors.As(err, &pgErr) {
 			switch pgErr.Code {
 			case "23503":
-				return emptyValue, errpkg.ErrConstraint
+				return emptyStringAddr, errpkg.ErrConstraint
 			case "23505":
-				return emptyValue, errpkg.ErrUniqueViolation
+				return emptyStringAddr, errpkg.ErrUniqueViolation
 			}
 		}
 		log.Error(
 			"Critical error",
 			slog.String("error", err.Error()),
 		)
-		return emptyValue, err
+		return emptyStringAddr, err
 	}
 
 	return addrID, nil
 }
 
-func (s *ShippingService) GetByID(ctx context.Context, id uint32) (*models.Shipping, error) {
+func (s *ShippingService) GetByID(ctx context.Context, id string) (*models.Shipping, error) {
 	const op = "service.ShippingService.GetByID"
 
 	log := s.log.With("op", op)
@@ -60,7 +62,7 @@ func (s *ShippingService) GetByID(ctx context.Context, id uint32) (*models.Shipp
 		log.Error(
 			"Critical error",
 			slog.String("error", err.Error()),
-			slog.Uint64("address_id", uint64(id)),
+			slog.String("address_id", id),
 		)
 		return nil, err
 	}
@@ -68,7 +70,7 @@ func (s *ShippingService) GetByID(ctx context.Context, id uint32) (*models.Shipp
 	return address, nil
 }
 
-func (s *ShippingService) ListByProfile(ctx context.Context, profileID uint32) ([]models.Shipping, error) {
+func (s *ShippingService) ListByProfile(ctx context.Context, profileID string) ([]models.Shipping, error) {
 	const op = "service.ShippingService.ListByProfile"
 
 	log := s.log.With("op", op)
@@ -78,7 +80,7 @@ func (s *ShippingService) ListByProfile(ctx context.Context, profileID uint32) (
 		log.Error(
 			"Critical error",
 			slog.String("error", err.Error()),
-			slog.Uint64("profile_id", uint64(profileID)),
+			slog.String("profile_id", profileID),
 		)
 		return nil, err
 	}
@@ -86,7 +88,7 @@ func (s *ShippingService) ListByProfile(ctx context.Context, profileID uint32) (
 	return addresses, nil
 }
 
-func (s *ShippingService) Update(ctx context.Context, id uint32, address *models.Shipping) (uint32, error) {
+func (s *ShippingService) Update(ctx context.Context, id string, address *models.Shipping) (string, error) {
 	const op = "service.ShippingService.Update"
 
 	log := s.log.With("op", op)
@@ -101,13 +103,13 @@ func (s *ShippingService) Update(ctx context.Context, id uint32, address *models
 			"Critical error",
 			slog.String("error", err.Error()),
 		)
-		return emptyValue, err
+		return emptyStringAddr, err
 	}
 
 	return addrID, nil
 }
 
-func (s *ShippingService) SetDefault(ctx context.Context, addressID, profileID uint32) (uint32, error) {
+func (s *ShippingService) SetDefault(ctx context.Context, addressID, profileID string) (string, error) {
 	const op = "service.ShippingService.SetDefault"
 
 	log := s.log.With("op", op)
@@ -116,16 +118,16 @@ func (s *ShippingService) SetDefault(ctx context.Context, addressID, profileID u
 		log.Error(
 			"Critical error",
 			slog.String("error", err.Error()),
-			slog.Uint64("address_id", uint64(addressID)),
-			slog.Uint64("profile_id", uint64(profileID)),
+			slog.String("address_id", addressID),
+			slog.String("profile_id", profileID),
 		)
-		return emptyValue, err
+		return emptyStringAddr, err
 	}
 
-	return uint32(addressID), nil
+	return addressID, nil
 }
 
-func (s *ShippingService) Delete(ctx context.Context, id uint32) (uint32, error) {
+func (s *ShippingService) Delete(ctx context.Context, id string) (string, error) {
 	const op = "service.ShippingService.Delete"
 
 	log := s.log.With("op", op)
@@ -133,14 +135,14 @@ func (s *ShippingService) Delete(ctx context.Context, id uint32) (uint32, error)
 	addrID, err := s.repo.Delete(ctx, id)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return emptyValue, errpkg.ErrNotFound
+			return emptyStringAddr, errpkg.ErrNotFound
 		}
 		log.Error(
 			"Critical error",
 			slog.String("error", err.Error()),
-			slog.Uint64("address_id", uint64(id)),
+			slog.String("address_id", id),
 		)
-		return emptyValue, err
+		return emptyStringAddr, err
 	}
 
 	return addrID, nil

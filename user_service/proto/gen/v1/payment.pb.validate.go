@@ -57,15 +57,16 @@ func (m *PaymentInput) validate(all bool) error {
 
 	var errors []error
 
-	if m.GetProfileId() <= 0 {
+	if utf8.RuneCountInString(m.GetProfileId()) != 36 {
 		err := PaymentInputValidationError{
 			field:  "ProfileId",
-			reason: "value must be greater than 0",
+			reason: "value length must be 36 runes",
 		}
 		if !all {
 			return err
 		}
 		errors = append(errors, err)
+
 	}
 
 	if l := utf8.RuneCountInString(m.GetPaymentToken()); l < 1 || l > 255 {
@@ -177,9 +178,29 @@ func (m *Payment) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for PaymentId
+	if utf8.RuneCountInString(m.GetPaymentId()) != 36 {
+		err := PaymentValidationError{
+			field:  "PaymentId",
+			reason: "value length must be 36 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 
-	// no validation rules for ProfileId
+	}
+
+	if utf8.RuneCountInString(m.GetProfileId()) != 36 {
+		err := PaymentValidationError{
+			field:  "ProfileId",
+			reason: "value length must be 36 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+
+	}
 
 	// no validation rules for PaymentToken
 
@@ -284,15 +305,16 @@ func (m *ResourceID) validate(all bool) error {
 
 	var errors []error
 
-	if m.GetId() <= 0 {
+	if utf8.RuneCountInString(m.GetId()) != 36 {
 		err := ResourceIDValidationError{
 			field:  "Id",
-			reason: "value must be greater than 0",
+			reason: "value length must be 36 runes",
 		}
 		if !all {
 			return err
 		}
 		errors = append(errors, err)
+
 	}
 
 	if len(errors) > 0 {
@@ -394,7 +416,17 @@ func (m *UpdatePaymentRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for PaymentId
+	if utf8.RuneCountInString(m.GetPaymentId()) != 36 {
+		err := UpdatePaymentRequestValidationError{
+			field:  "PaymentId",
+			reason: "value length must be 36 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+
+	}
 
 	if all {
 		switch v := interface{}(m.GetPayment()).(type) {
@@ -527,15 +559,16 @@ func (m *ResourceByIDRequest) validate(all bool) error {
 
 	var errors []error
 
-	if m.GetId() <= 0 {
+	if utf8.RuneCountInString(m.GetId()) != 36 {
 		err := ResourceByIDRequestValidationError{
 			field:  "Id",
-			reason: "value must be greater than 0",
+			reason: "value length must be 36 runes",
 		}
 		if !all {
 			return err
 		}
 		errors = append(errors, err)
+
 	}
 
 	if len(errors) > 0 {
@@ -640,15 +673,16 @@ func (m *ListByProfileRequest) validate(all bool) error {
 
 	var errors []error
 
-	if m.GetProfileId() <= 0 {
+	if utf8.RuneCountInString(m.GetProfileId()) != 36 {
 		err := ListByProfileRequestValidationError{
 			field:  "ProfileId",
-			reason: "value must be greater than 0",
+			reason: "value length must be 36 runes",
 		}
 		if !all {
 			return err
 		}
 		errors = append(errors, err)
+
 	}
 
 	if len(errors) > 0 {
@@ -889,26 +923,28 @@ func (m *SetDefaultPaymentRequest) validate(all bool) error {
 
 	var errors []error
 
-	if m.GetPaymentId() <= 0 {
+	if utf8.RuneCountInString(m.GetPaymentId()) != 36 {
 		err := SetDefaultPaymentRequestValidationError{
 			field:  "PaymentId",
-			reason: "value must be greater than 0",
+			reason: "value length must be 36 runes",
 		}
 		if !all {
 			return err
 		}
 		errors = append(errors, err)
+
 	}
 
-	if m.GetProfileId() <= 0 {
+	if utf8.RuneCountInString(m.GetProfileId()) != 36 {
 		err := SetDefaultPaymentRequestValidationError{
 			field:  "ProfileId",
-			reason: "value must be greater than 0",
+			reason: "value length must be 36 runes",
 		}
 		if !all {
 			return err
 		}
 		errors = append(errors, err)
+
 	}
 
 	if len(errors) > 0 {

@@ -57,28 +57,40 @@ func (m *WishlistItem) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for ItemId
-
-	if m.GetProfileId() <= 0 {
+	if utf8.RuneCountInString(m.GetItemId()) != 36 {
 		err := WishlistItemValidationError{
-			field:  "ProfileId",
-			reason: "value must be greater than 0",
+			field:  "ItemId",
+			reason: "value length must be 36 runes",
 		}
 		if !all {
 			return err
 		}
 		errors = append(errors, err)
+
 	}
 
-	if m.GetProductId() <= 0 {
+	if utf8.RuneCountInString(m.GetProfileId()) != 36 {
 		err := WishlistItemValidationError{
-			field:  "ProductId",
-			reason: "value must be greater than 0",
+			field:  "ProfileId",
+			reason: "value length must be 36 runes",
 		}
 		if !all {
 			return err
 		}
 		errors = append(errors, err)
+
+	}
+
+	if utf8.RuneCountInString(m.GetProductId()) != 36 {
+		err := WishlistItemValidationError{
+			field:  "ProductId",
+			reason: "value length must be 36 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+
 	}
 
 	if all {
@@ -342,15 +354,16 @@ func (m *GetWishlistItemRequest) validate(all bool) error {
 
 	var errors []error
 
-	if m.GetItemId() <= 0 {
+	if utf8.RuneCountInString(m.GetItemId()) != 36 {
 		err := GetWishlistItemRequestValidationError{
 			field:  "ItemId",
-			reason: "value must be greater than 0",
+			reason: "value length must be 36 runes",
 		}
 		if !all {
 			return err
 		}
 		errors = append(errors, err)
+
 	}
 
 	if len(errors) > 0 {
@@ -586,15 +599,16 @@ func (m *DeleteWishlistItemRequest) validate(all bool) error {
 
 	var errors []error
 
-	if m.GetItemId() <= 0 {
+	if utf8.RuneCountInString(m.GetItemId()) != 36 {
 		err := DeleteWishlistItemRequestValidationError{
 			field:  "ItemId",
-			reason: "value must be greater than 0",
+			reason: "value length must be 36 runes",
 		}
 		if !all {
 			return err
 		}
 		errors = append(errors, err)
+
 	}
 
 	if len(errors) > 0 {
@@ -699,15 +713,16 @@ func (m *ListWishlistItemsRequest) validate(all bool) error {
 
 	var errors []error
 
-	if m.GetProfileId() <= 0 {
+	if utf8.RuneCountInString(m.GetProfileId()) != 36 {
 		err := ListWishlistItemsRequestValidationError{
 			field:  "ProfileId",
-			reason: "value must be greater than 0",
+			reason: "value length must be 36 runes",
 		}
 		if !all {
 			return err
 		}
 		errors = append(errors, err)
+
 	}
 
 	if len(errors) > 0 {
@@ -789,3 +804,139 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ListWishlistItemsRequestValidationError{}
+
+// Validate checks the field values on ListWishlistItemsResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListWishlistItemsResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListWishlistItemsResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListWishlistItemsResponseMultiError, or nil if none found.
+func (m *ListWishlistItemsResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListWishlistItemsResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetWishlistItems() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListWishlistItemsResponseValidationError{
+						field:  fmt.Sprintf("WishlistItems[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListWishlistItemsResponseValidationError{
+						field:  fmt.Sprintf("WishlistItems[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListWishlistItemsResponseValidationError{
+					field:  fmt.Sprintf("WishlistItems[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return ListWishlistItemsResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListWishlistItemsResponseMultiError is an error wrapping multiple validation
+// errors returned by ListWishlistItemsResponse.ValidateAll() if the
+// designated constraints aren't met.
+type ListWishlistItemsResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListWishlistItemsResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListWishlistItemsResponseMultiError) AllErrors() []error { return m }
+
+// ListWishlistItemsResponseValidationError is the validation error returned by
+// ListWishlistItemsResponse.Validate if the designated constraints aren't met.
+type ListWishlistItemsResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListWishlistItemsResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListWishlistItemsResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListWishlistItemsResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListWishlistItemsResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListWishlistItemsResponseValidationError) ErrorName() string {
+	return "ListWishlistItemsResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListWishlistItemsResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListWishlistItemsResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListWishlistItemsResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListWishlistItemsResponseValidationError{}

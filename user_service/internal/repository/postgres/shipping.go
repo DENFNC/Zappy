@@ -27,9 +27,11 @@ func NewShippingRepo(
 	}
 }
 
-func (r *ShippingRepo) Create(ctx context.Context, address *models.Shipping) (uint32, error) {
+func (r *ShippingRepo) Create(ctx context.Context, address *models.Shipping) (string, error) {
+	id := r.NewV7().String()
 	stmt, args, err := r.goqu.Insert("shipping_address").
 		Rows(goqu.Record{
+			"address_id":  id,
 			"profile_id":  address.ProfileID,
 			"country":     address.Country,
 			"city":        address.City,
@@ -40,18 +42,18 @@ func (r *ShippingRepo) Create(ctx context.Context, address *models.Shipping) (ui
 		Returning("address_id").
 		Prepared(true).ToSQL()
 	if err != nil {
-		return 0, err
+		return "", err
 	}
 
-	var addrID uint32
+	var addrID string
 	if err := r.DB.QueryRow(ctx, stmt, args...).Scan(&addrID); err != nil {
-		return 0, err
+		return "", err
 	}
 
 	return addrID, nil
 }
 
-func (r *ShippingRepo) GetByID(ctx context.Context, id uint32) (*models.Shipping, error) {
+func (r *ShippingRepo) GetByID(ctx context.Context, id string) (*models.Shipping, error) {
 	stmt, args, err := r.goqu.Select(
 		"address_id",
 		"profile_id",
@@ -86,7 +88,7 @@ func (r *ShippingRepo) GetByID(ctx context.Context, id uint32) (*models.Shipping
 	return &s, nil
 }
 
-func (r *ShippingRepo) GetByProfileID(ctx context.Context, profileID uint32) ([]models.Shipping, error) {
+func (r *ShippingRepo) GetByProfileID(ctx context.Context, profileID string) ([]models.Shipping, error) {
 	stmt, args, err := r.goqu.
 		From("shipping_address").
 		Where(goqu.Ex{"profile_id": profileID}).
@@ -126,7 +128,7 @@ func (r *ShippingRepo) GetByProfileID(ctx context.Context, profileID uint32) ([]
 	return list, nil
 }
 
-func (r *ShippingRepo) UpdateAddress(ctx context.Context, id uint32, address *models.Shipping) (uint32, error) {
+func (r *ShippingRepo) UpdateAddress(ctx context.Context, id string, address *models.Shipping) (string, error) {
 	stmt, args, err := r.goqu.
 		Update("shipping_address").
 		Set(goqu.Record{
@@ -143,21 +145,21 @@ func (r *ShippingRepo) UpdateAddress(ctx context.Context, id uint32, address *mo
 		Prepared(true).
 		ToSQL()
 	if err != nil {
-		return 0, err
+		return "", err
 	}
 
-	var updatedID uint32
+	var updatedID string
 	if err := r.DB.QueryRow(ctx, stmt, args...).Scan(&updatedID); err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return 0, errpkg.ErrNotFound
+			return "", errpkg.ErrNotFound
 		}
-		return 0, err
+		return "", err
 	}
 
 	return updatedID, nil
 }
 
-func (r *ShippingRepo) SetDefault(ctx context.Context, addressID, profileID uint32) error {
+func (r *ShippingRepo) SetDefault(ctx context.Context, addressID, profileID string) error {
 	conn, err := r.DB.Acquire(ctx)
 	if err != nil {
 		return err
@@ -187,7 +189,7 @@ func (r *ShippingRepo) SetDefault(ctx context.Context, addressID, profileID uint
 			return err
 		}
 
-		var id uint32
+		var id string
 		if err := tx.QueryRow(ctx, setSQL, setArgs...).Scan(&id); err != nil {
 			return err
 		}
@@ -196,18 +198,18 @@ func (r *ShippingRepo) SetDefault(ctx context.Context, addressID, profileID uint
 	})
 }
 
-func (r *ShippingRepo) Delete(ctx context.Context, id uint32) (uint32, error) {
+func (r *ShippingRepo) Delete(ctx context.Context, id string) (string, error) {
 	stmt, args, err := r.goqu.Delete("shipping_address").
 		Returning(goqu.C("address_id")).
 		Where(goqu.C("address_id").Eq(id)).
 		Prepared(true).ToSQL()
 	if err != nil {
-		return 0, err
+		return "", err
 	}
 
-	var addrID uint32
+	var addrID string
 	if err := r.DB.QueryRow(ctx, stmt, args...).Scan(&addrID); err != nil {
-		return 0, err
+		return "", err
 	}
 
 	return addrID, nil
