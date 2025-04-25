@@ -7,6 +7,7 @@
 package v1
 
 import (
+	_ "github.com/envoyproxy/protoc-gen-validate/validate"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	wrapperspb "google.golang.org/protobuf/types/known/wrapperspb"
@@ -666,10 +667,10 @@ var File_service_proto protoreflect.FileDescriptor
 
 const file_service_proto_rawDesc = "" +
 	"\n" +
-	"\rservice.proto\x12\x14ecommerce.catalog.v1\x1a\x1egoogle/protobuf/wrappers.proto\x1a\rmessage.proto\"2\n" +
-	"\x11GetProductRequest\x12\x1d\n" +
+	"\rservice.proto\x12\x14ecommerce.catalog.v1\x1a\x1egoogle/protobuf/wrappers.proto\x1a\x17validate/validate.proto\x1a\rmessage.proto\"<\n" +
+	"\x11GetProductRequest\x12'\n" +
 	"\n" +
-	"product_id\x18\x01 \x01(\tR\tproductId\"M\n" +
+	"product_id\x18\x01 \x01(\tB\b\xfaB\x05r\x03\xb0\x01\x01R\tproductId\"M\n" +
 	"\x12GetProductResponse\x127\n" +
 	"\aproduct\x18\x01 \x01(\v2\x1d.ecommerce.catalog.v1.ProductR\aproduct\"\x8a\x01\n" +
 	"\x13ListProductsRequest\x12\x1b\n" +

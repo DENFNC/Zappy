@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+package ecommerce.product.v1;
+
+import "google/protobuf/wrappers.proto";
+
+option go_package = "github.com/DENFNC/Zappy/user_service/proto/gen/v1;v1";
+
+message Pagination {
+  int32 page_size = 1;
+  string page_token = 2;
+}
+
+message GetProductRequest {
+  string product_id = 1;
+}
+message GetProductResponse {
+  Product product = 1;
+}
+
+message ListProductsRequest {
+  Pagination pagination = 1;
+  string query = 2;
+  repeated string category_ids = 3;
+}
+message ListProductsResponse {
+  repeated Product products = 1;
+  Pagination pagination = 2;
+}
+
+message CreateProductRequest {
+  string name = 1;
+  google.protobuf.StringValue description = 2;
+  int64 price_cents = 3;
+  string currency = 4;
+  repeated string category_ids = 5;
+}
+message CreateProductResponse {
+  Product product = 1;
+}
+
+message UpdateProductRequest {
+  string product_id = 1;
+  google.protobuf.StringValue name = 2;
+  google.protobuf.StringValue description = 3;
+  google.protobuf.Int64Value price_cents = 4;
+  google.protobuf.StringValue currency = 5;
+  repeated string category_ids = 6;
+  google.protobuf.BoolValue is_active = 7;
+}
+message UpdateProductResponse {
+  Product product = 1;
+}
+
+message Product {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  int64 price_cents = 4;
+  string currency = 5;
+  repeated string category_ids = 6;
+  bool is_active = 7;
+  string created_at = 8;
+  string updated_at = 9;
+}
+
+service ProductService {
+  rpc GetProduct(GetProductRequest) returns (GetProductResponse);
+  rpc ListProducts(ListProductsRequest) returns (ListProductsResponse);
+  rpc CreateProduct(CreateProductRequest) returns (CreateProductResponse);
+  rpc UpdateProduct(UpdateProductRequest) returns (UpdateProductResponse);
+}
