@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package common;
+
+option go_package = "github.com/DENFNC/Zappy/catalog_service/proto/gen/v1;v1";
+
+message Pagination {
+  int32 page_size  = 1;
+  string page_token = 2;
+}

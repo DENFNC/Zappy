@@ -1,41 +1,40 @@
+// proto/category/category.proto
 syntax = "proto3";
 
-package ecommerce.category.v1;
+package category;
 
 import "google/protobuf/wrappers.proto";
+import "pagination.proto";
 
-option go_package = "github.com/DENFNC/Zappy/user_service/proto/gen/v1;v1";
-
-message Pagination {
-  int32 page_size = 1;
-  string page_token = 2;
-}
+option go_package = "github.com/DENFNC/Zappy/catalog_service/proto/gen/v1;v1";
 
 message CreateCategoryRequest {
   string name = 1;
   google.protobuf.StringValue parent_id = 2;
 }
+
 message CreateCategoryResponse {
   Category category = 1;
 }
 
 message ListCategoriesRequest {
-  Pagination pagination = 1;
+  common.Pagination pagination = 1;
 }
+
 message ListCategoriesResponse {
   repeated Category categories = 1;
-  Pagination pagination = 2;
+  common.Pagination pagination = 2;
 }
 
 message Category {
-  string id = 1;
-  string name = 2;
-  string parent_id = 3;
+  string id         = 1;
+  string name       = 2;
+  string parent_id  = 3;
   string created_at = 4;
   string updated_at = 5;
 }
 
 service CategoryService {
-  rpc ListCategories(ListCategoriesRequest) returns (ListCategoriesResponse);
-  rpc CreateCategory(CreateCategoryRequest) returns (CreateCategoryResponse);
+  rpc ListCategories   (ListCategoriesRequest)  returns (ListCategoriesResponse);
+  rpc CreateCategory   (CreateCategoryRequest)  returns (CreateCategoryResponse);
 }
