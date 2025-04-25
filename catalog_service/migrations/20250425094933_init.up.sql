@@ -15,6 +15,7 @@ CREATE TABLE
         url VARCHAR(255) NOT NULL,
         alt VARCHAR(255) NOT NULL,
         created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+        updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
         CONSTRAINT fk_product_image FOREIGN KEY (product_id) REFERENCES product (product_id)
     );
 
