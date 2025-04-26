@@ -166,11 +166,11 @@ func (m *CreateCategoryResponse) validate(all bool) error {
 	var errors []error
 
 	if all {
-		switch v := interface{}(m.GetCategory()).(type) {
+		switch v := interface{}(m.GetCategoryId()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
 				errors = append(errors, CreateCategoryResponseValidationError{
-					field:  "Category",
+					field:  "CategoryId",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
@@ -178,16 +178,16 @@ func (m *CreateCategoryResponse) validate(all bool) error {
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
 				errors = append(errors, CreateCategoryResponseValidationError{
-					field:  "Category",
+					field:  "CategoryId",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
 			}
 		}
-	} else if v, ok := interface{}(m.GetCategory()).(interface{ Validate() error }); ok {
+	} else if v, ok := interface{}(m.GetCategoryId()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return CreateCategoryResponseValidationError{
-				field:  "Category",
+				field:  "CategoryId",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}
@@ -323,6 +323,10 @@ func (m *ListCategoriesRequest) validate(all bool) error {
 				cause:  err,
 			}
 		}
+	}
+
+	if m.ParentId != nil {
+		// no validation rules for ParentId
 	}
 
 	if len(errors) > 0 {

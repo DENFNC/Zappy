@@ -76,7 +76,7 @@ func (x *CreateCategoryRequest) GetParentId() string {
 
 type CreateCategoryResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Category      *Category              `protobuf:"bytes,1,opt,name=category,proto3" json:"category,omitempty"`
+	CategoryId    *ResourceID            `protobuf:"bytes,1,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -111,9 +111,9 @@ func (*CreateCategoryResponse) Descriptor() ([]byte, []int) {
 	return file_category_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *CreateCategoryResponse) GetCategory() *Category {
+func (x *CreateCategoryResponse) GetCategoryId() *ResourceID {
 	if x != nil {
-		return x.Category
+		return x.CategoryId
 	}
 	return nil
 }
@@ -121,6 +121,7 @@ func (x *CreateCategoryResponse) GetCategory() *Category {
 type ListCategoriesRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Pagination    *Pagination            `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	ParentId      *string                `protobuf:"bytes,2,opt,name=parent_id,json=parentId,proto3,oneof" json:"parent_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -160,6 +161,13 @@ func (x *ListCategoriesRequest) GetPagination() *Pagination {
 		return x.Pagination
 	}
 	return nil
+}
+
+func (x *ListCategoriesRequest) GetParentId() string {
+	if x != nil && x.ParentId != nil {
+		return *x.ParentId
+	}
+	return ""
 }
 
 type ListCategoriesResponse struct {
@@ -379,13 +387,17 @@ const file_category_proto_rawDesc = "" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
 	"\tparent_id\x18\x02 \x01(\tH\x00R\bparentId\x88\x01\x01B\f\n" +
 	"\n" +
-	"_parent_id\"H\n" +
-	"\x16CreateCategoryResponse\x12.\n" +
-	"\bcategory\x18\x01 \x01(\v2\x12.category.CategoryR\bcategory\"K\n" +
+	"_parent_id\"M\n" +
+	"\x16CreateCategoryResponse\x123\n" +
+	"\vcategory_id\x18\x01 \x01(\v2\x12.common.ResourceIDR\n" +
+	"categoryId\"{\n" +
 	"\x15ListCategoriesRequest\x122\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x12.common.PaginationR\n" +
-	"pagination\"\x80\x01\n" +
+	"pagination\x12 \n" +
+	"\tparent_id\x18\x02 \x01(\tH\x00R\bparentId\x88\x01\x01B\f\n" +
+	"\n" +
+	"_parent_id\"\x80\x01\n" +
 	"\x16ListCategoriesResponse\x122\n" +
 	"\n" +
 	"categories\x18\x01 \x03(\v2\x12.category.CategoryR\n" +
@@ -431,16 +443,16 @@ var file_category_proto_goTypes = []any{
 	(*DeleteCategoryRequest)(nil),  // 4: category.DeleteCategoryRequest
 	(*DeleteCategoryResponse)(nil), // 5: category.DeleteCategoryResponse
 	(*Category)(nil),               // 6: category.Category
-	(*Pagination)(nil),             // 7: common.Pagination
-	(*ResourceID)(nil),             // 8: common.ResourceID
+	(*ResourceID)(nil),             // 7: common.ResourceID
+	(*Pagination)(nil),             // 8: common.Pagination
 	(*emptypb.Empty)(nil),          // 9: google.protobuf.Empty
 }
 var file_category_proto_depIdxs = []int32{
-	6, // 0: category.CreateCategoryResponse.category:type_name -> category.Category
-	7, // 1: category.ListCategoriesRequest.pagination:type_name -> common.Pagination
+	7, // 0: category.CreateCategoryResponse.category_id:type_name -> common.ResourceID
+	8, // 1: category.ListCategoriesRequest.pagination:type_name -> common.Pagination
 	6, // 2: category.ListCategoriesResponse.categories:type_name -> category.Category
-	7, // 3: category.ListCategoriesResponse.pagination:type_name -> common.Pagination
-	8, // 4: category.DeleteCategoryRequest.category_id:type_name -> common.ResourceID
+	8, // 3: category.ListCategoriesResponse.pagination:type_name -> common.Pagination
+	7, // 4: category.DeleteCategoryRequest.category_id:type_name -> common.ResourceID
 	2, // 5: category.CategoryService.ListCategories:input_type -> category.ListCategoriesRequest
 	0, // 6: category.CategoryService.CreateCategory:input_type -> category.CreateCategoryRequest
 	4, // 7: category.CategoryService.DeleteCategory:input_type -> category.DeleteCategoryRequest
@@ -461,6 +473,7 @@ func file_category_proto_init() {
 	}
 	file_common_proto_init()
 	file_category_proto_msgTypes[0].OneofWrappers = []any{}
+	file_category_proto_msgTypes[2].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

@@ -13,11 +13,12 @@ message CreateCategoryRequest {
 }
 
 message CreateCategoryResponse {
-  Category category = 1;
+  common.ResourceID category_id = 1;
 }
 
 message ListCategoriesRequest {
   common.Pagination pagination = 1;
+  optional string parent_id = 2;
 }
 
 message ListCategoriesResponse {

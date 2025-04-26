@@ -4,20 +4,24 @@ import (
 	"context"
 
 	"github.com/DENFNC/Zappy/catalog_service/internal/domain/models"
+	errpkg "github.com/DENFNC/Zappy/catalog_service/internal/errors"
 	v1 "github.com/DENFNC/Zappy/catalog_service/proto/gen/v1"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 type Category interface {
-	CreateCategory(
+	Create(
 		ctx context.Context,
 		name, parentID string,
-	) (*models.Category, error)
-	ListCategories(
+	) (string, error)
+	List(
 		ctx context.Context,
 		page, pageSize int32,
 	) ([]models.Category, int32, error)
-	DeleteCategory(
+	Delete(
 		ctx context.Context,
 		categoryID string,
 	) error
@@ -42,12 +46,28 @@ func (api *serverAPI) CreateCategory(
 	ctx context.Context,
 	req *v1.CreateCategoryRequest,
 ) (*v1.CreateCategoryResponse, error) {
-	panic("implement me")
+	categoryID, err := api.svc.Create(ctx, req.GetName(), req.GetParentId())
+	if err != nil {
+		return nil, status.Error(
+			codes.Internal,
+			errpkg.ErrInternal.Message,
+		)
+	}
+
+	return &v1.CreateCategoryResponse{
+		CategoryId: &v1.ResourceID{
+			Id: categoryID,
+		},
+	}, nil
 }
 
 func (api *serverAPI) ListCategories(
 	ctx context.Context,
 	req *v1.ListCategoriesRequest,
 ) (*v1.ListCategoriesResponse, error) {
+	panic("implement me")
+}
+
+func (api *serverAPI) DeleteCategory(context.Context, *v1.DeleteCategoryRequest) (*emptypb.Empty, error) {
 	panic("implement me")
 }

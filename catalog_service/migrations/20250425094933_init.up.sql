@@ -23,7 +23,7 @@ CREATE TABLE
     category (
         category_id UUID PRIMARY KEY NOT NULL,
         category_name VARCHAR(100) UNIQUE NOT NULL,
-        parent_id UUID REFERENCES category (category_id),
+        parent_id UUID REFERENCES category (category_id) DEFAULT NULL,
         created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
         updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
     );

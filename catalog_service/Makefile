@@ -4,7 +4,7 @@ APP_PROTO_VALIDATE = proto/protoc-gen-validate
 GOPATH            ?= $(shell go env GOPATH)
 BIN_PATH          := $(GOPATH)/bin
 
-.PHONY: grpc-gen grpc-clean grpc-rebuild check-plugins
+.PHONY: grpc-gen grpc-clean grpc-rebuild check-plugins mig-up mig-drop
 
 # Generate gRPC and validation code
 grpc-gen: check-plugins
@@ -29,6 +29,16 @@ grpc-clean:
 
 # Rebuild everything
 grpc-rebuild: grpc-clean grpc-gen
+
+mig-up:
+	@echo "🚀 Migrating database..."
+	migrate -source file://./migrations/ \
+		-database pgx5://postgres:admin@localhost:5432/catalog_service up
+
+mig-drop:
+	@echo "💥 Dropping all database objects"
+	migrate -source file://./migrations/ \
+		-database pgx5://postgres:admin@localhost:5432/catalog_service drop -f
 
 # Ensure required plugins and proto files are installed
 check-plugins:
