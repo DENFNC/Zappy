@@ -10,7 +10,8 @@ import (
 type Product interface {
 	Create(
 		ctx context.Context,
-		desc, name string,
+		name, desc string,
+		categoryIDs []string,
 		price pgtype.Numeric,
 	) (string, error)
 	GetByID(

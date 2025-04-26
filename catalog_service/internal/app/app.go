@@ -4,6 +4,9 @@ import (
 	"log/slog"
 
 	grpcapp "github.com/DENFNC/Zappy/catalog_service/internal/app/grpc"
+	"github.com/DENFNC/Zappy/catalog_service/internal/handler/product"
+	repo "github.com/DENFNC/Zappy/catalog_service/internal/repo/postgres"
+	"github.com/DENFNC/Zappy/catalog_service/internal/service"
 	psql "github.com/DENFNC/Zappy/catalog_service/internal/storage/postgres"
 )
 
@@ -17,10 +20,15 @@ func New(
 	port int,
 ) *App {
 
+	productRepo := repo.NewProductRepo(db, db.Dial)
+	productSvc := service.NewProduct(log, productRepo)
+	productHandle := product.New(productSvc)
+
 	return &App{
 		App: *grpcapp.New(
 			log,
 			port,
+			productHandle,
 		),
 	}
 }

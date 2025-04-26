@@ -3,8 +3,7 @@ syntax = "proto3";
 package category;
 
 import "google/protobuf/empty.proto";
-import "google/protobuf/wrappers.proto";
-import "pagination.proto";
+import "common.proto";
 
 option go_package = "github.com/DENFNC/Zappy/catalog_service/proto/gen/v1;v1";
 
@@ -27,7 +26,7 @@ message ListCategoriesResponse {
 }
 
 message DeleteCategoryRequest {
-  string category_id = 1;
+  common.ResourceID category_id = 1;
 }
 
 message DeleteCategoryResponse {

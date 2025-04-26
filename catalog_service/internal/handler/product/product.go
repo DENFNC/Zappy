@@ -2,20 +2,23 @@ package product
 
 import (
 	"context"
+	"math/big"
 
 	"github.com/DENFNC/Zappy/catalog_service/internal/domain/models"
+	errpkg "github.com/DENFNC/Zappy/catalog_service/internal/errors"
 	v1 "github.com/DENFNC/Zappy/catalog_service/proto/gen/v1"
 	"github.com/jackc/pgx/v5/pgtype"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type Product interface {
 	Create(
 		ctx context.Context,
-		name string,
-		desc, currency string,
-		price pgtype.Numeric,
+		name, desc string,
 		categoryIDs []string,
+		price pgtype.Numeric,
 	) (string, error)
 	Get(
 		ctx context.Context,
@@ -60,7 +63,31 @@ func (api *serverAPI) CreateProduct(
 	ctx context.Context,
 	req *v1.CreateProductRequest,
 ) (*v1.CreateProductResponse, error) {
-	panic("implement me")
+	productID, err := api.svc.Create(
+		ctx,
+		req.GetName(),
+		req.GetDescription(),
+		req.GetCategoryIds(),
+		pgtype.Numeric{
+			Int:              big.NewInt(req.GetPriceCents()),
+			Exp:              -2,
+			Valid:            true,
+			InfinityModifier: pgtype.Finite,
+			NaN:              false,
+		},
+	)
+	if err != nil {
+		return nil, status.Error(
+			codes.Internal,
+			errpkg.ErrInternal.Message,
+		)
+	}
+
+	return &v1.CreateProductResponse{
+		ProductId: &v1.ResourceID{
+			Id: productID,
+		},
+	}, nil
 }
 
 func (api *serverAPI) GetProduct(

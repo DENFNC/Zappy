@@ -3,17 +3,16 @@ syntax = "proto3";
 package product;
 
 import "google/protobuf/empty.proto";
-import "google/protobuf/wrappers.proto";
-import "pagination.proto";
+import "common.proto";
 
 option go_package = "github.com/DENFNC/Zappy/catalog_service/proto/gen/v1;v1";
 
 message GetProductRequest {
-  string product_id = 1;
+  common.ResourceID product_id = 1;
 }
 
 message GetProductResponse {
-  Product product = 1;
+  common.ResourceID product_id = 1;
 }
 
 message ListProductsRequest {
@@ -36,7 +35,7 @@ message CreateProductRequest {
 }
 
 message CreateProductResponse {
-  Product product = 1;
+  common.ResourceID product_id = 1;
 }
 
 message UpdateProductRequest {

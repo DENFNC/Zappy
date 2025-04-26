@@ -57,7 +57,34 @@ func (m *GetProductRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for ProductId
+	if all {
+		switch v := interface{}(m.GetProductId()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GetProductRequestValidationError{
+					field:  "ProductId",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GetProductRequestValidationError{
+					field:  "ProductId",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetProductId()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GetProductRequestValidationError{
+				field:  "ProductId",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	if len(errors) > 0 {
 		return GetProductRequestMultiError(errors)
@@ -162,11 +189,11 @@ func (m *GetProductResponse) validate(all bool) error {
 	var errors []error
 
 	if all {
-		switch v := interface{}(m.GetProduct()).(type) {
+		switch v := interface{}(m.GetProductId()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
 				errors = append(errors, GetProductResponseValidationError{
-					field:  "Product",
+					field:  "ProductId",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
@@ -174,16 +201,16 @@ func (m *GetProductResponse) validate(all bool) error {
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
 				errors = append(errors, GetProductResponseValidationError{
-					field:  "Product",
+					field:  "ProductId",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
 			}
 		}
-	} else if v, ok := interface{}(m.GetProduct()).(interface{ Validate() error }); ok {
+	} else if v, ok := interface{}(m.GetProductId()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return GetProductResponseValidationError{
-				field:  "Product",
+				field:  "ProductId",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}
@@ -703,11 +730,11 @@ func (m *CreateProductResponse) validate(all bool) error {
 	var errors []error
 
 	if all {
-		switch v := interface{}(m.GetProduct()).(type) {
+		switch v := interface{}(m.GetProductId()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
 				errors = append(errors, CreateProductResponseValidationError{
-					field:  "Product",
+					field:  "ProductId",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
@@ -715,16 +742,16 @@ func (m *CreateProductResponse) validate(all bool) error {
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
 				errors = append(errors, CreateProductResponseValidationError{
-					field:  "Product",
+					field:  "ProductId",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
 			}
 		}
-	} else if v, ok := interface{}(m.GetProduct()).(interface{ Validate() error }); ok {
+	} else if v, ok := interface{}(m.GetProductId()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return CreateProductResponseValidationError{
-				field:  "Product",
+				field:  "ProductId",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}

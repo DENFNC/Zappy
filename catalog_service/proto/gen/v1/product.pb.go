@@ -10,7 +10,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
-	_ "google.golang.org/protobuf/types/known/wrapperspb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -25,7 +24,7 @@ const (
 
 type GetProductRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ProductId     string                 `protobuf:"bytes,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
+	ProductId     *ResourceID            `protobuf:"bytes,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -60,16 +59,16 @@ func (*GetProductRequest) Descriptor() ([]byte, []int) {
 	return file_product_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *GetProductRequest) GetProductId() string {
+func (x *GetProductRequest) GetProductId() *ResourceID {
 	if x != nil {
 		return x.ProductId
 	}
-	return ""
+	return nil
 }
 
 type GetProductResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Product       *Product               `protobuf:"bytes,1,opt,name=product,proto3" json:"product,omitempty"`
+	ProductId     *ResourceID            `protobuf:"bytes,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -104,9 +103,9 @@ func (*GetProductResponse) Descriptor() ([]byte, []int) {
 	return file_product_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *GetProductResponse) GetProduct() *Product {
+func (x *GetProductResponse) GetProductId() *ResourceID {
 	if x != nil {
-		return x.Product
+		return x.ProductId
 	}
 	return nil
 }
@@ -301,7 +300,7 @@ func (x *CreateProductRequest) GetCategoryIds() []string {
 
 type CreateProductResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Product       *Product               `protobuf:"bytes,1,opt,name=product,proto3" json:"product,omitempty"`
+	ProductId     *ResourceID            `protobuf:"bytes,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -336,9 +335,9 @@ func (*CreateProductResponse) Descriptor() ([]byte, []int) {
 	return file_product_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *CreateProductResponse) GetProduct() *Product {
+func (x *CreateProductResponse) GetProductId() *ResourceID {
 	if x != nil {
-		return x.Product
+		return x.ProductId
 	}
 	return nil
 }
@@ -671,12 +670,13 @@ var File_product_proto protoreflect.FileDescriptor
 
 const file_product_proto_rawDesc = "" +
 	"\n" +
-	"\rproduct.proto\x12\aproduct\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1egoogle/protobuf/wrappers.proto\x1a\x10pagination.proto\"2\n" +
-	"\x11GetProductRequest\x12\x1d\n" +
+	"\rproduct.proto\x12\aproduct\x1a\x1bgoogle/protobuf/empty.proto\x1a\fcommon.proto\"F\n" +
+	"\x11GetProductRequest\x121\n" +
 	"\n" +
-	"product_id\x18\x01 \x01(\tR\tproductId\"@\n" +
-	"\x12GetProductResponse\x12*\n" +
-	"\aproduct\x18\x01 \x01(\v2\x10.product.ProductR\aproduct\"\x82\x01\n" +
+	"product_id\x18\x01 \x01(\v2\x12.common.ResourceIDR\tproductId\"G\n" +
+	"\x12GetProductResponse\x121\n" +
+	"\n" +
+	"product_id\x18\x01 \x01(\v2\x12.common.ResourceIDR\tproductId\"\x82\x01\n" +
 	"\x13ListProductsRequest\x122\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x12.common.PaginationR\n" +
@@ -695,9 +695,10 @@ const file_product_proto_rawDesc = "" +
 	"priceCents\x12\x1a\n" +
 	"\bcurrency\x18\x04 \x01(\tR\bcurrency\x12!\n" +
 	"\fcategory_ids\x18\x05 \x03(\tR\vcategoryIdsB\x0e\n" +
-	"\f_description\"C\n" +
-	"\x15CreateProductResponse\x12*\n" +
-	"\aproduct\x18\x01 \x01(\v2\x10.product.ProductR\aproduct\"\xc5\x02\n" +
+	"\f_description\"J\n" +
+	"\x15CreateProductResponse\x121\n" +
+	"\n" +
+	"product_id\x18\x01 \x01(\v2\x12.common.ResourceIDR\tproductId\"\xc5\x02\n" +
 	"\x14UpdateProductRequest\x12\x1d\n" +
 	"\n" +
 	"product_id\x18\x01 \x01(\tR\tproductId\x12\x17\n" +
@@ -766,31 +767,33 @@ var file_product_proto_goTypes = []any{
 	(*DeleteProductRequest)(nil),  // 8: product.DeleteProductRequest
 	(*DeleteProductResponse)(nil), // 9: product.DeleteProductResponse
 	(*Product)(nil),               // 10: product.Product
-	(*Pagination)(nil),            // 11: common.Pagination
-	(*emptypb.Empty)(nil),         // 12: google.protobuf.Empty
+	(*ResourceID)(nil),            // 11: common.ResourceID
+	(*Pagination)(nil),            // 12: common.Pagination
+	(*emptypb.Empty)(nil),         // 13: google.protobuf.Empty
 }
 var file_product_proto_depIdxs = []int32{
-	10, // 0: product.GetProductResponse.product:type_name -> product.Product
-	11, // 1: product.ListProductsRequest.pagination:type_name -> common.Pagination
-	10, // 2: product.ListProductsResponse.products:type_name -> product.Product
-	11, // 3: product.ListProductsResponse.pagination:type_name -> common.Pagination
-	10, // 4: product.CreateProductResponse.product:type_name -> product.Product
-	10, // 5: product.UpdateProductResponse.product:type_name -> product.Product
-	0,  // 6: product.ProductService.GetProduct:input_type -> product.GetProductRequest
-	2,  // 7: product.ProductService.ListProducts:input_type -> product.ListProductsRequest
-	4,  // 8: product.ProductService.CreateProduct:input_type -> product.CreateProductRequest
-	6,  // 9: product.ProductService.UpdateProduct:input_type -> product.UpdateProductRequest
-	8,  // 10: product.ProductService.DeleteProduct:input_type -> product.DeleteProductRequest
-	1,  // 11: product.ProductService.GetProduct:output_type -> product.GetProductResponse
-	3,  // 12: product.ProductService.ListProducts:output_type -> product.ListProductsResponse
-	5,  // 13: product.ProductService.CreateProduct:output_type -> product.CreateProductResponse
-	7,  // 14: product.ProductService.UpdateProduct:output_type -> product.UpdateProductResponse
-	12, // 15: product.ProductService.DeleteProduct:output_type -> google.protobuf.Empty
-	11, // [11:16] is the sub-list for method output_type
-	6,  // [6:11] is the sub-list for method input_type
-	6,  // [6:6] is the sub-list for extension type_name
-	6,  // [6:6] is the sub-list for extension extendee
-	0,  // [0:6] is the sub-list for field type_name
+	11, // 0: product.GetProductRequest.product_id:type_name -> common.ResourceID
+	11, // 1: product.GetProductResponse.product_id:type_name -> common.ResourceID
+	12, // 2: product.ListProductsRequest.pagination:type_name -> common.Pagination
+	10, // 3: product.ListProductsResponse.products:type_name -> product.Product
+	12, // 4: product.ListProductsResponse.pagination:type_name -> common.Pagination
+	11, // 5: product.CreateProductResponse.product_id:type_name -> common.ResourceID
+	10, // 6: product.UpdateProductResponse.product:type_name -> product.Product
+	0,  // 7: product.ProductService.GetProduct:input_type -> product.GetProductRequest
+	2,  // 8: product.ProductService.ListProducts:input_type -> product.ListProductsRequest
+	4,  // 9: product.ProductService.CreateProduct:input_type -> product.CreateProductRequest
+	6,  // 10: product.ProductService.UpdateProduct:input_type -> product.UpdateProductRequest
+	8,  // 11: product.ProductService.DeleteProduct:input_type -> product.DeleteProductRequest
+	1,  // 12: product.ProductService.GetProduct:output_type -> product.GetProductResponse
+	3,  // 13: product.ProductService.ListProducts:output_type -> product.ListProductsResponse
+	5,  // 14: product.ProductService.CreateProduct:output_type -> product.CreateProductResponse
+	7,  // 15: product.ProductService.UpdateProduct:output_type -> product.UpdateProductResponse
+	13, // 16: product.ProductService.DeleteProduct:output_type -> google.protobuf.Empty
+	12, // [12:17] is the sub-list for method output_type
+	7,  // [7:12] is the sub-list for method input_type
+	7,  // [7:7] is the sub-list for extension type_name
+	7,  // [7:7] is the sub-list for extension extendee
+	0,  // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_product_proto_init() }
@@ -798,7 +801,7 @@ func file_product_proto_init() {
 	if File_product_proto != nil {
 		return
 	}
-	file_pagination_proto_init()
+	file_common_proto_init()
 	file_product_proto_msgTypes[4].OneofWrappers = []any{}
 	file_product_proto_msgTypes[6].OneofWrappers = []any{}
 	type x struct{}

@@ -10,7 +10,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
-	_ "google.golang.org/protobuf/types/known/wrapperspb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -217,7 +216,7 @@ func (x *ListCategoriesResponse) GetPagination() *Pagination {
 
 type DeleteCategoryRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	CategoryId    string                 `protobuf:"bytes,1,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"`
+	CategoryId    *ResourceID            `protobuf:"bytes,1,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -252,11 +251,11 @@ func (*DeleteCategoryRequest) Descriptor() ([]byte, []int) {
 	return file_category_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *DeleteCategoryRequest) GetCategoryId() string {
+func (x *DeleteCategoryRequest) GetCategoryId() *ResourceID {
 	if x != nil {
 		return x.CategoryId
 	}
-	return ""
+	return nil
 }
 
 type DeleteCategoryResponse struct {
@@ -375,7 +374,7 @@ var File_category_proto protoreflect.FileDescriptor
 
 const file_category_proto_rawDesc = "" +
 	"\n" +
-	"\x0ecategory.proto\x12\bcategory\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1egoogle/protobuf/wrappers.proto\x1a\x10pagination.proto\"[\n" +
+	"\x0ecategory.proto\x12\bcategory\x1a\x1bgoogle/protobuf/empty.proto\x1a\fcommon.proto\"[\n" +
 	"\x15CreateCategoryRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
 	"\tparent_id\x18\x02 \x01(\tH\x00R\bparentId\x88\x01\x01B\f\n" +
@@ -393,9 +392,9 @@ const file_category_proto_rawDesc = "" +
 	"categories\x122\n" +
 	"\n" +
 	"pagination\x18\x02 \x01(\v2\x12.common.PaginationR\n" +
-	"pagination\"8\n" +
-	"\x15DeleteCategoryRequest\x12\x1f\n" +
-	"\vcategory_id\x18\x01 \x01(\tR\n" +
+	"pagination\"L\n" +
+	"\x15DeleteCategoryRequest\x123\n" +
+	"\vcategory_id\x18\x01 \x01(\v2\x12.common.ResourceIDR\n" +
 	"categoryId\"\x18\n" +
 	"\x16DeleteCategoryResponse\"\x89\x01\n" +
 	"\bCategory\x12\x0e\n" +
@@ -433,24 +432,26 @@ var file_category_proto_goTypes = []any{
 	(*DeleteCategoryResponse)(nil), // 5: category.DeleteCategoryResponse
 	(*Category)(nil),               // 6: category.Category
 	(*Pagination)(nil),             // 7: common.Pagination
-	(*emptypb.Empty)(nil),          // 8: google.protobuf.Empty
+	(*ResourceID)(nil),             // 8: common.ResourceID
+	(*emptypb.Empty)(nil),          // 9: google.protobuf.Empty
 }
 var file_category_proto_depIdxs = []int32{
 	6, // 0: category.CreateCategoryResponse.category:type_name -> category.Category
 	7, // 1: category.ListCategoriesRequest.pagination:type_name -> common.Pagination
 	6, // 2: category.ListCategoriesResponse.categories:type_name -> category.Category
 	7, // 3: category.ListCategoriesResponse.pagination:type_name -> common.Pagination
-	2, // 4: category.CategoryService.ListCategories:input_type -> category.ListCategoriesRequest
-	0, // 5: category.CategoryService.CreateCategory:input_type -> category.CreateCategoryRequest
-	4, // 6: category.CategoryService.DeleteCategory:input_type -> category.DeleteCategoryRequest
-	3, // 7: category.CategoryService.ListCategories:output_type -> category.ListCategoriesResponse
-	1, // 8: category.CategoryService.CreateCategory:output_type -> category.CreateCategoryResponse
-	8, // 9: category.CategoryService.DeleteCategory:output_type -> google.protobuf.Empty
-	7, // [7:10] is the sub-list for method output_type
-	4, // [4:7] is the sub-list for method input_type
-	4, // [4:4] is the sub-list for extension type_name
-	4, // [4:4] is the sub-list for extension extendee
-	0, // [0:4] is the sub-list for field type_name
+	8, // 4: category.DeleteCategoryRequest.category_id:type_name -> common.ResourceID
+	2, // 5: category.CategoryService.ListCategories:input_type -> category.ListCategoriesRequest
+	0, // 6: category.CategoryService.CreateCategory:input_type -> category.CreateCategoryRequest
+	4, // 7: category.CategoryService.DeleteCategory:input_type -> category.DeleteCategoryRequest
+	3, // 8: category.CategoryService.ListCategories:output_type -> category.ListCategoriesResponse
+	1, // 9: category.CategoryService.CreateCategory:output_type -> category.CreateCategoryResponse
+	9, // 10: category.CategoryService.DeleteCategory:output_type -> google.protobuf.Empty
+	8, // [8:11] is the sub-list for method output_type
+	5, // [5:8] is the sub-list for method input_type
+	5, // [5:5] is the sub-list for extension type_name
+	5, // [5:5] is the sub-list for extension extendee
+	0, // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_category_proto_init() }
@@ -458,7 +459,7 @@ func file_category_proto_init() {
 	if File_category_proto != nil {
 		return
 	}
-	file_pagination_proto_init()
+	file_common_proto_init()
 	file_category_proto_msgTypes[0].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
