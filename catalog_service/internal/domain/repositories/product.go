@@ -17,10 +17,17 @@ type Product interface {
 		ctx context.Context,
 		uid string,
 	) (models.Product, error)
+	List(
+		ctx context.Context,
+	) ([]models.Product, error)
 	Update(
 		ctx context.Context,
 		uid string,
 		desc, name string,
 		price pgtype.Numeric,
 	)
+	Delete(
+		ctx context.Context,
+		uid string,
+	) error
 }
