@@ -1,8 +1,8 @@
-// proto/category/category.proto
 syntax = "proto3";
 
 package category;
 
+import "google/protobuf/empty.proto";
 import "google/protobuf/wrappers.proto";
 import "pagination.proto";
 
@@ -26,6 +26,14 @@ message ListCategoriesResponse {
   common.Pagination pagination = 2;
 }
 
+message DeleteCategoryRequest {
+  string category_id = 1;
+}
+
+message DeleteCategoryResponse {
+  // empty response
+}
+
 message Category {
   string id         = 1;
   string name       = 2;
@@ -37,4 +45,5 @@ message Category {
 service CategoryService {
   rpc ListCategories   (ListCategoriesRequest)  returns (ListCategoriesResponse);
   rpc CreateCategory   (CreateCategoryRequest)  returns (CreateCategoryResponse);
+  rpc DeleteCategory   (DeleteCategoryRequest)  returns (google.protobuf.Empty);
 }

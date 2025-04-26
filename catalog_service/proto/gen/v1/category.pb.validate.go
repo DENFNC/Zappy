@@ -595,6 +595,212 @@ var _ interface {
 	ErrorName() string
 } = ListCategoriesResponseValidationError{}
 
+// Validate checks the field values on DeleteCategoryRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DeleteCategoryRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteCategoryRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteCategoryRequestMultiError, or nil if none found.
+func (m *DeleteCategoryRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteCategoryRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for CategoryId
+
+	if len(errors) > 0 {
+		return DeleteCategoryRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteCategoryRequestMultiError is an error wrapping multiple validation
+// errors returned by DeleteCategoryRequest.ValidateAll() if the designated
+// constraints aren't met.
+type DeleteCategoryRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteCategoryRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteCategoryRequestMultiError) AllErrors() []error { return m }
+
+// DeleteCategoryRequestValidationError is the validation error returned by
+// DeleteCategoryRequest.Validate if the designated constraints aren't met.
+type DeleteCategoryRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteCategoryRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteCategoryRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteCategoryRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteCategoryRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteCategoryRequestValidationError) ErrorName() string {
+	return "DeleteCategoryRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DeleteCategoryRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteCategoryRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteCategoryRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteCategoryRequestValidationError{}
+
+// Validate checks the field values on DeleteCategoryResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DeleteCategoryResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteCategoryResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteCategoryResponseMultiError, or nil if none found.
+func (m *DeleteCategoryResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteCategoryResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return DeleteCategoryResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteCategoryResponseMultiError is an error wrapping multiple validation
+// errors returned by DeleteCategoryResponse.ValidateAll() if the designated
+// constraints aren't met.
+type DeleteCategoryResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteCategoryResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteCategoryResponseMultiError) AllErrors() []error { return m }
+
+// DeleteCategoryResponseValidationError is the validation error returned by
+// DeleteCategoryResponse.Validate if the designated constraints aren't met.
+type DeleteCategoryResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteCategoryResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteCategoryResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteCategoryResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteCategoryResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteCategoryResponseValidationError) ErrorName() string {
+	return "DeleteCategoryResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DeleteCategoryResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteCategoryResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteCategoryResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteCategoryResponseValidationError{}
+
 // Validate checks the field values on Category with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.

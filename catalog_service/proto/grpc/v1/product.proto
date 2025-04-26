@@ -1,8 +1,8 @@
-// proto/product/product.proto
 syntax = "proto3";
 
 package product;
 
+import "google/protobuf/empty.proto";
 import "google/protobuf/wrappers.proto";
 import "pagination.proto";
 
@@ -53,6 +53,14 @@ message UpdateProductResponse {
   Product product = 1;
 }
 
+message DeleteProductRequest {
+  string product_id = 1;
+}
+
+message DeleteProductResponse {
+  // empty response
+}
+
 message Product {
   string          id           = 1;
   string          name         = 2;
@@ -70,4 +78,5 @@ service ProductService {
   rpc ListProducts  (ListProductsRequest)  returns (ListProductsResponse);
   rpc CreateProduct (CreateProductRequest) returns (CreateProductResponse);
   rpc UpdateProduct (UpdateProductRequest) returns (UpdateProductResponse);
+  rpc DeleteProduct (DeleteProductRequest) returns (google.protobuf.Empty);
 }
