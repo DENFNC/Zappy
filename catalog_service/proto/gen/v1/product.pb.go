@@ -10,7 +10,7 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
-	wrapperspb "google.golang.org/protobuf/types/known/wrapperspb"
+	_ "google.golang.org/protobuf/types/known/wrapperspb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -224,12 +224,12 @@ func (x *ListProductsResponse) GetPagination() *Pagination {
 }
 
 type CreateProductRequest struct {
-	state         protoimpl.MessageState  `protogen:"open.v1"`
-	Name          string                  `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Description   *wrapperspb.StringValue `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
-	PriceCents    int64                   `protobuf:"varint,3,opt,name=price_cents,json=priceCents,proto3" json:"price_cents,omitempty"`
-	Currency      string                  `protobuf:"bytes,4,opt,name=currency,proto3" json:"currency,omitempty"`
-	CategoryIds   []string                `protobuf:"bytes,5,rep,name=category_ids,json=categoryIds,proto3" json:"category_ids,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Description   *string                `protobuf:"bytes,2,opt,name=description,proto3,oneof" json:"description,omitempty"`
+	PriceCents    int64                  `protobuf:"varint,3,opt,name=price_cents,json=priceCents,proto3" json:"price_cents,omitempty"`
+	Currency      string                 `protobuf:"bytes,4,opt,name=currency,proto3" json:"currency,omitempty"`
+	CategoryIds   []string               `protobuf:"bytes,5,rep,name=category_ids,json=categoryIds,proto3" json:"category_ids,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -271,11 +271,11 @@ func (x *CreateProductRequest) GetName() string {
 	return ""
 }
 
-func (x *CreateProductRequest) GetDescription() *wrapperspb.StringValue {
-	if x != nil {
-		return x.Description
+func (x *CreateProductRequest) GetDescription() string {
+	if x != nil && x.Description != nil {
+		return *x.Description
 	}
-	return nil
+	return ""
 }
 
 func (x *CreateProductRequest) GetPriceCents() int64 {
@@ -344,14 +344,14 @@ func (x *CreateProductResponse) GetProduct() *Product {
 }
 
 type UpdateProductRequest struct {
-	state         protoimpl.MessageState  `protogen:"open.v1"`
-	ProductId     string                  `protobuf:"bytes,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
-	Name          *wrapperspb.StringValue `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Description   *wrapperspb.StringValue `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
-	PriceCents    *wrapperspb.Int64Value  `protobuf:"bytes,4,opt,name=price_cents,json=priceCents,proto3" json:"price_cents,omitempty"`
-	Currency      *wrapperspb.StringValue `protobuf:"bytes,5,opt,name=currency,proto3" json:"currency,omitempty"`
-	CategoryIds   []string                `protobuf:"bytes,6,rep,name=category_ids,json=categoryIds,proto3" json:"category_ids,omitempty"`
-	IsActive      *wrapperspb.BoolValue   `protobuf:"bytes,7,opt,name=is_active,json=isActive,proto3" json:"is_active,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ProductId     string                 `protobuf:"bytes,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
+	Name          *string                `protobuf:"bytes,2,opt,name=name,proto3,oneof" json:"name,omitempty"`
+	Description   *string                `protobuf:"bytes,3,opt,name=description,proto3,oneof" json:"description,omitempty"`
+	PriceCents    *int64                 `protobuf:"varint,4,opt,name=price_cents,json=priceCents,proto3,oneof" json:"price_cents,omitempty"`
+	Currency      *string                `protobuf:"bytes,5,opt,name=currency,proto3,oneof" json:"currency,omitempty"`
+	CategoryIds   []string               `protobuf:"bytes,6,rep,name=category_ids,json=categoryIds,proto3" json:"category_ids,omitempty"`
+	IsActive      *bool                  `protobuf:"varint,7,opt,name=is_active,json=isActive,proto3,oneof" json:"is_active,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -393,32 +393,32 @@ func (x *UpdateProductRequest) GetProductId() string {
 	return ""
 }
 
-func (x *UpdateProductRequest) GetName() *wrapperspb.StringValue {
-	if x != nil {
-		return x.Name
+func (x *UpdateProductRequest) GetName() string {
+	if x != nil && x.Name != nil {
+		return *x.Name
 	}
-	return nil
+	return ""
 }
 
-func (x *UpdateProductRequest) GetDescription() *wrapperspb.StringValue {
-	if x != nil {
-		return x.Description
+func (x *UpdateProductRequest) GetDescription() string {
+	if x != nil && x.Description != nil {
+		return *x.Description
 	}
-	return nil
+	return ""
 }
 
-func (x *UpdateProductRequest) GetPriceCents() *wrapperspb.Int64Value {
-	if x != nil {
-		return x.PriceCents
+func (x *UpdateProductRequest) GetPriceCents() int64 {
+	if x != nil && x.PriceCents != nil {
+		return *x.PriceCents
 	}
-	return nil
+	return 0
 }
 
-func (x *UpdateProductRequest) GetCurrency() *wrapperspb.StringValue {
-	if x != nil {
-		return x.Currency
+func (x *UpdateProductRequest) GetCurrency() string {
+	if x != nil && x.Currency != nil {
+		return *x.Currency
 	}
-	return nil
+	return ""
 }
 
 func (x *UpdateProductRequest) GetCategoryIds() []string {
@@ -428,11 +428,11 @@ func (x *UpdateProductRequest) GetCategoryIds() []string {
 	return nil
 }
 
-func (x *UpdateProductRequest) GetIsActive() *wrapperspb.BoolValue {
-	if x != nil {
-		return x.IsActive
+func (x *UpdateProductRequest) GetIsActive() bool {
+	if x != nil && x.IsActive != nil {
+		return *x.IsActive
 	}
-	return nil
+	return false
 }
 
 type UpdateProductResponse struct {
@@ -687,26 +687,33 @@ const file_product_proto_rawDesc = "" +
 	"\bproducts\x18\x01 \x03(\v2\x10.product.ProductR\bproducts\x122\n" +
 	"\n" +
 	"pagination\x18\x02 \x01(\v2\x12.common.PaginationR\n" +
-	"pagination\"\xca\x01\n" +
+	"pagination\"\xc1\x01\n" +
 	"\x14CreateProductRequest\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04name\x12>\n" +
-	"\vdescription\x18\x02 \x01(\v2\x1c.google.protobuf.StringValueR\vdescription\x12\x1f\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12%\n" +
+	"\vdescription\x18\x02 \x01(\tH\x00R\vdescription\x88\x01\x01\x12\x1f\n" +
 	"\vprice_cents\x18\x03 \x01(\x03R\n" +
 	"priceCents\x12\x1a\n" +
 	"\bcurrency\x18\x04 \x01(\tR\bcurrency\x12!\n" +
-	"\fcategory_ids\x18\x05 \x03(\tR\vcategoryIds\"C\n" +
+	"\fcategory_ids\x18\x05 \x03(\tR\vcategoryIdsB\x0e\n" +
+	"\f_description\"C\n" +
 	"\x15CreateProductResponse\x12*\n" +
-	"\aproduct\x18\x01 \x01(\v2\x10.product.ProductR\aproduct\"\xfb\x02\n" +
+	"\aproduct\x18\x01 \x01(\v2\x10.product.ProductR\aproduct\"\xc5\x02\n" +
 	"\x14UpdateProductRequest\x12\x1d\n" +
 	"\n" +
-	"product_id\x18\x01 \x01(\tR\tproductId\x120\n" +
-	"\x04name\x18\x02 \x01(\v2\x1c.google.protobuf.StringValueR\x04name\x12>\n" +
-	"\vdescription\x18\x03 \x01(\v2\x1c.google.protobuf.StringValueR\vdescription\x12<\n" +
-	"\vprice_cents\x18\x04 \x01(\v2\x1b.google.protobuf.Int64ValueR\n" +
-	"priceCents\x128\n" +
-	"\bcurrency\x18\x05 \x01(\v2\x1c.google.protobuf.StringValueR\bcurrency\x12!\n" +
-	"\fcategory_ids\x18\x06 \x03(\tR\vcategoryIds\x127\n" +
-	"\tis_active\x18\a \x01(\v2\x1a.google.protobuf.BoolValueR\bisActive\"C\n" +
+	"product_id\x18\x01 \x01(\tR\tproductId\x12\x17\n" +
+	"\x04name\x18\x02 \x01(\tH\x00R\x04name\x88\x01\x01\x12%\n" +
+	"\vdescription\x18\x03 \x01(\tH\x01R\vdescription\x88\x01\x01\x12$\n" +
+	"\vprice_cents\x18\x04 \x01(\x03H\x02R\n" +
+	"priceCents\x88\x01\x01\x12\x1f\n" +
+	"\bcurrency\x18\x05 \x01(\tH\x03R\bcurrency\x88\x01\x01\x12!\n" +
+	"\fcategory_ids\x18\x06 \x03(\tR\vcategoryIds\x12 \n" +
+	"\tis_active\x18\a \x01(\bH\x04R\bisActive\x88\x01\x01B\a\n" +
+	"\x05_nameB\x0e\n" +
+	"\f_descriptionB\x0e\n" +
+	"\f_price_centsB\v\n" +
+	"\t_currencyB\f\n" +
+	"\n" +
+	"_is_active\"C\n" +
 	"\x15UpdateProductResponse\x12*\n" +
 	"\aproduct\x18\x01 \x01(\v2\x10.product.ProductR\aproduct\"5\n" +
 	"\x14DeleteProductRequest\x12\x1d\n" +
@@ -748,51 +755,42 @@ func file_product_proto_rawDescGZIP() []byte {
 
 var file_product_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_product_proto_goTypes = []any{
-	(*GetProductRequest)(nil),      // 0: product.GetProductRequest
-	(*GetProductResponse)(nil),     // 1: product.GetProductResponse
-	(*ListProductsRequest)(nil),    // 2: product.ListProductsRequest
-	(*ListProductsResponse)(nil),   // 3: product.ListProductsResponse
-	(*CreateProductRequest)(nil),   // 4: product.CreateProductRequest
-	(*CreateProductResponse)(nil),  // 5: product.CreateProductResponse
-	(*UpdateProductRequest)(nil),   // 6: product.UpdateProductRequest
-	(*UpdateProductResponse)(nil),  // 7: product.UpdateProductResponse
-	(*DeleteProductRequest)(nil),   // 8: product.DeleteProductRequest
-	(*DeleteProductResponse)(nil),  // 9: product.DeleteProductResponse
-	(*Product)(nil),                // 10: product.Product
-	(*Pagination)(nil),             // 11: common.Pagination
-	(*wrapperspb.StringValue)(nil), // 12: google.protobuf.StringValue
-	(*wrapperspb.Int64Value)(nil),  // 13: google.protobuf.Int64Value
-	(*wrapperspb.BoolValue)(nil),   // 14: google.protobuf.BoolValue
-	(*emptypb.Empty)(nil),          // 15: google.protobuf.Empty
+	(*GetProductRequest)(nil),     // 0: product.GetProductRequest
+	(*GetProductResponse)(nil),    // 1: product.GetProductResponse
+	(*ListProductsRequest)(nil),   // 2: product.ListProductsRequest
+	(*ListProductsResponse)(nil),  // 3: product.ListProductsResponse
+	(*CreateProductRequest)(nil),  // 4: product.CreateProductRequest
+	(*CreateProductResponse)(nil), // 5: product.CreateProductResponse
+	(*UpdateProductRequest)(nil),  // 6: product.UpdateProductRequest
+	(*UpdateProductResponse)(nil), // 7: product.UpdateProductResponse
+	(*DeleteProductRequest)(nil),  // 8: product.DeleteProductRequest
+	(*DeleteProductResponse)(nil), // 9: product.DeleteProductResponse
+	(*Product)(nil),               // 10: product.Product
+	(*Pagination)(nil),            // 11: common.Pagination
+	(*emptypb.Empty)(nil),         // 12: google.protobuf.Empty
 }
 var file_product_proto_depIdxs = []int32{
 	10, // 0: product.GetProductResponse.product:type_name -> product.Product
 	11, // 1: product.ListProductsRequest.pagination:type_name -> common.Pagination
 	10, // 2: product.ListProductsResponse.products:type_name -> product.Product
 	11, // 3: product.ListProductsResponse.pagination:type_name -> common.Pagination
-	12, // 4: product.CreateProductRequest.description:type_name -> google.protobuf.StringValue
-	10, // 5: product.CreateProductResponse.product:type_name -> product.Product
-	12, // 6: product.UpdateProductRequest.name:type_name -> google.protobuf.StringValue
-	12, // 7: product.UpdateProductRequest.description:type_name -> google.protobuf.StringValue
-	13, // 8: product.UpdateProductRequest.price_cents:type_name -> google.protobuf.Int64Value
-	12, // 9: product.UpdateProductRequest.currency:type_name -> google.protobuf.StringValue
-	14, // 10: product.UpdateProductRequest.is_active:type_name -> google.protobuf.BoolValue
-	10, // 11: product.UpdateProductResponse.product:type_name -> product.Product
-	0,  // 12: product.ProductService.GetProduct:input_type -> product.GetProductRequest
-	2,  // 13: product.ProductService.ListProducts:input_type -> product.ListProductsRequest
-	4,  // 14: product.ProductService.CreateProduct:input_type -> product.CreateProductRequest
-	6,  // 15: product.ProductService.UpdateProduct:input_type -> product.UpdateProductRequest
-	8,  // 16: product.ProductService.DeleteProduct:input_type -> product.DeleteProductRequest
-	1,  // 17: product.ProductService.GetProduct:output_type -> product.GetProductResponse
-	3,  // 18: product.ProductService.ListProducts:output_type -> product.ListProductsResponse
-	5,  // 19: product.ProductService.CreateProduct:output_type -> product.CreateProductResponse
-	7,  // 20: product.ProductService.UpdateProduct:output_type -> product.UpdateProductResponse
-	15, // 21: product.ProductService.DeleteProduct:output_type -> google.protobuf.Empty
-	17, // [17:22] is the sub-list for method output_type
-	12, // [12:17] is the sub-list for method input_type
-	12, // [12:12] is the sub-list for extension type_name
-	12, // [12:12] is the sub-list for extension extendee
-	0,  // [0:12] is the sub-list for field type_name
+	10, // 4: product.CreateProductResponse.product:type_name -> product.Product
+	10, // 5: product.UpdateProductResponse.product:type_name -> product.Product
+	0,  // 6: product.ProductService.GetProduct:input_type -> product.GetProductRequest
+	2,  // 7: product.ProductService.ListProducts:input_type -> product.ListProductsRequest
+	4,  // 8: product.ProductService.CreateProduct:input_type -> product.CreateProductRequest
+	6,  // 9: product.ProductService.UpdateProduct:input_type -> product.UpdateProductRequest
+	8,  // 10: product.ProductService.DeleteProduct:input_type -> product.DeleteProductRequest
+	1,  // 11: product.ProductService.GetProduct:output_type -> product.GetProductResponse
+	3,  // 12: product.ProductService.ListProducts:output_type -> product.ListProductsResponse
+	5,  // 13: product.ProductService.CreateProduct:output_type -> product.CreateProductResponse
+	7,  // 14: product.ProductService.UpdateProduct:output_type -> product.UpdateProductResponse
+	12, // 15: product.ProductService.DeleteProduct:output_type -> google.protobuf.Empty
+	11, // [11:16] is the sub-list for method output_type
+	6,  // [6:11] is the sub-list for method input_type
+	6,  // [6:6] is the sub-list for extension type_name
+	6,  // [6:6] is the sub-list for extension extendee
+	0,  // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_product_proto_init() }
@@ -801,6 +799,8 @@ func file_product_proto_init() {
 		return
 	}
 	file_pagination_proto_init()
+	file_product_proto_msgTypes[4].OneofWrappers = []any{}
+	file_product_proto_msgTypes[6].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

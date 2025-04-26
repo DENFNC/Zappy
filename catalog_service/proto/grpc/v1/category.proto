@@ -10,7 +10,7 @@ option go_package = "github.com/DENFNC/Zappy/catalog_service/proto/gen/v1;v1";
 
 message CreateCategoryRequest {
   string name = 1;
-  google.protobuf.StringValue parent_id = 2;
+  optional string parent_id = 2;
 }
 
 message CreateCategoryResponse {
