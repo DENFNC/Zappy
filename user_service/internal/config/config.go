@@ -21,15 +21,6 @@ type ConfigPSQL struct {
 	URL string `yaml:"url" env-required:"true"`
 }
 
-// type ConfigVault struct {
-// 	URL     string        `yaml:"url" env-required:"true"`
-// 	Token   string        `yaml:"token" env-required:"true"`
-// 	AppUUID string        `yaml:"app_uuid" env-required:"true"`
-// 	Issuer  string        `yaml:"issuer" env-required:"true"`
-// 	Expires time.Duration `yaml:"expires" env-default:"5m"`
-// 	KeyName string        `yaml:"key_name" env-required:"true"`
-// }
-
 func MustLoad(path string) *Config {
 	if path == "" {
 		panic("path is empty")
