@@ -3,11 +3,25 @@ package category
 import (
 	"context"
 
+	"github.com/DENFNC/Zappy/catalog_service/internal/domain/models"
 	v1 "github.com/DENFNC/Zappy/catalog_service/proto/gen/v1"
 	"google.golang.org/grpc"
 )
 
-type Category interface{}
+type Category interface {
+	CreateCategory(
+		ctx context.Context,
+		name, parentID string,
+	) (*models.Category, error)
+	ListCategories(
+		ctx context.Context,
+		page, pageSize int32,
+	) ([]models.Category, int32, error)
+	DeleteCategory(
+		ctx context.Context,
+		categoryID string,
+	) error
+}
 
 type serverAPI struct {
 	v1.UnimplementedCategoryServiceServer

@@ -16,7 +16,7 @@ type Product interface {
 	GetByID(
 		ctx context.Context,
 		uid string,
-	) (models.Product, error)
+	) (*models.Product, error)
 	List(
 		ctx context.Context,
 	) ([]models.Product, error)
@@ -25,7 +25,7 @@ type Product interface {
 		uid string,
 		desc, name string,
 		price pgtype.Numeric,
-	)
+	) error
 	Delete(
 		ctx context.Context,
 		uid string,
