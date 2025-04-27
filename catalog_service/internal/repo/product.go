@@ -103,9 +103,37 @@ func (repo *ProductRepo) Create(
 
 func (repo *ProductRepo) GetByID(
 	ctx context.Context,
-	uid string,
+	productID string,
 ) (*models.Product, error) {
-	panic("implement me")
+	stmt, args, err := repo.goqu.Select(
+		"product_id",
+		"product_name",
+		"description",
+		"price",
+		"created_at",
+		"updated_at",
+	).
+		From("product").
+		Where(goqu.C("product_id").Eq(productID)).
+		Prepared(true).
+		ToSQL()
+	if err != nil {
+		return nil, err
+	}
+
+	var product models.Product
+	if err := repo.DB.QueryRow(ctx, stmt, args...).Scan(
+		&product.ProductID,
+		&product.ProductName,
+		&product.Description,
+		&product.Price,
+		&product.CreatedAt,
+		&product.UpdatedAt,
+	); err != nil {
+		return nil, err
+	}
+
+	return &product, nil
 }
 
 func (repo *ProductRepo) List(

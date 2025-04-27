@@ -10,6 +10,7 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
+	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -68,7 +69,7 @@ func (x *GetProductRequest) GetProductId() *ResourceID {
 
 type GetProductResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ProductId     *ResourceID            `protobuf:"bytes,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
+	Product       *Product               `protobuf:"bytes,1,opt,name=product,proto3" json:"product,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -103,9 +104,9 @@ func (*GetProductResponse) Descriptor() ([]byte, []int) {
 	return file_product_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *GetProductResponse) GetProductId() *ResourceID {
+func (x *GetProductResponse) GetProduct() *Product {
 	if x != nil {
-		return x.ProductId
+		return x.Product
 	}
 	return nil
 }
@@ -227,8 +228,7 @@ type CreateProductRequest struct {
 	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	Description   *string                `protobuf:"bytes,2,opt,name=description,proto3,oneof" json:"description,omitempty"`
 	PriceCents    int64                  `protobuf:"varint,3,opt,name=price_cents,json=priceCents,proto3" json:"price_cents,omitempty"`
-	Currency      string                 `protobuf:"bytes,4,opt,name=currency,proto3" json:"currency,omitempty"`
-	CategoryIds   []string               `protobuf:"bytes,5,rep,name=category_ids,json=categoryIds,proto3" json:"category_ids,omitempty"`
+	CategoryIds   []string               `protobuf:"bytes,4,rep,name=category_ids,json=categoryIds,proto3" json:"category_ids,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -282,13 +282,6 @@ func (x *CreateProductRequest) GetPriceCents() int64 {
 		return x.PriceCents
 	}
 	return 0
-}
-
-func (x *CreateProductRequest) GetCurrency() string {
-	if x != nil {
-		return x.Currency
-	}
-	return ""
 }
 
 func (x *CreateProductRequest) GetCategoryIds() []string {
@@ -348,9 +341,8 @@ type UpdateProductRequest struct {
 	Name          *string                `protobuf:"bytes,2,opt,name=name,proto3,oneof" json:"name,omitempty"`
 	Description   *string                `protobuf:"bytes,3,opt,name=description,proto3,oneof" json:"description,omitempty"`
 	PriceCents    *int64                 `protobuf:"varint,4,opt,name=price_cents,json=priceCents,proto3,oneof" json:"price_cents,omitempty"`
-	Currency      *string                `protobuf:"bytes,5,opt,name=currency,proto3,oneof" json:"currency,omitempty"`
-	CategoryIds   []string               `protobuf:"bytes,6,rep,name=category_ids,json=categoryIds,proto3" json:"category_ids,omitempty"`
-	IsActive      *bool                  `protobuf:"varint,7,opt,name=is_active,json=isActive,proto3,oneof" json:"is_active,omitempty"`
+	CategoryIds   []string               `protobuf:"bytes,5,rep,name=category_ids,json=categoryIds,proto3" json:"category_ids,omitempty"`
+	IsActive      *bool                  `protobuf:"varint,6,opt,name=is_active,json=isActive,proto3,oneof" json:"is_active,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -411,13 +403,6 @@ func (x *UpdateProductRequest) GetPriceCents() int64 {
 		return *x.PriceCents
 	}
 	return 0
-}
-
-func (x *UpdateProductRequest) GetCurrency() string {
-	if x != nil && x.Currency != nil {
-		return *x.Currency
-	}
-	return ""
 }
 
 func (x *UpdateProductRequest) GetCategoryIds() []string {
@@ -564,11 +549,8 @@ type Product struct {
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
 	PriceCents    int64                  `protobuf:"varint,4,opt,name=price_cents,json=priceCents,proto3" json:"price_cents,omitempty"`
-	Currency      string                 `protobuf:"bytes,5,opt,name=currency,proto3" json:"currency,omitempty"`
-	CategoryIds   []string               `protobuf:"bytes,6,rep,name=category_ids,json=categoryIds,proto3" json:"category_ids,omitempty"`
-	IsActive      bool                   `protobuf:"varint,7,opt,name=is_active,json=isActive,proto3" json:"is_active,omitempty"`
-	CreatedAt     string                 `protobuf:"bytes,8,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt     string                 `protobuf:"bytes,9,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -631,52 +613,30 @@ func (x *Product) GetPriceCents() int64 {
 	return 0
 }
 
-func (x *Product) GetCurrency() string {
+func (x *Product) GetCreatedAt() *timestamppb.Timestamp {
 	if x != nil {
-		return x.Currency
-	}
-	return ""
-}
-
-func (x *Product) GetCategoryIds() []string {
-	if x != nil {
-		return x.CategoryIds
+		return x.CreatedAt
 	}
 	return nil
 }
 
-func (x *Product) GetIsActive() bool {
-	if x != nil {
-		return x.IsActive
-	}
-	return false
-}
-
-func (x *Product) GetCreatedAt() string {
-	if x != nil {
-		return x.CreatedAt
-	}
-	return ""
-}
-
-func (x *Product) GetUpdatedAt() string {
+func (x *Product) GetUpdatedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.UpdatedAt
 	}
-	return ""
+	return nil
 }
 
 var File_product_proto protoreflect.FileDescriptor
 
 const file_product_proto_rawDesc = "" +
 	"\n" +
-	"\rproduct.proto\x12\aproduct\x1a\x1bgoogle/protobuf/empty.proto\x1a\fcommon.proto\"F\n" +
+	"\rproduct.proto\x12\aproduct\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\fcommon.proto\"F\n" +
 	"\x11GetProductRequest\x121\n" +
 	"\n" +
-	"product_id\x18\x01 \x01(\v2\x12.common.ResourceIDR\tproductId\"G\n" +
-	"\x12GetProductResponse\x121\n" +
-	"\n" +
-	"product_id\x18\x01 \x01(\v2\x12.common.ResourceIDR\tproductId\"\x82\x01\n" +
+	"product_id\x18\x01 \x01(\v2\x12.common.ResourceIDR\tproductId\"@\n" +
+	"\x12GetProductResponse\x12*\n" +
+	"\aproduct\x18\x01 \x01(\v2\x10.product.ProductR\aproduct\"\x82\x01\n" +
 	"\x13ListProductsRequest\x122\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x12.common.PaginationR\n" +
@@ -687,32 +647,29 @@ const file_product_proto_rawDesc = "" +
 	"\bproducts\x18\x01 \x03(\v2\x10.product.ProductR\bproducts\x122\n" +
 	"\n" +
 	"pagination\x18\x02 \x01(\v2\x12.common.PaginationR\n" +
-	"pagination\"\xc1\x01\n" +
+	"pagination\"\xa5\x01\n" +
 	"\x14CreateProductRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12%\n" +
 	"\vdescription\x18\x02 \x01(\tH\x00R\vdescription\x88\x01\x01\x12\x1f\n" +
 	"\vprice_cents\x18\x03 \x01(\x03R\n" +
-	"priceCents\x12\x1a\n" +
-	"\bcurrency\x18\x04 \x01(\tR\bcurrency\x12!\n" +
-	"\fcategory_ids\x18\x05 \x03(\tR\vcategoryIdsB\x0e\n" +
+	"priceCents\x12!\n" +
+	"\fcategory_ids\x18\x04 \x03(\tR\vcategoryIdsB\x0e\n" +
 	"\f_description\"J\n" +
 	"\x15CreateProductResponse\x121\n" +
 	"\n" +
-	"product_id\x18\x01 \x01(\v2\x12.common.ResourceIDR\tproductId\"\xc5\x02\n" +
+	"product_id\x18\x01 \x01(\v2\x12.common.ResourceIDR\tproductId\"\x97\x02\n" +
 	"\x14UpdateProductRequest\x12\x1d\n" +
 	"\n" +
 	"product_id\x18\x01 \x01(\tR\tproductId\x12\x17\n" +
 	"\x04name\x18\x02 \x01(\tH\x00R\x04name\x88\x01\x01\x12%\n" +
 	"\vdescription\x18\x03 \x01(\tH\x01R\vdescription\x88\x01\x01\x12$\n" +
 	"\vprice_cents\x18\x04 \x01(\x03H\x02R\n" +
-	"priceCents\x88\x01\x01\x12\x1f\n" +
-	"\bcurrency\x18\x05 \x01(\tH\x03R\bcurrency\x88\x01\x01\x12!\n" +
-	"\fcategory_ids\x18\x06 \x03(\tR\vcategoryIds\x12 \n" +
-	"\tis_active\x18\a \x01(\bH\x04R\bisActive\x88\x01\x01B\a\n" +
+	"priceCents\x88\x01\x01\x12!\n" +
+	"\fcategory_ids\x18\x05 \x03(\tR\vcategoryIds\x12 \n" +
+	"\tis_active\x18\x06 \x01(\bH\x03R\bisActive\x88\x01\x01B\a\n" +
 	"\x05_nameB\x0e\n" +
 	"\f_descriptionB\x0e\n" +
-	"\f_price_centsB\v\n" +
-	"\t_currencyB\f\n" +
+	"\f_price_centsB\f\n" +
 	"\n" +
 	"_is_active\"C\n" +
 	"\x15UpdateProductResponse\x12*\n" +
@@ -720,20 +677,17 @@ const file_product_proto_rawDesc = "" +
 	"\x14DeleteProductRequest\x12\x1d\n" +
 	"\n" +
 	"product_id\x18\x01 \x01(\tR\tproductId\"\x17\n" +
-	"\x15DeleteProductResponse\"\x8a\x02\n" +
+	"\x15DeleteProductResponse\"\xe6\x01\n" +
 	"\aProduct\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x1f\n" +
 	"\vprice_cents\x18\x04 \x01(\x03R\n" +
-	"priceCents\x12\x1a\n" +
-	"\bcurrency\x18\x05 \x01(\tR\bcurrency\x12!\n" +
-	"\fcategory_ids\x18\x06 \x03(\tR\vcategoryIds\x12\x1b\n" +
-	"\tis_active\x18\a \x01(\bR\bisActive\x12\x1d\n" +
+	"priceCents\x129\n" +
 	"\n" +
-	"created_at\x18\b \x01(\tR\tcreatedAt\x12\x1d\n" +
+	"created_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\t \x01(\tR\tupdatedAt2\x8c\x03\n" +
+	"updated_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt2\x8c\x03\n" +
 	"\x0eProductService\x12E\n" +
 	"\n" +
 	"GetProduct\x12\x1a.product.GetProductRequest\x1a\x1b.product.GetProductResponse\x12K\n" +
@@ -769,31 +723,34 @@ var file_product_proto_goTypes = []any{
 	(*Product)(nil),               // 10: product.Product
 	(*ResourceID)(nil),            // 11: common.ResourceID
 	(*Pagination)(nil),            // 12: common.Pagination
-	(*emptypb.Empty)(nil),         // 13: google.protobuf.Empty
+	(*timestamppb.Timestamp)(nil), // 13: google.protobuf.Timestamp
+	(*emptypb.Empty)(nil),         // 14: google.protobuf.Empty
 }
 var file_product_proto_depIdxs = []int32{
 	11, // 0: product.GetProductRequest.product_id:type_name -> common.ResourceID
-	11, // 1: product.GetProductResponse.product_id:type_name -> common.ResourceID
+	10, // 1: product.GetProductResponse.product:type_name -> product.Product
 	12, // 2: product.ListProductsRequest.pagination:type_name -> common.Pagination
 	10, // 3: product.ListProductsResponse.products:type_name -> product.Product
 	12, // 4: product.ListProductsResponse.pagination:type_name -> common.Pagination
 	11, // 5: product.CreateProductResponse.product_id:type_name -> common.ResourceID
 	10, // 6: product.UpdateProductResponse.product:type_name -> product.Product
-	0,  // 7: product.ProductService.GetProduct:input_type -> product.GetProductRequest
-	2,  // 8: product.ProductService.ListProducts:input_type -> product.ListProductsRequest
-	4,  // 9: product.ProductService.CreateProduct:input_type -> product.CreateProductRequest
-	6,  // 10: product.ProductService.UpdateProduct:input_type -> product.UpdateProductRequest
-	8,  // 11: product.ProductService.DeleteProduct:input_type -> product.DeleteProductRequest
-	1,  // 12: product.ProductService.GetProduct:output_type -> product.GetProductResponse
-	3,  // 13: product.ProductService.ListProducts:output_type -> product.ListProductsResponse
-	5,  // 14: product.ProductService.CreateProduct:output_type -> product.CreateProductResponse
-	7,  // 15: product.ProductService.UpdateProduct:output_type -> product.UpdateProductResponse
-	13, // 16: product.ProductService.DeleteProduct:output_type -> google.protobuf.Empty
-	12, // [12:17] is the sub-list for method output_type
-	7,  // [7:12] is the sub-list for method input_type
-	7,  // [7:7] is the sub-list for extension type_name
-	7,  // [7:7] is the sub-list for extension extendee
-	0,  // [0:7] is the sub-list for field type_name
+	13, // 7: product.Product.created_at:type_name -> google.protobuf.Timestamp
+	13, // 8: product.Product.updated_at:type_name -> google.protobuf.Timestamp
+	0,  // 9: product.ProductService.GetProduct:input_type -> product.GetProductRequest
+	2,  // 10: product.ProductService.ListProducts:input_type -> product.ListProductsRequest
+	4,  // 11: product.ProductService.CreateProduct:input_type -> product.CreateProductRequest
+	6,  // 12: product.ProductService.UpdateProduct:input_type -> product.UpdateProductRequest
+	8,  // 13: product.ProductService.DeleteProduct:input_type -> product.DeleteProductRequest
+	1,  // 14: product.ProductService.GetProduct:output_type -> product.GetProductResponse
+	3,  // 15: product.ProductService.ListProducts:output_type -> product.ListProductsResponse
+	5,  // 16: product.ProductService.CreateProduct:output_type -> product.CreateProductResponse
+	7,  // 17: product.ProductService.UpdateProduct:output_type -> product.UpdateProductResponse
+	14, // 18: product.ProductService.DeleteProduct:output_type -> google.protobuf.Empty
+	14, // [14:19] is the sub-list for method output_type
+	9,  // [9:14] is the sub-list for method input_type
+	9,  // [9:9] is the sub-list for extension type_name
+	9,  // [9:9] is the sub-list for extension extendee
+	0,  // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_product_proto_init() }

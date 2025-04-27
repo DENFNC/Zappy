@@ -50,7 +50,20 @@ func (svc *Product) Get(
 	ctx context.Context,
 	productID string,
 ) (*models.Product, error) {
-	panic("implement me")
+	const op = "service.Product.Get"
+
+	log := svc.log.With("op", op)
+
+	product, err := svc.repo.GetByID(ctx, productID)
+	if err != nil {
+		log.Error(
+			"Critical error",
+			slog.String("error", err.Error()),
+		)
+		return nil, err
+	}
+
+	return product, nil
 }
 
 func (svc *Product) List(

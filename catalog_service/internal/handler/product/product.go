@@ -11,6 +11,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type Product interface {
@@ -94,7 +95,24 @@ func (api *serverAPI) GetProduct(
 	ctx context.Context,
 	req *v1.GetProductRequest,
 ) (*v1.GetProductResponse, error) {
-	panic("implement me")
+	product, err := api.svc.Get(ctx, req.GetProductId().GetId())
+	if err != nil {
+		return nil, status.Error(
+			codes.Internal,
+			errpkg.ErrInternal.Message,
+		)
+	}
+
+	return &v1.GetProductResponse{
+		Product: &v1.Product{
+			Id:          product.ProductID,
+			Name:        product.ProductName,
+			Description: product.Description,
+			PriceCents:  product.Price.Int.Int64(),
+			CreatedAt:   timestamppb.New(product.CreatedAt),
+			UpdatedAt:   timestamppb.New(product.UpdatedAt),
+		},
+	}, nil
 }
 
 func (api *serverAPI) ListProducts(

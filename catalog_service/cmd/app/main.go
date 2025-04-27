@@ -13,9 +13,15 @@ import (
 
 func main() {
 	cfg := config.MustLoad("./config/config.yaml")
-	logger, _ := logger.New(cfg.LogType)
+	logger, err := logger.New(cfg.LogType)
+	if err != nil {
+		panic(err)
+	}
 
-	dbpool, _ := psql.New(cfg.Postgres.URL)
+	dbpool, err := psql.New(cfg.Postgres.URL)
+	if err != nil {
+		panic(err)
+	}
 
 	application := app.New(logger, dbpool, cfg.GRPC.Port)
 
