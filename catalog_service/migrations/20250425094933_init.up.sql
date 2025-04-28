@@ -16,16 +16,17 @@ CREATE TABLE
         alt VARCHAR(255) NOT NULL,
         created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
         updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
-        CONSTRAINT fk_product_image FOREIGN KEY (product_id) REFERENCES product (product_id)
+        CONSTRAINT fk_product_image FOREIGN KEY (product_id) REFERENCES product (product_id) ON DELETE CASCADE
     );
 
 CREATE TABLE
     category (
         category_id UUID PRIMARY KEY NOT NULL,
         category_name VARCHAR(100) UNIQUE NOT NULL,
-        parent_id UUID REFERENCES category (category_id) DEFAULT NULL,
+        parent_id UUID DEFAULT NULL,
         created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
-        updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+        updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+        CONSTRAINT fk_category_parent FOREIGN KEY (parent_id) REFERENCES category (category_id) ON DELETE CASCADE
     );
 
 CREATE TABLE
@@ -34,6 +35,6 @@ CREATE TABLE
         category_id UUID NOT NULL,
         assigned_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
         CONSTRAINT pk_product_category PRIMARY KEY (product_id, category_id),
-        CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES category (category_id),
-        CONSTRAINT fk_product FOREIGN KEY (product_id) REFERENCES product (product_id)
+        CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES category (category_id) ON DELETE CASCADE,
+        CONSTRAINT fk_product FOREIGN KEY (product_id) REFERENCES product (product_id) ON DELETE CASCADE
     );
