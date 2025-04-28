@@ -11,6 +11,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -127,4 +128,16 @@ func (api *serverAPI) UpdateProduct(
 	req *v1.UpdateProductRequest,
 ) (*v1.UpdateProductResponse, error) {
 	panic("implement me")
+}
+
+func (api *serverAPI) DeleteProduct(ctx context.Context, req *v1.DeleteProductRequest) (*emptypb.Empty, error) {
+	err := api.svc.Delete(ctx, req.GetProductId())
+	if err != nil {
+		return nil, status.Error(
+			codes.Internal,
+			errpkg.ErrInternal.Message,
+		)
+	}
+
+	return &emptypb.Empty{}, nil
 }

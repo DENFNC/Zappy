@@ -90,5 +90,17 @@ func (svc *Product) Delete(
 	ctx context.Context,
 	productID string,
 ) error {
-	panic("implement me")
+	const op = "service.Product.Delete"
+
+	log := svc.log.With("op", op)
+
+	if err := svc.repo.Delete(ctx, productID); err != nil {
+		log.Error(
+			"Critical error",
+			slog.String("error", err.Error()),
+		)
+		return err
+	}
+
+	return nil
 }

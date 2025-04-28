@@ -2,10 +2,11 @@ package repo
 
 import (
 	"context"
-	"errors"
 	"time"
 
 	"github.com/DENFNC/Zappy/catalog_service/internal/domain/models"
+	errpkg "github.com/DENFNC/Zappy/catalog_service/internal/errors"
+	"github.com/DENFNC/Zappy/catalog_service/internal/pkg/dbutils"
 	psql "github.com/DENFNC/Zappy/catalog_service/internal/storage/postgres"
 	"github.com/doug-martin/goqu/v9"
 	"github.com/jackc/pgx/v5"
@@ -65,7 +66,7 @@ func (repo *ProductRepo) Create(
 			return err
 		}
 		if cmdTags.RowsAffected() == 0 {
-			return errors.New("no rows affected")
+			return errpkg.New("NO_ROWS", "no rows affected", err)
 		}
 
 		records := make([]interface{}, len(categoryIDs))
@@ -90,7 +91,7 @@ func (repo *ProductRepo) Create(
 			return err
 		}
 		if cmdTags.RowsAffected() == 0 {
-			return errors.New("no rows affected")
+			return errpkg.New("NO_ROWS", "no rows affected", err)
 		}
 
 		return nil
@@ -122,14 +123,8 @@ func (repo *ProductRepo) GetByID(
 	}
 
 	var product models.Product
-	if err := repo.DB.QueryRow(ctx, stmt, args...).Scan(
-		&product.ProductID,
-		&product.ProductName,
-		&product.Description,
-		&product.Price,
-		&product.CreatedAt,
-		&product.UpdatedAt,
-	); err != nil {
+	row := repo.DB.QueryRow(ctx, stmt, args...)
+	if err := dbutils.ScanStruct(row, &product); err != nil {
 		return nil, err
 	}
 
@@ -153,7 +148,23 @@ func (repo *ProductRepo) Update(
 
 func (repo *ProductRepo) Delete(
 	ctx context.Context,
-	uid string,
+	productID string,
 ) error {
-	panic("implement me")
+	stmt, args, err := repo.goqu.Delete("product").
+		Where(goqu.C("product_id").Eq(productID)).
+		Prepared(true).
+		ToSQL()
+	if err != nil {
+		return err
+	}
+
+	cmdTags, err := repo.DB.Exec(ctx, stmt, args...)
+	if err != nil {
+		return err
+	}
+	if cmdTags.RowsAffected() == 0 {
+		return errpkg.New("NO_ROWS", "no rows affected", err)
+	}
+
+	return nil
 }
