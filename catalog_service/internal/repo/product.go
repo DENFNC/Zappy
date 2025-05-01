@@ -15,12 +15,12 @@ import (
 
 type ProductRepo struct {
 	*psql.Storage
-	goqu *goqu.DialectWrapper
+	goqu goqu.DialectWrapper
 }
 
 func NewProductRepo(
 	db *psql.Storage,
-	goqu *goqu.DialectWrapper,
+	goqu goqu.DialectWrapper,
 ) *ProductRepo {
 	return &ProductRepo{
 		Storage: db,

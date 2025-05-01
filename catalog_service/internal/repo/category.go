@@ -3,33 +3,46 @@ package repo
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/DENFNC/Zappy/catalog_service/internal/domain/models"
+	"github.com/DENFNC/Zappy/catalog_service/internal/pkg/paginate"
 	psql "github.com/DENFNC/Zappy/catalog_service/internal/storage/postgres"
 	"github.com/doug-martin/goqu/v9"
 )
 
 type CategoryRepo struct {
 	*psql.Storage
-	goqu *goqu.DialectWrapper
+	goqu     goqu.DialectWrapper
+	paginate *paginate.Paginator[models.Category]
 }
 
 func NewCategoryRepo(
 	db *psql.Storage,
-	goqu *goqu.DialectWrapper,
-) *CategoryRepo {
-	return &CategoryRepo{
-		Storage: db,
-		goqu:    goqu,
+	goqu goqu.DialectWrapper,
+	coder paginate.TokenCoder,
+) (*CategoryRepo, error) {
+	paginate, err := paginate.NewPaginator[models.Category](
+		db.DB,
+		goqu,
+		coder,
+	)
+	if err != nil {
+		return nil, err
 	}
+
+	return &CategoryRepo{
+		Storage:  db,
+		goqu:     goqu,
+		paginate: paginate,
+	}, nil
 }
 
 func (repo *CategoryRepo) Create(
 	ctx context.Context,
 	name, parentID string,
 ) (string, error) {
-
 	uid := repo.NewV7().String()
 	dateTimeNow := time.Now().UTC()
 
@@ -67,15 +80,25 @@ func (repo *CategoryRepo) GetByID(
 
 func (repo *CategoryRepo) List(
 	ctx context.Context,
-	pageSize int32,
+	pageSize uint,
 	pageToken string,
-) ([]models.Category, any, error) {
-	panic("implement me!")
+) ([]models.Category, string, error) {
+	paginate := repo.paginate.WithTable("category").
+		WithColumns("created_at", "category_id").
+		WithLimit(pageSize)
+	// TODO: пофиксить проблему с nil элементами
+	items, nextToken, err := paginate.Paginate(ctx, pageToken)
+	fmt.Println(items)
+	if err != nil {
+		return nil, "", err
+	}
+
+	return items, nextToken, nil
 }
 
 func (repo *CategoryRepo) ListByParentID(
 	ctx context.Context,
-	pageSize int32,
+	pageSize uint,
 	parentID, pageToken string,
 ) (*models.Category, any, error) {
 	panic("implement me!")

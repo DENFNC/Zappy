@@ -13,7 +13,7 @@ import (
 
 type Storage struct {
 	DB   *pgxpool.Pool
-	Dial *goqu.DialectWrapper
+	Dial goqu.DialectWrapper
 }
 
 func New(conn string) (*Storage, error) {
@@ -33,7 +33,7 @@ func New(conn string) (*Storage, error) {
 
 	return &Storage{
 		DB:   dbpool,
-		Dial: &dialect,
+		Dial: dialect,
 	}, nil
 }
 

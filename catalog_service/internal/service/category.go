@@ -45,9 +45,23 @@ func (svc *Category) Create(
 
 func (svc *Category) List(
 	ctx context.Context,
-	page, pageSize int32,
-) ([]models.Category, int32, error) {
-	panic("implement me")
+	pageSize uint32,
+	pageToken string,
+) ([]models.Category, string, error) {
+	const op = "service.Category.List"
+
+	log := svc.log.With("op", op)
+
+	items, nextPageToken, err := svc.repo.List(ctx, uint(pageSize), pageToken)
+	if err != nil {
+		log.Error(
+			"Critical error",
+			slog.String("error", err.Error()),
+		)
+		return nil, "", err
+	}
+
+	return items, nextPageToken, nil
 }
 
 func (svc *Category) Delete(

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/rand"
 	"os"
 	"os/signal"
 	"syscall"
@@ -8,6 +9,7 @@ import (
 	"github.com/DENFNC/Zappy/catalog_service/internal/app"
 	"github.com/DENFNC/Zappy/catalog_service/internal/config"
 	"github.com/DENFNC/Zappy/catalog_service/internal/pkg/logger"
+	"github.com/DENFNC/Zappy/catalog_service/internal/pkg/paginate"
 	psql "github.com/DENFNC/Zappy/catalog_service/internal/storage/postgres"
 )
 
@@ -23,7 +25,23 @@ func main() {
 		panic(err)
 	}
 
-	application := app.New(logger, dbpool, cfg.GRPC.Port)
+	paginateCoder, err := paginate.NewEncryptor(
+		[]byte(cfg.PaginateSecret),
+		rand.Reader,
+	)
+	if err != nil {
+		panic(err)
+	}
+
+	application, err := app.New(
+		logger,
+		dbpool,
+		cfg.GRPC.Port,
+		paginateCoder,
+	)
+	if err != nil {
+		panic(err)
+	}
 
 	go application.App.MustRun()
 

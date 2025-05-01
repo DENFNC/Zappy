@@ -1,15 +1,17 @@
 package config
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/ilyakaznacheev/cleanenv"
 )
 
 type Config struct {
-	LogType  string `yaml:"log_type" env-default:"dev"`
-	GRPC     ConfigGRPC
-	Postgres ConfigPSQL
+	LogType        string `yaml:"log_type" env-default:"dev"`
+	PaginateSecret string `yaml:"paginate_secret" env-required:"true"`
+	GRPC           ConfigGRPC
+	Postgres       ConfigPSQL
 }
 
 type ConfigGRPC struct {
@@ -31,6 +33,7 @@ func MustLoad(path string) *Config {
 
 	var cfg Config
 	if err := cleanenv.ReadConfig(path, &cfg); err != nil {
+		fmt.Println(err)
 		panic("error reading config")
 	}
 

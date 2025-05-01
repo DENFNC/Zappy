@@ -130,7 +130,10 @@ func (api *serverAPI) UpdateProduct(
 	panic("implement me")
 }
 
-func (api *serverAPI) DeleteProduct(ctx context.Context, req *v1.DeleteProductRequest) (*emptypb.Empty, error) {
+func (api *serverAPI) DeleteProduct(
+	ctx context.Context,
+	req *v1.DeleteProductRequest,
+) (*emptypb.Empty, error) {
 	err := api.svc.Delete(ctx, req.GetProductId())
 	if err != nil {
 		return nil, status.Error(

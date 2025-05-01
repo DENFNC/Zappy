@@ -10,6 +10,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type Category interface {
@@ -19,8 +20,9 @@ type Category interface {
 	) (string, error)
 	List(
 		ctx context.Context,
-		page, pageSize int32,
-	) ([]models.Category, int32, error)
+		pageSize uint32,
+		pageToken string,
+	) ([]models.Category, string, error)
 	Delete(
 		ctx context.Context,
 		categoryID string,
@@ -65,7 +67,41 @@ func (api *serverAPI) ListCategories(
 	ctx context.Context,
 	req *v1.ListCategoriesRequest,
 ) (*v1.ListCategoriesResponse, error) {
-	panic("implement me")
+	afterPage := true
+	items, nextPageToken, err := api.svc.List(
+		ctx,
+		req.Pagination.GetPageSize(),
+		req.Pagination.GetPageToken(),
+	)
+	if nextPageToken == "" {
+		afterPage = false
+	}
+	if err != nil {
+		return nil, status.Error(
+			codes.Internal,
+			errpkg.ErrInternal.Message,
+		)
+	}
+
+	v1Category := make([]*v1.Category, len(items))
+	for i, item := range items {
+		v1Category[i] = &v1.Category{
+			Id:        item.CategoryID,
+			Name:      item.CategoryName,
+			ParentId:  *item.ParentID,
+			CreatedAt: timestamppb.New(item.CreatedAt),
+			UpdatedAt: timestamppb.New(item.UpdatedAt),
+		}
+	}
+
+	return &v1.ListCategoriesResponse{
+		Categories: v1Category,
+		Pagination: &v1.PaginationResponse{
+			PageSize:  req.Pagination.GetPageSize(),
+			PageToken: nextPageToken,
+			AfterPage: afterPage,
+		},
+	}, nil
 }
 
 func (api *serverAPI) DeleteCategory(context.Context, *v1.DeleteCategoryRequest) (*emptypb.Empty, error) {

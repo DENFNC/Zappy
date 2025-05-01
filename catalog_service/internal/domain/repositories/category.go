@@ -17,12 +17,12 @@ type Category interface {
 	) (*models.Category, error)
 	List(
 		ctx context.Context,
-		pageSize int32,
+		pageSize uint,
 		pageToken string,
-	) ([]models.Category, any, error)
+	) ([]models.Category, string, error)
 	ListByParentID(
 		ctx context.Context,
-		pageSize int32,
+		pageSize uint,
 		parentID, pageToken string,
 	) (*models.Category, any, error)
 	Delete(
