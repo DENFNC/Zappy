@@ -7,9 +7,15 @@ import "validate/validate.proto";
 option go_package = "github.com/DENFNC/Zappy/catalog_service/proto/gen/v1;v1";
 
 
-message Pagination {
-  int32 page_size  = 1;
+message PaginationRequest {
+  uint32 page_size  = 1;
   string page_token = 2;
+}
+
+message PaginationResponse {
+  uint32 page_size  = 1;
+  string page_token = 2;
+  bool   after_page = 3;
 }
 
 

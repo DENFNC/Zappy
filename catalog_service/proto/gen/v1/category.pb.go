@@ -10,6 +10,7 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
+	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -120,7 +121,7 @@ func (x *CreateCategoryResponse) GetCategoryId() *ResourceID {
 
 type ListCategoriesRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Pagination    *Pagination            `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	Pagination    *PaginationRequest     `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	ParentId      *string                `protobuf:"bytes,2,opt,name=parent_id,json=parentId,proto3,oneof" json:"parent_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -156,7 +157,7 @@ func (*ListCategoriesRequest) Descriptor() ([]byte, []int) {
 	return file_category_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *ListCategoriesRequest) GetPagination() *Pagination {
+func (x *ListCategoriesRequest) GetPagination() *PaginationRequest {
 	if x != nil {
 		return x.Pagination
 	}
@@ -173,7 +174,7 @@ func (x *ListCategoriesRequest) GetParentId() string {
 type ListCategoriesResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Categories    []*Category            `protobuf:"bytes,1,rep,name=categories,proto3" json:"categories,omitempty"`
-	Pagination    *Pagination            `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	Pagination    *PaginationResponse    `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -215,7 +216,7 @@ func (x *ListCategoriesResponse) GetCategories() []*Category {
 	return nil
 }
 
-func (x *ListCategoriesResponse) GetPagination() *Pagination {
+func (x *ListCategoriesResponse) GetPagination() *PaginationResponse {
 	if x != nil {
 		return x.Pagination
 	}
@@ -307,8 +308,8 @@ type Category struct {
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	ParentId      string                 `protobuf:"bytes,3,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
-	CreatedAt     string                 `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt     string                 `protobuf:"bytes,5,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -364,25 +365,25 @@ func (x *Category) GetParentId() string {
 	return ""
 }
 
-func (x *Category) GetCreatedAt() string {
+func (x *Category) GetCreatedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.CreatedAt
 	}
-	return ""
+	return nil
 }
 
-func (x *Category) GetUpdatedAt() string {
+func (x *Category) GetUpdatedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.UpdatedAt
 	}
-	return ""
+	return nil
 }
 
 var File_category_proto protoreflect.FileDescriptor
 
 const file_category_proto_rawDesc = "" +
 	"\n" +
-	"\x0ecategory.proto\x12\bcategory\x1a\x1bgoogle/protobuf/empty.proto\x1a\fcommon.proto\"[\n" +
+	"\x0ecategory.proto\x12\bcategory\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\fcommon.proto\"[\n" +
 	"\x15CreateCategoryRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
 	"\tparent_id\x18\x02 \x01(\tH\x00R\bparentId\x88\x01\x01B\f\n" +
@@ -390,37 +391,37 @@ const file_category_proto_rawDesc = "" +
 	"_parent_id\"M\n" +
 	"\x16CreateCategoryResponse\x123\n" +
 	"\vcategory_id\x18\x01 \x01(\v2\x12.common.ResourceIDR\n" +
-	"categoryId\"{\n" +
-	"\x15ListCategoriesRequest\x122\n" +
+	"categoryId\"\x82\x01\n" +
+	"\x15ListCategoriesRequest\x129\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2\x12.common.PaginationR\n" +
+	"pagination\x18\x01 \x01(\v2\x19.common.PaginationRequestR\n" +
 	"pagination\x12 \n" +
 	"\tparent_id\x18\x02 \x01(\tH\x00R\bparentId\x88\x01\x01B\f\n" +
 	"\n" +
-	"_parent_id\"\x80\x01\n" +
+	"_parent_id\"\x88\x01\n" +
 	"\x16ListCategoriesResponse\x122\n" +
 	"\n" +
 	"categories\x18\x01 \x03(\v2\x12.category.CategoryR\n" +
-	"categories\x122\n" +
+	"categories\x12:\n" +
 	"\n" +
-	"pagination\x18\x02 \x01(\v2\x12.common.PaginationR\n" +
+	"pagination\x18\x02 \x01(\v2\x1a.common.PaginationResponseR\n" +
 	"pagination\"L\n" +
 	"\x15DeleteCategoryRequest\x123\n" +
 	"\vcategory_id\x18\x01 \x01(\v2\x12.common.ResourceIDR\n" +
 	"categoryId\"\x18\n" +
-	"\x16DeleteCategoryResponse\"\x89\x01\n" +
+	"\x16DeleteCategoryResponse\"\xc1\x01\n" +
 	"\bCategory\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1b\n" +
-	"\tparent_id\x18\x03 \x01(\tR\bparentId\x12\x1d\n" +
+	"\tparent_id\x18\x03 \x01(\tR\bparentId\x129\n" +
 	"\n" +
-	"created_at\x18\x04 \x01(\tR\tcreatedAt\x12\x1d\n" +
+	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\x05 \x01(\tR\tupdatedAt2\x86\x02\n" +
-	"\x0fCategoryService\x12S\n" +
-	"\x0eListCategories\x12\x1f.category.ListCategoriesRequest\x1a .category.ListCategoriesResponse\x12S\n" +
-	"\x0eCreateCategory\x12\x1f.category.CreateCategoryRequest\x1a .category.CreateCategoryResponse\x12I\n" +
-	"\x0eDeleteCategory\x12\x1f.category.DeleteCategoryRequest\x1a\x16.google.protobuf.EmptyB9Z7github.com/DENFNC/Zappy/catalog_service/proto/gen/v1;v1b\x06proto3"
+	"updated_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt2\x8c\x02\n" +
+	"\x0fCategoryService\x12U\n" +
+	"\x0eListCategories\x12\x1f.category.ListCategoriesRequest\x1a .category.ListCategoriesResponse\"\x00\x12U\n" +
+	"\x0eCreateCategory\x12\x1f.category.CreateCategoryRequest\x1a .category.CreateCategoryResponse\"\x00\x12K\n" +
+	"\x0eDeleteCategory\x12\x1f.category.DeleteCategoryRequest\x1a\x16.google.protobuf.Empty\"\x00B9Z7github.com/DENFNC/Zappy/catalog_service/proto/gen/v1;v1b\x06proto3"
 
 var (
 	file_category_proto_rawDescOnce sync.Once
@@ -444,26 +445,30 @@ var file_category_proto_goTypes = []any{
 	(*DeleteCategoryResponse)(nil), // 5: category.DeleteCategoryResponse
 	(*Category)(nil),               // 6: category.Category
 	(*ResourceID)(nil),             // 7: common.ResourceID
-	(*Pagination)(nil),             // 8: common.Pagination
-	(*emptypb.Empty)(nil),          // 9: google.protobuf.Empty
+	(*PaginationRequest)(nil),      // 8: common.PaginationRequest
+	(*PaginationResponse)(nil),     // 9: common.PaginationResponse
+	(*timestamppb.Timestamp)(nil),  // 10: google.protobuf.Timestamp
+	(*emptypb.Empty)(nil),          // 11: google.protobuf.Empty
 }
 var file_category_proto_depIdxs = []int32{
-	7, // 0: category.CreateCategoryResponse.category_id:type_name -> common.ResourceID
-	8, // 1: category.ListCategoriesRequest.pagination:type_name -> common.Pagination
-	6, // 2: category.ListCategoriesResponse.categories:type_name -> category.Category
-	8, // 3: category.ListCategoriesResponse.pagination:type_name -> common.Pagination
-	7, // 4: category.DeleteCategoryRequest.category_id:type_name -> common.ResourceID
-	2, // 5: category.CategoryService.ListCategories:input_type -> category.ListCategoriesRequest
-	0, // 6: category.CategoryService.CreateCategory:input_type -> category.CreateCategoryRequest
-	4, // 7: category.CategoryService.DeleteCategory:input_type -> category.DeleteCategoryRequest
-	3, // 8: category.CategoryService.ListCategories:output_type -> category.ListCategoriesResponse
-	1, // 9: category.CategoryService.CreateCategory:output_type -> category.CreateCategoryResponse
-	9, // 10: category.CategoryService.DeleteCategory:output_type -> google.protobuf.Empty
-	8, // [8:11] is the sub-list for method output_type
-	5, // [5:8] is the sub-list for method input_type
-	5, // [5:5] is the sub-list for extension type_name
-	5, // [5:5] is the sub-list for extension extendee
-	0, // [0:5] is the sub-list for field type_name
+	7,  // 0: category.CreateCategoryResponse.category_id:type_name -> common.ResourceID
+	8,  // 1: category.ListCategoriesRequest.pagination:type_name -> common.PaginationRequest
+	6,  // 2: category.ListCategoriesResponse.categories:type_name -> category.Category
+	9,  // 3: category.ListCategoriesResponse.pagination:type_name -> common.PaginationResponse
+	7,  // 4: category.DeleteCategoryRequest.category_id:type_name -> common.ResourceID
+	10, // 5: category.Category.created_at:type_name -> google.protobuf.Timestamp
+	10, // 6: category.Category.updated_at:type_name -> google.protobuf.Timestamp
+	2,  // 7: category.CategoryService.ListCategories:input_type -> category.ListCategoriesRequest
+	0,  // 8: category.CategoryService.CreateCategory:input_type -> category.CreateCategoryRequest
+	4,  // 9: category.CategoryService.DeleteCategory:input_type -> category.DeleteCategoryRequest
+	3,  // 10: category.CategoryService.ListCategories:output_type -> category.ListCategoriesResponse
+	1,  // 11: category.CategoryService.CreateCategory:output_type -> category.CreateCategoryResponse
+	11, // 12: category.CategoryService.DeleteCategory:output_type -> google.protobuf.Empty
+	10, // [10:13] is the sub-list for method output_type
+	7,  // [7:10] is the sub-list for method input_type
+	7,  // [7:7] is the sub-list for extension type_name
+	7,  // [7:7] is the sub-list for extension extendee
+	0,  // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_category_proto_init() }

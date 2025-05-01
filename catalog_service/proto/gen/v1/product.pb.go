@@ -113,7 +113,7 @@ func (x *GetProductResponse) GetProduct() *Product {
 
 type ListProductsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Pagination    *Pagination            `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	Pagination    *PaginationRequest     `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Query         string                 `protobuf:"bytes,2,opt,name=query,proto3" json:"query,omitempty"`
 	CategoryIds   []string               `protobuf:"bytes,3,rep,name=category_ids,json=categoryIds,proto3" json:"category_ids,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -150,7 +150,7 @@ func (*ListProductsRequest) Descriptor() ([]byte, []int) {
 	return file_product_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *ListProductsRequest) GetPagination() *Pagination {
+func (x *ListProductsRequest) GetPagination() *PaginationRequest {
 	if x != nil {
 		return x.Pagination
 	}
@@ -174,7 +174,7 @@ func (x *ListProductsRequest) GetCategoryIds() []string {
 type ListProductsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Products      []*Product             `protobuf:"bytes,1,rep,name=products,proto3" json:"products,omitempty"`
-	Pagination    *Pagination            `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	Pagination    *PaginationResponse    `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -216,7 +216,7 @@ func (x *ListProductsResponse) GetProducts() []*Product {
 	return nil
 }
 
-func (x *ListProductsResponse) GetPagination() *Pagination {
+func (x *ListProductsResponse) GetPagination() *PaginationResponse {
 	if x != nil {
 		return x.Pagination
 	}
@@ -636,17 +636,17 @@ const file_product_proto_rawDesc = "" +
 	"\n" +
 	"product_id\x18\x01 \x01(\v2\x12.common.ResourceIDR\tproductId\"@\n" +
 	"\x12GetProductResponse\x12*\n" +
-	"\aproduct\x18\x01 \x01(\v2\x10.product.ProductR\aproduct\"\x82\x01\n" +
-	"\x13ListProductsRequest\x122\n" +
+	"\aproduct\x18\x01 \x01(\v2\x10.product.ProductR\aproduct\"\x89\x01\n" +
+	"\x13ListProductsRequest\x129\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2\x12.common.PaginationR\n" +
+	"pagination\x18\x01 \x01(\v2\x19.common.PaginationRequestR\n" +
 	"pagination\x12\x14\n" +
 	"\x05query\x18\x02 \x01(\tR\x05query\x12!\n" +
-	"\fcategory_ids\x18\x03 \x03(\tR\vcategoryIds\"x\n" +
+	"\fcategory_ids\x18\x03 \x03(\tR\vcategoryIds\"\x80\x01\n" +
 	"\x14ListProductsResponse\x12,\n" +
-	"\bproducts\x18\x01 \x03(\v2\x10.product.ProductR\bproducts\x122\n" +
+	"\bproducts\x18\x01 \x03(\v2\x10.product.ProductR\bproducts\x12:\n" +
 	"\n" +
-	"pagination\x18\x02 \x01(\v2\x12.common.PaginationR\n" +
+	"pagination\x18\x02 \x01(\v2\x1a.common.PaginationResponseR\n" +
 	"pagination\"\xa5\x01\n" +
 	"\x14CreateProductRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12%\n" +
@@ -722,20 +722,21 @@ var file_product_proto_goTypes = []any{
 	(*DeleteProductResponse)(nil), // 9: product.DeleteProductResponse
 	(*Product)(nil),               // 10: product.Product
 	(*ResourceID)(nil),            // 11: common.ResourceID
-	(*Pagination)(nil),            // 12: common.Pagination
-	(*timestamppb.Timestamp)(nil), // 13: google.protobuf.Timestamp
-	(*emptypb.Empty)(nil),         // 14: google.protobuf.Empty
+	(*PaginationRequest)(nil),     // 12: common.PaginationRequest
+	(*PaginationResponse)(nil),    // 13: common.PaginationResponse
+	(*timestamppb.Timestamp)(nil), // 14: google.protobuf.Timestamp
+	(*emptypb.Empty)(nil),         // 15: google.protobuf.Empty
 }
 var file_product_proto_depIdxs = []int32{
 	11, // 0: product.GetProductRequest.product_id:type_name -> common.ResourceID
 	10, // 1: product.GetProductResponse.product:type_name -> product.Product
-	12, // 2: product.ListProductsRequest.pagination:type_name -> common.Pagination
+	12, // 2: product.ListProductsRequest.pagination:type_name -> common.PaginationRequest
 	10, // 3: product.ListProductsResponse.products:type_name -> product.Product
-	12, // 4: product.ListProductsResponse.pagination:type_name -> common.Pagination
+	13, // 4: product.ListProductsResponse.pagination:type_name -> common.PaginationResponse
 	11, // 5: product.CreateProductResponse.product_id:type_name -> common.ResourceID
 	10, // 6: product.UpdateProductResponse.product:type_name -> product.Product
-	13, // 7: product.Product.created_at:type_name -> google.protobuf.Timestamp
-	13, // 8: product.Product.updated_at:type_name -> google.protobuf.Timestamp
+	14, // 7: product.Product.created_at:type_name -> google.protobuf.Timestamp
+	14, // 8: product.Product.updated_at:type_name -> google.protobuf.Timestamp
 	0,  // 9: product.ProductService.GetProduct:input_type -> product.GetProductRequest
 	2,  // 10: product.ProductService.ListProducts:input_type -> product.ListProductsRequest
 	4,  // 11: product.ProductService.CreateProduct:input_type -> product.CreateProductRequest
@@ -745,7 +746,7 @@ var file_product_proto_depIdxs = []int32{
 	3,  // 15: product.ProductService.ListProducts:output_type -> product.ListProductsResponse
 	5,  // 16: product.ProductService.CreateProduct:output_type -> product.CreateProductResponse
 	7,  // 17: product.ProductService.UpdateProduct:output_type -> product.UpdateProductResponse
-	14, // 18: product.ProductService.DeleteProduct:output_type -> google.protobuf.Empty
+	15, // 18: product.ProductService.DeleteProduct:output_type -> google.protobuf.Empty
 	14, // [14:19] is the sub-list for method output_type
 	9,  // [9:14] is the sub-list for method input_type
 	9,  // [9:9] is the sub-list for extension type_name

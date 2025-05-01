@@ -17,14 +17,14 @@ message GetProductResponse {
 }
 
 message ListProductsRequest {
-  common.Pagination pagination  = 1;
+  common.PaginationRequest pagination  = 1;
   string          query         = 2;
   repeated string category_ids  = 3;
 }
 
 message ListProductsResponse {
   repeated Product    products   = 1;
-  common.Pagination   pagination = 2;
+  common.PaginationResponse   pagination = 2;
 }
 
 message CreateProductRequest {
