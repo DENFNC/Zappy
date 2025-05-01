@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package category;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "common.proto";
+
+option go_package = "github.com/DENFNC/Zappy/catalog_service/proto/gen/v1;v1";
+
+message CreateCategoryRequest {
+  string name = 1;
+  optional string parent_id = 2;
+}
+
+message CreateCategoryResponse {
+  common.ResourceID category_id = 1;
+}
+
+message ListCategoriesRequest {
+  common.PaginationRequest pagination = 1;
+  optional string parent_id = 2;
+}
+
+message ListCategoriesResponse {
+  repeated Category categories = 1;
+  common.PaginationResponse pagination = 2;
+}
+
+message DeleteCategoryRequest {
+  common.ResourceID category_id = 1;
+}
+
+message DeleteCategoryResponse {
+  // empty response
+}
+
+message Category {
+  string id         = 1;
+  string name       = 2;
+  string parent_id  = 3;
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp updated_at = 5;
+}
+
+service CategoryService {
+  rpc ListCategories(ListCategoriesRequest) returns (ListCategoriesResponse) {}
+  rpc CreateCategory(CreateCategoryRequest) returns (CreateCategoryResponse) {}
+  rpc DeleteCategory(DeleteCategoryRequest) returns (google.protobuf.Empty) {}
+}
