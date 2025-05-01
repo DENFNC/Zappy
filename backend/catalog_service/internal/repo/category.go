@@ -3,7 +3,6 @@ package repo
 import (
 	"context"
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/DENFNC/Zappy/catalog_service/internal/domain/models"
@@ -15,7 +14,7 @@ import (
 type CategoryRepo struct {
 	*psql.Storage
 	goqu     goqu.DialectWrapper
-	paginate *paginate.Paginator[models.Category]
+	paginate *paginate.Paginator[psql.CategoryDAO]
 }
 
 func NewCategoryRepo(
@@ -23,7 +22,7 @@ func NewCategoryRepo(
 	goqu goqu.DialectWrapper,
 	coder paginate.TokenCoder,
 ) (*CategoryRepo, error) {
-	paginate, err := paginate.NewPaginator[models.Category](
+	paginate, err := paginate.NewPaginator[psql.CategoryDAO](
 		db.DB,
 		goqu,
 		coder,
@@ -87,10 +86,20 @@ func (repo *CategoryRepo) List(
 		WithColumns("created_at", "category_id").
 		WithLimit(pageSize)
 	// TODO: пофиксить проблему с nil элементами
-	items, nextToken, err := paginate.Paginate(ctx, pageToken)
-	fmt.Println(items)
+	itemsDAO, nextToken, err := paginate.Paginate(ctx, pageToken)
 	if err != nil {
 		return nil, "", err
+	}
+
+	items := make([]models.Category, len(itemsDAO))
+	for i, itemDAO := range itemsDAO {
+		items[i] = models.Category{
+			CategoryID:   itemDAO.CategoryID.String(),
+			CategoryName: itemDAO.CategoryName,
+			ParentID:     itemDAO.ParentID.String(),
+			CreatedAt:    itemDAO.CreatedAt.Time,
+			UpdatedAt:    itemDAO.UpdatedAt.Time,
+		}
 	}
 
 	return items, nextToken, nil
