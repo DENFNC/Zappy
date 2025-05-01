@@ -27,6 +27,7 @@ import (
 	"github.com/doug-martin/goqu/v9/exp"
 	"github.com/gofrs/uuid"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -40,6 +41,8 @@ func init() {
 	gob.Register(time.Time{})
 	gob.Register(uuid.UUID{})
 	gob.Register([]byte{})
+	gob.Register(pgtype.Timestamptz{})
+	gob.Register(pgtype.UUID{})
 }
 
 // * TokenCoder задаёт интерфейс для шифрования и дешифрования курсорных токенов.

@@ -88,7 +88,7 @@ func (api *serverAPI) ListCategories(
 		v1Category[i] = &v1.Category{
 			Id:        item.CategoryID,
 			Name:      item.CategoryName,
-			ParentId:  *item.ParentID,
+			ParentId:  item.ParentID,
 			CreatedAt: timestamppb.New(item.CreatedAt),
 			UpdatedAt: timestamppb.New(item.UpdatedAt),
 		}
