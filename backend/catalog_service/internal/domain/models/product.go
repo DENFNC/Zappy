@@ -8,7 +8,7 @@ type Product struct {
 	ProductID   string
 	ProductName string
 	Description string
-	Price       uint32
+	Price       int64
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 }
