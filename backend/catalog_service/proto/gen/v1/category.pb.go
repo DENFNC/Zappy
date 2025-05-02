@@ -122,7 +122,6 @@ func (x *CreateCategoryResponse) GetCategoryId() *ResourceID {
 type ListCategoriesRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Pagination    *PaginationRequest     `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	ParentId      *string                `protobuf:"bytes,2,opt,name=parent_id,json=parentId,proto3,oneof" json:"parent_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -162,13 +161,6 @@ func (x *ListCategoriesRequest) GetPagination() *PaginationRequest {
 		return x.Pagination
 	}
 	return nil
-}
-
-func (x *ListCategoriesRequest) GetParentId() string {
-	if x != nil && x.ParentId != nil {
-		return *x.ParentId
-	}
-	return ""
 }
 
 type ListCategoriesResponse struct {
@@ -391,14 +383,11 @@ const file_category_proto_rawDesc = "" +
 	"_parent_id\"M\n" +
 	"\x16CreateCategoryResponse\x123\n" +
 	"\vcategory_id\x18\x01 \x01(\v2\x12.common.ResourceIDR\n" +
-	"categoryId\"\x82\x01\n" +
+	"categoryId\"R\n" +
 	"\x15ListCategoriesRequest\x129\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x19.common.PaginationRequestR\n" +
-	"pagination\x12 \n" +
-	"\tparent_id\x18\x02 \x01(\tH\x00R\bparentId\x88\x01\x01B\f\n" +
-	"\n" +
-	"_parent_id\"\x88\x01\n" +
+	"pagination\"\x88\x01\n" +
 	"\x16ListCategoriesResponse\x122\n" +
 	"\n" +
 	"categories\x18\x01 \x03(\v2\x12.category.CategoryR\n" +
@@ -478,7 +467,6 @@ func file_category_proto_init() {
 	}
 	file_common_proto_init()
 	file_category_proto_msgTypes[0].OneofWrappers = []any{}
-	file_category_proto_msgTypes[2].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
