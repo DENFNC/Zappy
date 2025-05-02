@@ -6,7 +6,6 @@ import (
 
 	"github.com/DENFNC/Zappy/catalog_service/internal/domain/models"
 	"github.com/DENFNC/Zappy/catalog_service/internal/domain/repositories"
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type Product struct {
@@ -28,7 +27,7 @@ func (svc *Product) Create(
 	ctx context.Context,
 	name, desc string,
 	categoryIDs []string,
-	price pgtype.Numeric,
+	price int64,
 ) (string, error) {
 	const op = "service.Product.Create"
 
@@ -68,17 +67,29 @@ func (svc *Product) Get(
 
 func (svc *Product) List(
 	ctx context.Context,
-	page, pageSize int32,
-	query string,
-	categoryIDs []string,
-) ([]*models.Product, int32, error) {
-	panic("implement me")
+	pageSize uint32,
+	pageToken string,
+) ([]models.Product, string, error) {
+	const op = "service.Product.List"
+
+	log := svc.log.With("op", op)
+
+	products, nextPageToken, err := svc.repo.List(ctx, pageSize, pageToken)
+	if err != nil {
+		log.Error(
+			"Critical error",
+			slog.String("error", err.Error()),
+		)
+		return nil, "", err
+	}
+
+	return products, nextPageToken, nil
 }
 
 func (svc *Product) Update(
 	ctx context.Context,
 	productID, name, description string,
-	price pgtype.Numeric,
+	price int64,
 	currency string,
 	categoryIDs []string,
 	isActive *bool,

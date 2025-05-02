@@ -23,14 +23,12 @@ func New(
 	coder paginate.TokenCoder,
 ) (*App, error) {
 
-	productRepo := repo.NewProductRepo(db, db.Dial)
+	productRepo := repo.NewProductRepo(db, db.Dial, coder)
+
 	productSvc := service.NewProduct(log, productRepo)
 	productHandle := product.New(productSvc)
 
-	categoryRepo, err := repo.NewCategoryRepo(db, db.Dial, coder)
-	if err != nil {
-		return nil, err
-	}
+	categoryRepo := repo.NewCategoryRepo(db, db.Dial, coder)
 	categorySvc := service.NewCategory(log, categoryRepo)
 	categoryHandle := category.New(categorySvc)
 

@@ -1,17 +1,6 @@
-//* Пакет paginate предоставляет реализацию курсорной пагинации с шифрованием
-//* курсорных токенов через интерфейс TokenCoder (например, AES-GCM).
-//*
-//* Основные элементы:
-//*   - TokenCoder: интерфейс для шифрования/дешифрования байтовых данных
-//*   - Paginator[T]: универсальный пагинатор для структур с набором полей для сортировки
-//*
-//* Пример использования:
-//*
-//*   coder, _ := NewEncryptor(key, nil)
-//*   paginator, _ := NewPaginator[MyStruct](conn, dialect, coder)
-//*   paginator = paginator.WithTable("my_table").WithColumns("id", "created_at").WithLimit(50)
-//*   items, nextToken, err := paginator.Paginate(ctx, prevToken)
-
+// * Пакет paginate предоставляет универсальный механизм курсорной пагинации для баз данных PostgreSQL.
+// * Он использует goqu для построения SQL-запросов и pgx для выполнения запросов, применяя зашифрованные курсоры
+// * для навигации по наборам результатов без использования смещений.
 package paginate
 
 import (
@@ -31,47 +20,47 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-// * init регистрирует необходимые типы в пакете encoding/gob,
-// * чтобы значения интерфейсных типов (например, time.Time и любых других
-// * зарегистрированных вами типов) могли корректно сериализоваться.
-// *
-// * Без такой регистрации gob не сможет закодировать интерфейсные значения,
-// * конкретные типы которых ему не известны.
+// * init регистрирует типы, используемые в курсорах, в пакете encoding/gob для сериализации.
 func init() {
-	gob.Register(time.Time{})
-	gob.Register(uuid.UUID{})
-	gob.Register([]byte{})
-	gob.Register(pgtype.Timestamptz{})
-	gob.Register(pgtype.UUID{})
+	gob.Register(time.Time{})          // * Регистрация time.Time для курсоров с отметкой времени
+	gob.Register(uuid.UUID{})          // * Регистрация uuid.UUID для UUID-курсоров
+	gob.Register([]byte{})             // * Регистрация []byte для бинарных данных
+	gob.Register(pgtype.Timestamptz{}) // * Регистрация типа pgx timestamptz
+	gob.Register(pgtype.UUID{})        // * Регистрация типа pgx UUID
 }
 
-// * TokenCoder задаёт интерфейс для шифрования и дешифрования курсорных токенов.
-// * Реализации могут использовать AES-GCM, HMAC или другие методы.
+// * TokenCoder определяет интерфейс для шифрования и расшифровки токенов курсора.
+// * Реализации должны обеспечивать безопасное кодирование токенов для хранения на стороне клиента.
 type TokenCoder interface {
-	//* Encrypt кодирует данные в строковый токен.
+	// * Encrypt принимает исходные данные в виде среза байт и возвращает строковый токен или ошибку.
 	Encrypt(data []byte) (string, error)
-	//* Decrypt декодирует строковый токен обратно в байты данных.
+	// * Decrypt дешифрует токен и возвращает исходные данные или ошибку при неудаче.
 	Decrypt(token string) ([]byte, error)
 }
 
-// * Paginator выполняет курсорную пагинацию над таблицей базы данных.
-// * T — любая структура (struct) с экспортируемыми полями, помеченными тэгом `db` или совпадающими
-// * по имени с колонками таблицы. Поля используются для сканирования и извлечения значений курсора.
+// * Paginator[T] управляет состоянием и выполнением курсорной пагинации для типа T.
+// * Используйте WithDataset, WithColumns и WithLimit для настройки запроса перед вызовом Paginate.
+// * Paginate возвращает срез результатов типа T и зашифрованный токен для следующей страницы, если таковая имеется.
 type Paginator[T any] struct {
-	conn    *pgxpool.Pool       //* соединение с базой данных
-	dialect goqu.DialectWrapper //* диалект SQL (Postgres, MySQL и т.д.)
-	coder   TokenCoder          //* шифратор/дешифратор токенов
-	limit   uint                //* максимальный размер страницы
-	cols    []string            //* колонки для сортировки и курсора
-	table   string              //* имя таблицы
+	conn    *pgxpool.Pool       // * conn — пул соединений PostgreSQL
+	dialect goqu.DialectWrapper // * dialect — SQL-диалект для построения запросов
+	coder   TokenCoder          // * coder — шифратор/дешифратор токенов курсора
+	limit   uint                // * limit — максимальное число записей на страницу
+	cols    []string            // * cols — список колонок для сортировки и формирования курсора
+	ds      *goqu.SelectDataset // * ds — базовый запрос (dataset) для пагинации
 }
 
-// * DefaultLimit задаёт значение лимита по умолчанию, если не указано иное.
+// * DefaultLimit задаёт размер страницы по умолчанию, если не указан через WithLimit.
 const DefaultLimit = 20
 
-// * NewPaginator создаёт Paginator[T] с соединением, диалектом и шифратором.
-// * Если conn или coder равны nil, возвращается ошибка.
-// * Лимит устанавливается в DefaultLimit.
+// * NewPaginator создаёт новый Paginator.
+// * Параметры:
+// *   - conn: инициализированный pgxpool.Pool для подключения к БД (обязателен).
+// *   - dialect: диалект goqu для построения SQL-запросов.
+// *   - coder: реализация TokenCoder для операций с токенами (обязателен).
+// * Возвращает:
+// *   - *Paginator[T]: настроенный Paginator с лимитом по умолчанию.
+// *   - error: если conn или coder равны nil.
 func NewPaginator[T any](conn *pgxpool.Pool, dialect goqu.DialectWrapper, coder TokenCoder) (*Paginator[T], error) {
 	if conn == nil {
 		return nil, errors.New("db connection is nil")
@@ -79,23 +68,25 @@ func NewPaginator[T any](conn *pgxpool.Pool, dialect goqu.DialectWrapper, coder 
 	if coder == nil {
 		return nil, errors.New("coder is nil")
 	}
-
-	p := &Paginator[T]{
+	return &Paginator[T]{
 		conn:    conn,
 		dialect: dialect,
 		coder:   coder,
 		limit:   DefaultLimit,
-	}
-	return p, nil
+	}, nil
 }
 
-// * WithTable устанавливает имя таблицы для пагинации.
-func (p *Paginator[T]) WithTable(table string) *Paginator[T] {
-	p.table = table
+// * WithDataset задаёт базовый SelectDataset для пагинации.
+// * Использовать перед вызовом Paginate для установки контекста запроса.
+// * Возвращает тот же Paginator для цепочки вызовов.
+func (p *Paginator[T]) WithDataset(ds *goqu.SelectDataset) *Paginator[T] {
+	p.ds = ds
 	return p
 }
 
-// * WithLimit задаёт максимальное число записей на страницу (если >0).
+// * WithLimit задаёт свой размер страницы.
+// * Если limit равен нулю, текущий лимит сохраняется.
+// * Возвращает тот же Paginator для цепочки.
 func (p *Paginator[T]) WithLimit(limit uint) *Paginator[T] {
 	if limit > 0 {
 		p.limit = limit
@@ -103,124 +94,106 @@ func (p *Paginator[T]) WithLimit(limit uint) *Paginator[T] {
 	return p
 }
 
-// * WithColumns задаёт колонки, по которым производится упорядочивание и курсор.
-// * Порядок колонок важен: первым идёт основной ключ, далее дополнительные.
+// * WithColumns настраивает колонки для сортировки и формирования курсоров.
+// * Порядок колонок определяет лексикографический порядок при пагинации.
+// * Возвращает тот же Paginator для цепочки.
 func (p *Paginator[T]) WithColumns(cols ...string) *Paginator[T] {
-	//* создаём копию слайса cols
 	p.cols = append([]string(nil), cols...)
 	return p
 }
 
-// * Paginate выполняет запрос к БД и возвращает элементы, новый токен курсора и ошибку.
-// * token: предыдущий токен; если пусто — возвращает первую страницу.
-// * Контекст ctx используется для отмены и таймаутов.
+// * Paginate выполняет запрос для получения одной страницы результатов.
+// * Параметры:
+// *   - ctx: контекст выполнения запроса.
+// *   - token: зашифрованный курсор предыдущей страницы; пустая строка для первой страницы.
+// * Возвращает:
+// *   - []T: срез результатов размером до limit.
+// *   - string: токен для следующей страницы или пустую строку, если страниц больше нет.
+// *   - error: ошибка при построении SQL, выполнении запроса или сканировании строк.
 func (p *Paginator[T]) Paginate(ctx context.Context, token string) ([]T, string, error) {
 	if p.limit == 0 {
 		return nil, "", errors.New("limit must be > 0")
 	}
-	if len(p.cols) == 0 {
-		return nil, "", errors.New("no columns specified for ordering")
+	if p.ds == nil {
+		return nil, "", errors.New("dataset not provided")
 	}
-	if p.table == "" {
-		return nil, "", errors.New("table name not set")
+	if len(p.cols) == 0 {
+		return nil, "", errors.New("no columns specified for cursor")
 	}
 
-	//* Строим набор данных
-	ds, err := p.buildDataset(token)
-	if err != nil {
-		return nil, "", err
+	// * Формируем выражения ORDER BY по убыванию для каждой колонки.
+	orderExprs := make([]exp.OrderedExpression, len(p.cols))
+	for i, c := range p.cols {
+		orderExprs[i] = goqu.C(c).Desc()
 	}
+	ds := p.ds.Order(orderExprs...).Limit(p.limit + 1)
+
+	// * Если передан токен, расшифровываем и применяем условие курсора.
+	if token != "" {
+		raw, err := p.coder.Decrypt(token)
+		if err != nil {
+			return nil, "", fmt.Errorf("token decrypt error: %w", err)
+		}
+		var vals []interface{}
+		if err := gob.NewDecoder(bytes.NewReader(raw)).Decode(&vals); err != nil {
+			return nil, "", fmt.Errorf("cursor decoding error: %w", err)
+		}
+		expr, err := cursorConditionExpr(p.cols, vals)
+		if err != nil {
+			return nil, "", err
+		}
+		ds = ds.Where(expr)
+	}
+
+	// * Генерируем SQL и выполняем запрос.
 	sqlStr, args, err := ds.ToSQL()
 	if err != nil {
-		return nil, "", fmt.Errorf("SQL build: %w", err)
+		return nil, "", fmt.Errorf("SQL build error: %w", err)
 	}
-
-	//* Выполняем запрос
 	rows, err := p.conn.Query(ctx, sqlStr, args...)
-	// TODO: проверить запрос
 	if err != nil {
-		return nil, "", fmt.Errorf("query execution: %w", err)
+		return nil, "", fmt.Errorf("query execution error: %w", err)
 	}
 	defer rows.Close()
 
-	//* Сканируем строки в срез структур T
+	// * Сканируем строки в срез структур T.
 	items, err := scanRows[T](rows)
 	if err != nil {
 		return nil, "", err
 	}
-	if len(items) == 0 {
-		return items, "", nil
-	}
 
-	// * Проверяем существует ли следующая страница
-	// * Если её нет то возвращаем пустой токен
-	hasNext := len(items) > int(p.limit)
-	if hasNext {
-		//* Извлекаем значения последнего элемента для курсора
-		vals, err := extractValuesReflect(items[len(items)-1], p.cols)
+	// * Если получено больше элементов, чем limit, генерируем токен для следующей страницы.
+	if len(items) > int(p.limit) {
+		vals, err := extractValuesReflect(items[p.limit-1], p.cols)
 		if err != nil {
-			return nil, "", fmt.Errorf("extract cursor values: %w", err)
+			return nil, "", err
 		}
-
-		//* Кодируем курсор в бинарный вид
 		var buf bytes.Buffer
 		if err := gob.NewEncoder(&buf).Encode(vals); err != nil {
-			return nil, "", fmt.Errorf("encoding cursor: %w", err)
+			return nil, "", err
 		}
-		//* Шифруем и кодируем токен
 		tok, err := p.coder.Encrypt(buf.Bytes())
 		if err != nil {
-			return nil, "", fmt.Errorf("encrypting cursor: %w", err)
+			return nil, "", err
 		}
 		return items[:p.limit], tok, nil
 	}
-
 	return items, "", nil
 }
 
-// * buildDataset конструирует goqu.SelectDataset с учётом токена.
-// * Если token непустой — добавляет условие WHERE для курсора.
-func (p *Paginator[T]) buildDataset(token string) (*goqu.SelectDataset, error) {
-	//* Формируем выражения ORDER BY col DESC
-	exprs := make([]exp.OrderedExpression, len(p.cols))
-	for i, c := range p.cols {
-		exprs[i] = goqu.C(c).Desc()
-	}
-
-	//* SELECT * FROM table ORDER BY ... LIMIT ...
-	ds := p.dialect.From(p.table).Order(exprs...).Limit(p.limit + 1)
-	if token != "" {
-		//* Дешифруем и декодируем курсор
-		raw, err := p.coder.Decrypt(token)
-		if err != nil {
-			return nil, fmt.Errorf("token decrypt: %w", err)
-		}
-		var vals []interface{}
-		if err := gob.NewDecoder(bytes.NewReader(raw)).Decode(&vals); err != nil {
-			return nil, fmt.Errorf("decoding cursor: %w", err)
-		}
-		//* Строим условие WHERE c1 < v1 OR (c1 = v1 AND c2 < v2) ...
-		expr, err := cursorConditionExpr(p.cols, vals)
-		if err != nil {
-			return nil, err
-		}
-		ds = ds.Where(expr)
-	}
-	return ds, nil
-}
-
-// * cursorConditionExpr строит выражение для курсора: последовательность OR/AND по колонкам.
+// * cursorConditionExpr строит лексикографическое условие WHERE для фильтрации по курсору.
+// * Возвращает выражение вида (col1<val1) OR (col1=val1 AND col2<val2) OR ...
 func cursorConditionExpr(cols []string, vals []interface{}) (goqu.Expression, error) {
 	if len(cols) != len(vals) {
 		return nil, errors.New("cols and vals length mismatch")
 	}
 	var expr goqu.Expression
 	for i := range cols {
-		//* условие cols[i] < vals[i]
 		lt := goqu.Ex{cols[i]: goqu.Op{"lt": vals[i]}}
-		var curr goqu.Expression = lt
-		if i > 0 {
-			//* условие cols[0]=vals[0] AND ... cols[i-1]=vals[i-1]
+		var curr goqu.Expression
+		if i == 0 {
+			curr = lt
+		} else {
 			eq := goqu.Ex{}
 			for j := 0; j < i; j++ {
 				eq[cols[j]] = vals[j]
@@ -236,8 +209,9 @@ func cursorConditionExpr(cols []string, vals []interface{}) (goqu.Expression, er
 	return expr, nil
 }
 
-// * scanRows сканирует pgx.Rows в срез структур T.
-// * Тип T должен быть struct, поля должны иметь тэг `db:"col"` или совпадать по имени с колонками.
+// * scanRows считывает все строки из pgx.Rows и маппит их в срез структур типа T.
+// * T должен быть структурой с полями, помеченными тегом `db:"column"` или совпадающими по имени с названием колонки.
+// * Возвращает ошибку, если сканирование не удалось или T не является структурой.
 func scanRows[T any](rows pgx.Rows) ([]T, error) {
 	var zero T
 	typ := reflect.TypeOf(zero)
@@ -245,10 +219,9 @@ func scanRows[T any](rows pgx.Rows) ([]T, error) {
 		return nil, errors.New("T must be a struct")
 	}
 
-	//* Получаем описание колонок из результата
+	// * Строим карту соответствия названий колонок и индексов полей структуры.
 	fds := rows.FieldDescriptions()
-	//* Колонка -> индекс поля в struct
-	colIdx := make(map[string]int, typ.NumField())
+	colIdx := make(map[string]int)
 	for i := 0; i < typ.NumField(); i++ {
 		sf := typ.Field(i)
 		name := sf.Tag.Get("db")
@@ -260,10 +233,8 @@ func scanRows[T any](rows pgx.Rows) ([]T, error) {
 
 	var result []T
 	for rows.Next() {
-		//* Создаём новый экземпляр T
 		ptr := reflect.New(typ)
 		val := ptr.Elem()
-		//* Подготавливаем слайс интерфейсов для Scan
 		dests := make([]interface{}, len(fds))
 		for i, fd := range fds {
 			if idx, ok := colIdx[fd.Name]; ok {
@@ -274,26 +245,32 @@ func scanRows[T any](rows pgx.Rows) ([]T, error) {
 			}
 		}
 		if err := rows.Scan(dests...); err != nil {
-			return nil, fmt.Errorf("row scan: %w", err)
+			return nil, fmt.Errorf("row scan error: %w", err)
 		}
 		result = append(result, ptr.Elem().Interface().(T))
 	}
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("rows error: %w", err)
+		return nil, fmt.Errorf("rows iteration error: %w", err)
 	}
 	return result, nil
 }
 
-// * extractValuesReflect извлекает значения полей структуры item в том порядке,
-// * в котором указаны cols. Используется для формирования курсора.
+// * extractValuesReflect извлекает значения колонок курсора из экземпляра структуры через reflection.
+// * Параметры:
+// *   - item: экземпляр структуры типа T.
+// *   - cols: список имён колонок для извлечения.
+// * Возвращает:
+// *   - []interface{}: значения в порядке, соответствующем cols.
+// *   - error: если item не структура или колонка не найдена.
 func extractValuesReflect[T any](item T, cols []string) ([]interface{}, error) {
 	typ := reflect.TypeOf(item)
 	if typ.Kind() != reflect.Struct {
 		return nil, errors.New("item must be a struct")
 	}
 	val := reflect.ValueOf(item)
-	//* Карта имя колонки -> индекс поля
-	fieldMap := make(map[string]int, typ.NumField())
+
+	// * Строим карту соответствия названий колонок и индексов полей структуры.
+	fieldMap := make(map[string]int)
 	for i := 0; i < typ.NumField(); i++ {
 		sf := typ.Field(i)
 		name := sf.Tag.Get("db")
@@ -302,7 +279,7 @@ func extractValuesReflect[T any](item T, cols []string) ([]interface{}, error) {
 		}
 		fieldMap[name] = i
 	}
-	//* Собираем значения в порядке cols
+
 	vals := make([]interface{}, len(cols))
 	for i, col := range cols {
 		idx, ok := fieldMap[col]

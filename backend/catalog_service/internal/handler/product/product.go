@@ -2,12 +2,10 @@ package product
 
 import (
 	"context"
-	"math/big"
 
 	"github.com/DENFNC/Zappy/catalog_service/internal/domain/models"
 	errpkg "github.com/DENFNC/Zappy/catalog_service/internal/errors"
 	v1 "github.com/DENFNC/Zappy/catalog_service/proto/gen/v1"
-	"github.com/jackc/pgx/v5/pgtype"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -20,7 +18,7 @@ type Product interface {
 		ctx context.Context,
 		name, desc string,
 		categoryIDs []string,
-		price pgtype.Numeric,
+		price int64,
 	) (string, error)
 	Get(
 		ctx context.Context,
@@ -28,14 +26,13 @@ type Product interface {
 	) (*models.Product, error)
 	List(
 		ctx context.Context,
-		page, pageSize int32,
-		query string,
-		categoryIDs []string,
-	) ([]*models.Product, int32, error)
+		pageSize uint32,
+		pageToken string,
+	) ([]models.Product, string, error)
 	Update(
 		ctx context.Context,
 		productID, name, description string,
-		price pgtype.Numeric,
+		price int64,
 		currency string,
 		categoryIDs []string,
 		isActive *bool,
@@ -70,13 +67,7 @@ func (api *serverAPI) CreateProduct(
 		req.GetName(),
 		req.GetDescription(),
 		req.GetCategoryIds(),
-		pgtype.Numeric{
-			Int:              big.NewInt(req.GetPriceCents()),
-			Exp:              -2,
-			Valid:            true,
-			InfinityModifier: pgtype.Finite,
-			NaN:              false,
-		},
+		req.GetPriceCents(),
 	)
 	if err != nil {
 		return nil, status.Error(
@@ -109,7 +100,7 @@ func (api *serverAPI) GetProduct(
 			Id:          product.ProductID,
 			Name:        product.ProductName,
 			Description: product.Description,
-			PriceCents:  product.Price.Int.Int64(),
+			PriceCents:  product.Price,
 			CreatedAt:   timestamppb.New(product.CreatedAt),
 			UpdatedAt:   timestamppb.New(product.UpdatedAt),
 		},
@@ -120,7 +111,42 @@ func (api *serverAPI) ListProducts(
 	ctx context.Context,
 	req *v1.ListProductsRequest,
 ) (*v1.ListProductsResponse, error) {
-	panic("implement me")
+	afterPage := true
+	items, nextPageToken, err := api.svc.List(
+		ctx,
+		req.Pagination.GetPageSize(),
+		req.Pagination.GetPageToken(),
+	)
+	if nextPageToken == "" {
+		afterPage = false
+	}
+	if err != nil {
+		return nil, status.Error(
+			codes.Internal,
+			errpkg.ErrInternal.Message,
+		)
+	}
+
+	v1Products := make([]*v1.Product, len(items))
+	for i, item := range items {
+		v1Products[i] = &v1.Product{
+			Id:          item.ProductID,
+			Name:        item.ProductName,
+			Description: item.Description,
+			PriceCents:  item.Price,
+			CreatedAt:   timestamppb.New(item.CreatedAt),
+			UpdatedAt:   timestamppb.New(item.UpdatedAt),
+		}
+	}
+
+	return &v1.ListProductsResponse{
+		Products: v1Products,
+		Pagination: &v1.PaginationResponse{
+			PageSize:  req.Pagination.GetPageSize(),
+			PageToken: nextPageToken,
+			AfterPage: afterPage,
+		},
+	}, nil
 }
 
 func (api *serverAPI) UpdateProduct(

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/DENFNC/Zappy/catalog_service/internal/domain/models"
+	"github.com/DENFNC/Zappy/catalog_service/internal/pkg/dbutils"
 	"github.com/DENFNC/Zappy/catalog_service/internal/pkg/paginate"
 	psql "github.com/DENFNC/Zappy/catalog_service/internal/storage/postgres"
 	"github.com/doug-martin/goqu/v9"
@@ -21,28 +22,28 @@ func NewCategoryRepo(
 	db *psql.Storage,
 	goqu goqu.DialectWrapper,
 	coder paginate.TokenCoder,
-) (*CategoryRepo, error) {
+) *CategoryRepo {
 	paginate, err := paginate.NewPaginator[psql.CategoryDAO](
 		db.DB,
 		goqu,
 		coder,
 	)
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
 
 	return &CategoryRepo{
 		Storage:  db,
 		goqu:     goqu,
 		paginate: paginate,
-	}, nil
+	}
 }
 
 func (repo *CategoryRepo) Create(
 	ctx context.Context,
 	name, parentID string,
 ) (string, error) {
-	uid := repo.NewV7().String()
+	uid := dbutils.NewUUIDV7().String()
 	dateTimeNow := time.Now().UTC()
 
 	stmt, args, err := repo.goqu.Insert("category").
@@ -82,10 +83,17 @@ func (repo *CategoryRepo) List(
 	pageSize uint,
 	pageToken string,
 ) ([]models.Category, string, error) {
-	paginate := repo.paginate.WithTable("category").
+	sqlStr := goqu.Select(
+		"category_id",
+		"category_name",
+		"parent_id",
+		"created_at",
+		"updated_at",
+	).From("category")
+
+	paginate := repo.paginate.WithDataset(sqlStr).
 		WithColumns("created_at", "category_id").
 		WithLimit(pageSize)
-	// TODO: пофиксить проблему с nil элементами
 	itemsDAO, nextToken, err := paginate.Paginate(ctx, pageToken)
 	if err != nil {
 		return nil, "", err
