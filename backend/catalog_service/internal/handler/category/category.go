@@ -104,6 +104,16 @@ func (api *serverAPI) ListCategories(
 	}, nil
 }
 
-func (api *serverAPI) DeleteCategory(context.Context, *v1.DeleteCategoryRequest) (*emptypb.Empty, error) {
-	panic("implement me")
+func (api *serverAPI) DeleteCategory(ctx context.Context, req *v1.DeleteCategoryRequest) (*emptypb.Empty, error) {
+	if err := api.svc.Delete(
+		ctx,
+		req.CategoryId.GetId(),
+	); err != nil {
+		return nil, status.Error(
+			codes.Internal,
+			errpkg.ErrInternal.Message,
+		)
+	}
+
+	return &emptypb.Empty{}, nil
 }

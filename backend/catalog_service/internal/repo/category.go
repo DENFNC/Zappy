@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/DENFNC/Zappy/catalog_service/internal/domain/models"
+	errpkg "github.com/DENFNC/Zappy/catalog_service/internal/errors"
 	"github.com/DENFNC/Zappy/catalog_service/internal/pkg/dbutils"
 	"github.com/DENFNC/Zappy/catalog_service/internal/pkg/paginate"
 	psql "github.com/DENFNC/Zappy/catalog_service/internal/storage/postgres"
@@ -125,5 +126,21 @@ func (repo *CategoryRepo) Delete(
 	ctx context.Context,
 	categoryID string,
 ) error {
-	panic("implement me!")
+	stmt, args, err := repo.goqu.Delete("category").
+		Where(goqu.C("category_id").Eq(categoryID)).
+		Prepared(true).
+		ToSQL()
+	if err != nil {
+		return err
+	}
+
+	cmdTags, err := repo.DB.Exec(ctx, stmt, args...)
+	if err != nil {
+		return err
+	}
+	if cmdTags.RowsAffected() == 0 {
+		return errpkg.New("NO_ROWS", "no rows affected", err)
+	}
+
+	return nil
 }
