@@ -59,7 +59,10 @@ func (a *App) MustRunGrpc() {
 
 	log := a.log.With("op", op)
 	if err := a.gRPCstart(); err != nil {
-		log.Error("Failed to start gRPC server", "error", err)
+		log.Error(
+			"Failed to start gRPC server",
+			"error", err,
+		)
 		panic(fmt.Errorf("failed to start gRPC server: %w", err))
 	}
 }
@@ -87,7 +90,7 @@ func (a *App) Stop() {
 }
 
 func (a *App) httpStart() error {
-	const op = "grpcapp.App.start"
+	const op = "grpcapp.App.httpStart"
 
 	log := a.log.With("op", op)
 	log.Info(
@@ -103,7 +106,7 @@ func (a *App) httpStart() error {
 }
 
 func (a *App) gRPCstart() error {
-	const op = "grpcapp.App.start"
+	const op = "grpcapp.App.gRPCstart"
 
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", a.grpcPort))
 	if err != nil {

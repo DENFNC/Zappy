@@ -327,7 +327,6 @@ type UpdateProductRequest struct {
 	Description   *string                `protobuf:"bytes,3,opt,name=description,proto3,oneof" json:"description,omitempty"`
 	PriceCents    *int64                 `protobuf:"varint,4,opt,name=price_cents,json=priceCents,proto3,oneof" json:"price_cents,omitempty"`
 	CategoryIds   []string               `protobuf:"bytes,5,rep,name=category_ids,json=categoryIds,proto3" json:"category_ids,omitempty"`
-	IsActive      *bool                  `protobuf:"varint,6,opt,name=is_active,json=isActive,proto3,oneof" json:"is_active,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -397,16 +396,8 @@ func (x *UpdateProductRequest) GetCategoryIds() []string {
 	return nil
 }
 
-func (x *UpdateProductRequest) GetIsActive() bool {
-	if x != nil && x.IsActive != nil {
-		return *x.IsActive
-	}
-	return false
-}
-
 type UpdateProductResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Product       *Product               `protobuf:"bytes,1,opt,name=product,proto3" json:"product,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -441,16 +432,9 @@ func (*UpdateProductResponse) Descriptor() ([]byte, []int) {
 	return file_product_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *UpdateProductResponse) GetProduct() *Product {
-	if x != nil {
-		return x.Product
-	}
-	return nil
-}
-
 type DeleteProductRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ProductId     string                 `protobuf:"bytes,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
+	ProductId     string                 `protobuf:"bytes,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"` // empty response
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -640,7 +624,7 @@ const file_product_proto_rawDesc = "" +
 	"\f_description\"J\n" +
 	"\x15CreateProductResponse\x121\n" +
 	"\n" +
-	"product_id\x18\x01 \x01(\v2\x12.common.ResourceIDR\tproductId\"\x97\x02\n" +
+	"product_id\x18\x01 \x01(\v2\x12.common.ResourceIDR\tproductId\"\xe7\x01\n" +
 	"\x14UpdateProductRequest\x12\x1d\n" +
 	"\n" +
 	"product_id\x18\x01 \x01(\tR\tproductId\x12\x17\n" +
@@ -648,15 +632,11 @@ const file_product_proto_rawDesc = "" +
 	"\vdescription\x18\x03 \x01(\tH\x01R\vdescription\x88\x01\x01\x12$\n" +
 	"\vprice_cents\x18\x04 \x01(\x03H\x02R\n" +
 	"priceCents\x88\x01\x01\x12!\n" +
-	"\fcategory_ids\x18\x05 \x03(\tR\vcategoryIds\x12 \n" +
-	"\tis_active\x18\x06 \x01(\bH\x03R\bisActive\x88\x01\x01B\a\n" +
+	"\fcategory_ids\x18\x05 \x03(\tR\vcategoryIdsB\a\n" +
 	"\x05_nameB\x0e\n" +
 	"\f_descriptionB\x0e\n" +
-	"\f_price_centsB\f\n" +
-	"\n" +
-	"_is_active\"C\n" +
-	"\x15UpdateProductResponse\x12*\n" +
-	"\aproduct\x18\x01 \x01(\v2\x10.product.ProductR\aproduct\"5\n" +
+	"\f_price_cents\"\x17\n" +
+	"\x15UpdateProductResponse\"5\n" +
 	"\x14DeleteProductRequest\x12\x1d\n" +
 	"\n" +
 	"product_id\x18\x01 \x01(\tR\tproductId\"\x17\n" +
@@ -716,24 +696,23 @@ var file_product_proto_depIdxs = []int32{
 	10, // 2: product.ListProductsResponse.products:type_name -> product.Product
 	12, // 3: product.ListProductsResponse.pagination:type_name -> common.PaginationResponse
 	13, // 4: product.CreateProductResponse.product_id:type_name -> common.ResourceID
-	10, // 5: product.UpdateProductResponse.product:type_name -> product.Product
-	14, // 6: product.Product.created_at:type_name -> google.protobuf.Timestamp
-	14, // 7: product.Product.updated_at:type_name -> google.protobuf.Timestamp
-	0,  // 8: product.ProductService.GetProduct:input_type -> product.GetProductRequest
-	2,  // 9: product.ProductService.ListProducts:input_type -> product.ListProductsRequest
-	4,  // 10: product.ProductService.CreateProduct:input_type -> product.CreateProductRequest
-	6,  // 11: product.ProductService.UpdateProduct:input_type -> product.UpdateProductRequest
-	8,  // 12: product.ProductService.DeleteProduct:input_type -> product.DeleteProductRequest
-	1,  // 13: product.ProductService.GetProduct:output_type -> product.GetProductResponse
-	3,  // 14: product.ProductService.ListProducts:output_type -> product.ListProductsResponse
-	5,  // 15: product.ProductService.CreateProduct:output_type -> product.CreateProductResponse
-	7,  // 16: product.ProductService.UpdateProduct:output_type -> product.UpdateProductResponse
-	15, // 17: product.ProductService.DeleteProduct:output_type -> google.protobuf.Empty
-	13, // [13:18] is the sub-list for method output_type
-	8,  // [8:13] is the sub-list for method input_type
-	8,  // [8:8] is the sub-list for extension type_name
-	8,  // [8:8] is the sub-list for extension extendee
-	0,  // [0:8] is the sub-list for field type_name
+	14, // 5: product.Product.created_at:type_name -> google.protobuf.Timestamp
+	14, // 6: product.Product.updated_at:type_name -> google.protobuf.Timestamp
+	0,  // 7: product.ProductService.GetProduct:input_type -> product.GetProductRequest
+	2,  // 8: product.ProductService.ListProducts:input_type -> product.ListProductsRequest
+	4,  // 9: product.ProductService.CreateProduct:input_type -> product.CreateProductRequest
+	6,  // 10: product.ProductService.UpdateProduct:input_type -> product.UpdateProductRequest
+	8,  // 11: product.ProductService.DeleteProduct:input_type -> product.DeleteProductRequest
+	1,  // 12: product.ProductService.GetProduct:output_type -> product.GetProductResponse
+	3,  // 13: product.ProductService.ListProducts:output_type -> product.ListProductsResponse
+	5,  // 14: product.ProductService.CreateProduct:output_type -> product.CreateProductResponse
+	7,  // 15: product.ProductService.UpdateProduct:output_type -> product.UpdateProductResponse
+	15, // 16: product.ProductService.DeleteProduct:output_type -> google.protobuf.Empty
+	12, // [12:17] is the sub-list for method output_type
+	7,  // [7:12] is the sub-list for method input_type
+	7,  // [7:7] is the sub-list for extension type_name
+	7,  // [7:7] is the sub-list for extension extendee
+	0,  // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_product_proto_init() }
