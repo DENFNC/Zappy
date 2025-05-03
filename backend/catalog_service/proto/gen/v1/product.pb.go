@@ -114,8 +114,6 @@ func (x *GetProductResponse) GetProduct() *Product {
 type ListProductsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Pagination    *PaginationRequest     `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	Query         string                 `protobuf:"bytes,2,opt,name=query,proto3" json:"query,omitempty"`
-	CategoryIds   []string               `protobuf:"bytes,3,rep,name=category_ids,json=categoryIds,proto3" json:"category_ids,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -153,20 +151,6 @@ func (*ListProductsRequest) Descriptor() ([]byte, []int) {
 func (x *ListProductsRequest) GetPagination() *PaginationRequest {
 	if x != nil {
 		return x.Pagination
-	}
-	return nil
-}
-
-func (x *ListProductsRequest) GetQuery() string {
-	if x != nil {
-		return x.Query
-	}
-	return ""
-}
-
-func (x *ListProductsRequest) GetCategoryIds() []string {
-	if x != nil {
-		return x.CategoryIds
 	}
 	return nil
 }
@@ -636,13 +620,11 @@ const file_product_proto_rawDesc = "" +
 	"\n" +
 	"product_id\x18\x01 \x01(\v2\x12.common.ResourceIDR\tproductId\"@\n" +
 	"\x12GetProductResponse\x12*\n" +
-	"\aproduct\x18\x01 \x01(\v2\x10.product.ProductR\aproduct\"\x89\x01\n" +
+	"\aproduct\x18\x01 \x01(\v2\x10.product.ProductR\aproduct\"P\n" +
 	"\x13ListProductsRequest\x129\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x19.common.PaginationRequestR\n" +
-	"pagination\x12\x14\n" +
-	"\x05query\x18\x02 \x01(\tR\x05query\x12!\n" +
-	"\fcategory_ids\x18\x03 \x03(\tR\vcategoryIds\"\x80\x01\n" +
+	"pagination\"\x80\x01\n" +
 	"\x14ListProductsResponse\x12,\n" +
 	"\bproducts\x18\x01 \x03(\v2\x10.product.ProductR\bproducts\x12:\n" +
 	"\n" +

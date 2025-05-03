@@ -1,9 +1,14 @@
 package dbutils
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"reflect"
+
+	"github.com/gofrs/uuid"
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type Scanner interface {
@@ -35,4 +40,30 @@ func ScanStruct(a Scanner, dest any) error {
 		return fmt.Errorf("scan into struct failed: %w", err)
 	}
 	return nil
+}
+
+func WithTx(ctx context.Context, conn *pgxpool.Conn, f func(pgx.Tx) error) error {
+	tx, err := conn.Begin(ctx)
+	if err != nil {
+		return err
+	}
+
+	defer func() {
+		if r := recover(); r != nil {
+			_ = tx.Rollback(ctx)
+		} else if err != nil {
+			_ = tx.Rollback(ctx)
+		}
+	}()
+
+	if err = f(tx); err != nil {
+		return err
+	}
+
+	return tx.Commit(ctx)
+}
+
+func NewUUIDV7() uuid.UUID {
+	uuid, _ := uuid.NewV7()
+	return uuid
 }

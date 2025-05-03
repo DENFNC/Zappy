@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/DENFNC/Zappy/catalog_service/internal/domain/models"
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type Product interface {
@@ -12,7 +11,7 @@ type Product interface {
 		ctx context.Context,
 		name, desc string,
 		categoryIDs []string,
-		price pgtype.Numeric,
+		price int64,
 	) (string, error)
 	GetByID(
 		ctx context.Context,
@@ -20,12 +19,14 @@ type Product interface {
 	) (*models.Product, error)
 	List(
 		ctx context.Context,
-	) ([]models.Product, error)
+		pageSize uint32,
+		pageToken string,
+	) ([]models.Product, string, error)
 	Update(
 		ctx context.Context,
 		uid string,
 		desc, name string,
-		price pgtype.Numeric,
+		price int64,
 	) error
 	Delete(
 		ctx context.Context,

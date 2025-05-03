@@ -68,5 +68,17 @@ func (svc *Category) Delete(
 	ctx context.Context,
 	categoryID string,
 ) error {
-	panic("implement me")
+	const op = "service.Category.Delete"
+
+	log := svc.log.With("op", op)
+
+	if err := svc.repo.Delete(ctx, categoryID); err != nil {
+		log.Error(
+			"Critical error",
+			slog.String("error", err.Error()),
+		)
+		return err
+	}
+
+	return nil
 }

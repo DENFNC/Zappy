@@ -348,8 +348,6 @@ func (m *ListProductsRequest) validate(all bool) error {
 		}
 	}
 
-	// no validation rules for Query
-
 	if len(errors) > 0 {
 		return ListProductsRequestMultiError(errors)
 	}

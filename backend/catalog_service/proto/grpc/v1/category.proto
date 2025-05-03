@@ -19,7 +19,6 @@ message CreateCategoryResponse {
 
 message ListCategoriesRequest {
   common.PaginationRequest pagination = 1;
-  optional string parent_id = 2;
 }
 
 message ListCategoriesResponse {

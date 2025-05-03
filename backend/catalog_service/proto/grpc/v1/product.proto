@@ -18,8 +18,6 @@ message GetProductResponse {
 
 message ListProductsRequest {
   common.PaginationRequest pagination  = 1;
-  string          query         = 2;
-  repeated string category_ids  = 3;
 }
 
 message ListProductsResponse {
@@ -60,10 +58,10 @@ message DeleteProductResponse {
 }
 
 message Product {
-  string          id           = 1;
-  string          name         = 2;
-  string          description  = 3;
-  int64           price_cents  = 4;
+  string id           = 1;
+  string name         = 2;
+  string description  = 3;
+  int64  price_cents  = 4;
   google.protobuf.Timestamp created_at   = 8;
   google.protobuf.Timestamp updated_at   = 9;
 }

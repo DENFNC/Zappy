@@ -325,10 +325,6 @@ func (m *ListCategoriesRequest) validate(all bool) error {
 		}
 	}
 
-	if m.ParentId != nil {
-		// no validation rules for ParentId
-	}
-
 	if len(errors) > 0 {
 		return ListCategoriesRequestMultiError(errors)
 	}

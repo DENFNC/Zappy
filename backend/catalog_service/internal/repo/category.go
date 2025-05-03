@@ -3,10 +3,11 @@ package repo
 import (
 	"context"
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/DENFNC/Zappy/catalog_service/internal/domain/models"
+	errpkg "github.com/DENFNC/Zappy/catalog_service/internal/errors"
+	"github.com/DENFNC/Zappy/catalog_service/internal/pkg/dbutils"
 	"github.com/DENFNC/Zappy/catalog_service/internal/pkg/paginate"
 	psql "github.com/DENFNC/Zappy/catalog_service/internal/storage/postgres"
 	"github.com/doug-martin/goqu/v9"
@@ -15,35 +16,35 @@ import (
 type CategoryRepo struct {
 	*psql.Storage
 	goqu     goqu.DialectWrapper
-	paginate *paginate.Paginator[models.Category]
+	paginate *paginate.Paginator[psql.CategoryDAO]
 }
 
 func NewCategoryRepo(
 	db *psql.Storage,
 	goqu goqu.DialectWrapper,
 	coder paginate.TokenCoder,
-) (*CategoryRepo, error) {
-	paginate, err := paginate.NewPaginator[models.Category](
+) *CategoryRepo {
+	paginate, err := paginate.NewPaginator[psql.CategoryDAO](
 		db.DB,
 		goqu,
 		coder,
 	)
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
 
 	return &CategoryRepo{
 		Storage:  db,
 		goqu:     goqu,
 		paginate: paginate,
-	}, nil
+	}
 }
 
 func (repo *CategoryRepo) Create(
 	ctx context.Context,
 	name, parentID string,
 ) (string, error) {
-	uid := repo.NewV7().String()
+	uid := dbutils.NewUUIDV7().String()
 	dateTimeNow := time.Now().UTC()
 
 	stmt, args, err := repo.goqu.Insert("category").
@@ -83,14 +84,31 @@ func (repo *CategoryRepo) List(
 	pageSize uint,
 	pageToken string,
 ) ([]models.Category, string, error) {
-	paginate := repo.paginate.WithTable("category").
+	sqlStr := goqu.Select(
+		"category_id",
+		"category_name",
+		"parent_id",
+		"created_at",
+		"updated_at",
+	).From("category")
+
+	paginate := repo.paginate.WithDataset(sqlStr).
 		WithColumns("created_at", "category_id").
 		WithLimit(pageSize)
-	// TODO: пофиксить проблему с nil элементами
-	items, nextToken, err := paginate.Paginate(ctx, pageToken)
-	fmt.Println(items)
+	itemsDAO, nextToken, err := paginate.Paginate(ctx, pageToken)
 	if err != nil {
 		return nil, "", err
+	}
+
+	items := make([]models.Category, len(itemsDAO))
+	for i, itemDAO := range itemsDAO {
+		items[i] = models.Category{
+			CategoryID:   itemDAO.CategoryID.String(),
+			CategoryName: itemDAO.CategoryName,
+			ParentID:     itemDAO.ParentID.String(),
+			CreatedAt:    itemDAO.CreatedAt.Time,
+			UpdatedAt:    itemDAO.UpdatedAt.Time,
+		}
 	}
 
 	return items, nextToken, nil
@@ -108,5 +126,21 @@ func (repo *CategoryRepo) Delete(
 	ctx context.Context,
 	categoryID string,
 ) error {
-	panic("implement me!")
+	stmt, args, err := repo.goqu.Delete("category").
+		Where(goqu.C("category_id").Eq(categoryID)).
+		Prepared(true).
+		ToSQL()
+	if err != nil {
+		return err
+	}
+
+	cmdTags, err := repo.DB.Exec(ctx, stmt, args...)
+	if err != nil {
+		return err
+	}
+	if cmdTags.RowsAffected() == 0 {
+		return errpkg.New("NO_ROWS", "no rows affected", err)
+	}
+
+	return nil
 }
