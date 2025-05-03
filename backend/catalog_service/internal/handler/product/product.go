@@ -62,10 +62,8 @@ func (api *serverAPI) GRPCRegister(grpc *grpc.Server) {
 func (api *serverAPI) HTTPRegister(
 	ctx context.Context,
 	mux *runtime.ServeMux,
-	grpcEndpoint string,
-	opts []grpc.DialOption,
 ) {
-	v1.RegisterProductServiceHandlerFromEndpoint(ctx, mux, grpcEndpoint, opts)
+	v1.RegisterProductServiceHandlerServer(ctx, mux, api)
 }
 
 func (api *serverAPI) CreateProduct(

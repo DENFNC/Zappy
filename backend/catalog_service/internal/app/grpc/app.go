@@ -9,7 +9,6 @@ import (
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
 )
 
@@ -18,8 +17,6 @@ type ServiceRegistrar interface {
 	HTTPRegister(
 		ctx context.Context,
 		mux *runtime.ServeMux,
-		grpcEndpoint string,
-		opts []grpc.DialOption,
 	)
 }
 
@@ -39,14 +36,13 @@ func New(
 	services ...ServiceRegistrar,
 ) *App {
 	mux := runtime.NewServeMux()
-	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
 
 	grpcServer := grpc.NewServer()
 	reflection.Register(grpcServer)
 
 	for _, service := range services {
 		service.GRPCRegister(grpcServer)
-		service.HTTPRegister(ctx, mux, fmt.Sprintf("localhost:%d", grpcPort), opts)
+		service.HTTPRegister(ctx, mux)
 	}
 
 	return &App{
@@ -99,7 +95,7 @@ func (a *App) httpStart() error {
 		"addr", fmt.Sprintf(":%d", a.httpPort),
 	)
 
-	if err := http.ListenAndServe(fmt.Sprintf(":%d", a.httpPort), a.httpServer); err != nil {
+	if err := http.ListenAndServe(fmt.Sprintf("localhost:%d", a.httpPort), a.httpServer); err != nil {
 		return err
 	}
 
