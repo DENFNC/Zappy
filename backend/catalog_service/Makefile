@@ -1,6 +1,7 @@
 APP_PROTO         = proto/grpc/v1
 APP_PROTO_GEN     = proto/gen/v1
 APP_PROTO_VALIDATE = proto/protoc-gen-validate
+APP_PROTO_API     = proto/googleapis
 GOPATH            ?= $(shell go env GOPATH)
 BIN_PATH          := $(GOPATH)/bin
 
@@ -14,11 +15,14 @@ grpc-gen: check-plugins
 	protoc \
 		-I=$(APP_PROTO) \
 		-I=$(APP_PROTO_VALIDATE) \
+		-I=$(APP_PROTO_API) \
 		--go_out=$(APP_PROTO_GEN) --go_opt=paths=source_relative \
 		--go-grpc_out=$(APP_PROTO_GEN) --go-grpc_opt=paths=source_relative \
 		--validate_out=$(APP_PROTO_GEN) \
 		--validate_opt=lang=go \
 		--validate_opt=paths=source_relative \
+		--grpc-gateway_out=$(APP_PROTO_GEN) \
+		--grpc-gateway_opt=paths=source_relative \
 		$(wildcard $(APP_PROTO)/*.proto)
 
 # Clean generated files

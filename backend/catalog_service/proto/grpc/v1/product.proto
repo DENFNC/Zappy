@@ -4,12 +4,43 @@ package product;
 
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
 import "common.proto";
 
 option go_package = "github.com/DENFNC/Zappy/catalog_service/proto/gen/v1;v1";
 
+service ProductService {
+  rpc GetProduct(GetProductRequest) returns (GetProductResponse) {
+    option (google.api.http) = {
+      get: "/v1/products/{product_id}"
+    };
+  }
+  rpc ListProducts(ListProductsRequest) returns (ListProductsResponse) {
+    option (google.api.http) = {
+      get: "/v1/products"
+    };
+  }
+  rpc CreateProduct(CreateProductRequest) returns (CreateProductResponse) {
+    option (google.api.http) = {
+      post: "/v1/products"
+      body: "*"
+    };
+  }
+  rpc UpdateProduct(UpdateProductRequest) returns (UpdateProductResponse) {
+    option (google.api.http) = {
+      patch: "/v1/products/{product_id}"
+      body: "*"
+    };
+  }
+  rpc DeleteProduct(DeleteProductRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/products/{product_id}"
+    };
+  }
+}
+
 message GetProductRequest {
-  common.ResourceID product_id = 1;
+  string product_id = 1;
 }
 
 message GetProductResponse {
@@ -64,12 +95,4 @@ message Product {
   int64  price_cents  = 4;
   google.protobuf.Timestamp created_at   = 8;
   google.protobuf.Timestamp updated_at   = 9;
-}
-
-service ProductService {
-  rpc GetProduct    (GetProductRequest)    returns (GetProductResponse);
-  rpc ListProducts  (ListProductsRequest)  returns (ListProductsResponse);
-  rpc CreateProduct (CreateProductRequest) returns (CreateProductResponse);
-  rpc UpdateProduct (UpdateProductRequest) returns (UpdateProductResponse);
-  rpc DeleteProduct (DeleteProductRequest) returns (google.protobuf.Empty);
 }

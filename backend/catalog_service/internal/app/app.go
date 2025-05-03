@@ -1,6 +1,7 @@
 package app
 
 import (
+	"context"
 	"log/slog"
 
 	grpcapp "github.com/DENFNC/Zappy/catalog_service/internal/app/grpc"
@@ -17,14 +18,15 @@ type App struct {
 }
 
 func New(
+	ctx context.Context,
 	log *slog.Logger,
 	db *psql.Storage,
-	port int,
+	grpcPort int,
+	httpPort int,
 	coder paginate.TokenCoder,
 ) (*App, error) {
 
 	productRepo := repo.NewProductRepo(db, db.Dial, coder)
-
 	productSvc := service.NewProduct(log, productRepo)
 	productHandle := product.New(productSvc)
 
@@ -34,8 +36,10 @@ func New(
 
 	return &App{
 		App: *grpcapp.New(
+			ctx,
 			log,
-			port,
+			grpcPort,
+			httpPort,
 			productHandle,
 			categoryHandle,
 		),

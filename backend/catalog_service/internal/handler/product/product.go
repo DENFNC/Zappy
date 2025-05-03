@@ -6,6 +6,7 @@ import (
 	"github.com/DENFNC/Zappy/catalog_service/internal/domain/models"
 	errpkg "github.com/DENFNC/Zappy/catalog_service/internal/errors"
 	v1 "github.com/DENFNC/Zappy/catalog_service/proto/gen/v1"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -54,8 +55,17 @@ func New(svc Product) *serverAPI {
 	}
 }
 
-func (api *serverAPI) Register(grpc *grpc.Server) {
+func (api *serverAPI) GRPCRegister(grpc *grpc.Server) {
 	v1.RegisterProductServiceServer(grpc, api)
+}
+
+func (api *serverAPI) HTTPRegister(
+	ctx context.Context,
+	mux *runtime.ServeMux,
+	grpcEndpoint string,
+	opts []grpc.DialOption,
+) {
+	v1.RegisterProductServiceHandlerFromEndpoint(ctx, mux, grpcEndpoint, opts)
 }
 
 func (api *serverAPI) CreateProduct(
@@ -87,7 +97,7 @@ func (api *serverAPI) GetProduct(
 	ctx context.Context,
 	req *v1.GetProductRequest,
 ) (*v1.GetProductResponse, error) {
-	product, err := api.svc.Get(ctx, req.GetProductId().GetId())
+	product, err := api.svc.Get(ctx, req.GetProductId())
 	if err != nil {
 		return nil, status.Error(
 			codes.Internal,
