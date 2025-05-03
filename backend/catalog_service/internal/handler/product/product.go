@@ -32,12 +32,11 @@ type Product interface {
 	) ([]models.Product, string, error)
 	Update(
 		ctx context.Context,
-		productID, name, description string,
-		price int64,
-		currency string,
+		uid string,
+		desc, name string,
 		categoryIDs []string,
-		isActive *bool,
-	) (*models.Product, error)
+		price int64,
+	) error
 	Delete(
 		ctx context.Context,
 		productID string,
@@ -161,7 +160,22 @@ func (api *serverAPI) UpdateProduct(
 	ctx context.Context,
 	req *v1.UpdateProductRequest,
 ) (*v1.UpdateProductResponse, error) {
-	panic("implement me")
+	err := api.svc.Update(
+		ctx,
+		req.GetProductId(),
+		req.GetDescription(),
+		req.GetName(),
+		req.GetCategoryIds(),
+		req.GetPriceCents(),
+	)
+	if err != nil {
+		return nil, status.Error(
+			codes.Internal,
+			errpkg.ErrConstraint.Message,
+		)
+	}
+
+	return &v1.UpdateProductResponse{}, nil
 }
 
 func (api *serverAPI) DeleteProduct(

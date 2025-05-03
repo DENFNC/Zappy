@@ -88,13 +88,25 @@ func (svc *Product) List(
 
 func (svc *Product) Update(
 	ctx context.Context,
-	productID, name, description string,
-	price int64,
-	currency string,
+	uid string,
+	desc, name string,
 	categoryIDs []string,
-	isActive *bool,
-) (*models.Product, error) {
-	panic("implement me")
+	price int64,
+) error {
+	const op = "service.Product.Update"
+
+	log := svc.log.With("op", op)
+
+	err := svc.repo.Update(ctx, uid, desc, name, categoryIDs, price)
+	if err != nil {
+		log.Error(
+			"Critical error",
+			slog.String("error", err.Error()),
+		)
+		return err
+	}
+
+	return err
 }
 
 func (svc *Product) Delete(
