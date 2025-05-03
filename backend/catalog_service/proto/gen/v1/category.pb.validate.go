@@ -592,34 +592,7 @@ func (m *DeleteCategoryRequest) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetCategoryId()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, DeleteCategoryRequestValidationError{
-					field:  "CategoryId",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, DeleteCategoryRequestValidationError{
-					field:  "CategoryId",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetCategoryId()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return DeleteCategoryRequestValidationError{
-				field:  "CategoryId",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
+	// no validation rules for CategoryId
 
 	if len(errors) > 0 {
 		return DeleteCategoryRequestMultiError(errors)

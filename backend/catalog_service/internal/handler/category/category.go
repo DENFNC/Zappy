@@ -6,6 +6,7 @@ import (
 	"github.com/DENFNC/Zappy/catalog_service/internal/domain/models"
 	errpkg "github.com/DENFNC/Zappy/catalog_service/internal/errors"
 	v1 "github.com/DENFNC/Zappy/catalog_service/proto/gen/v1"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -40,8 +41,15 @@ func New(serv Category) *serverAPI {
 	}
 }
 
-func (api *serverAPI) Register(grpc *grpc.Server) {
+func (api *serverAPI) GRPCRegister(grpc *grpc.Server) {
 	v1.RegisterCategoryServiceServer(grpc, api)
+}
+
+func (api *serverAPI) HTTPRegister(
+	ctx context.Context,
+	mux *runtime.ServeMux,
+) {
+	v1.RegisterCategoryServiceHandlerServer(ctx, mux, api)
 }
 
 func (api *serverAPI) CreateCategory(
@@ -107,7 +115,7 @@ func (api *serverAPI) ListCategories(
 func (api *serverAPI) DeleteCategory(ctx context.Context, req *v1.DeleteCategoryRequest) (*emptypb.Empty, error) {
 	if err := api.svc.Delete(
 		ctx,
-		req.CategoryId.GetId(),
+		req.GetCategoryId(),
 	); err != nil {
 		return nil, status.Error(
 			codes.Internal,

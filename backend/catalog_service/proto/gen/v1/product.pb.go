@@ -7,6 +7,7 @@
 package v1
 
 import (
+	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
@@ -25,7 +26,7 @@ const (
 
 type GetProductRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ProductId     *ResourceID            `protobuf:"bytes,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
+	ProductId     string                 `protobuf:"bytes,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -60,11 +61,11 @@ func (*GetProductRequest) Descriptor() ([]byte, []int) {
 	return file_product_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *GetProductRequest) GetProductId() *ResourceID {
+func (x *GetProductRequest) GetProductId() string {
 	if x != nil {
 		return x.ProductId
 	}
-	return nil
+	return ""
 }
 
 type GetProductResponse struct {
@@ -615,10 +616,10 @@ var File_product_proto protoreflect.FileDescriptor
 
 const file_product_proto_rawDesc = "" +
 	"\n" +
-	"\rproduct.proto\x12\aproduct\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\fcommon.proto\"F\n" +
-	"\x11GetProductRequest\x121\n" +
+	"\rproduct.proto\x12\aproduct\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1cgoogle/api/annotations.proto\x1a\fcommon.proto\"2\n" +
+	"\x11GetProductRequest\x12\x1d\n" +
 	"\n" +
-	"product_id\x18\x01 \x01(\v2\x12.common.ResourceIDR\tproductId\"@\n" +
+	"product_id\x18\x01 \x01(\tR\tproductId\"@\n" +
 	"\x12GetProductResponse\x12*\n" +
 	"\aproduct\x18\x01 \x01(\v2\x10.product.ProductR\aproduct\"P\n" +
 	"\x13ListProductsRequest\x129\n" +
@@ -669,14 +670,14 @@ const file_product_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt2\x8c\x03\n" +
-	"\x0eProductService\x12E\n" +
+	"updated_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt2\xa7\x04\n" +
+	"\x0eProductService\x12h\n" +
 	"\n" +
-	"GetProduct\x12\x1a.product.GetProductRequest\x1a\x1b.product.GetProductResponse\x12K\n" +
-	"\fListProducts\x12\x1c.product.ListProductsRequest\x1a\x1d.product.ListProductsResponse\x12N\n" +
-	"\rCreateProduct\x12\x1d.product.CreateProductRequest\x1a\x1e.product.CreateProductResponse\x12N\n" +
-	"\rUpdateProduct\x12\x1d.product.UpdateProductRequest\x1a\x1e.product.UpdateProductResponse\x12F\n" +
-	"\rDeleteProduct\x12\x1d.product.DeleteProductRequest\x1a\x16.google.protobuf.EmptyB9Z7github.com/DENFNC/Zappy/catalog_service/proto/gen/v1;v1b\x06proto3"
+	"GetProduct\x12\x1a.product.GetProductRequest\x1a\x1b.product.GetProductResponse\"!\x82\xd3\xe4\x93\x02\x1b\x12\x19/v1/products/{product_id}\x12a\n" +
+	"\fListProducts\x12\x1c.product.ListProductsRequest\x1a\x1d.product.ListProductsResponse\"\x14\x82\xd3\xe4\x93\x02\x0e\x12\f/v1/products\x12g\n" +
+	"\rCreateProduct\x12\x1d.product.CreateProductRequest\x1a\x1e.product.CreateProductResponse\"\x17\x82\xd3\xe4\x93\x02\x11:\x01*\"\f/v1/products\x12t\n" +
+	"\rUpdateProduct\x12\x1d.product.UpdateProductRequest\x1a\x1e.product.UpdateProductResponse\"$\x82\xd3\xe4\x93\x02\x1e:\x01*2\x19/v1/products/{product_id}\x12i\n" +
+	"\rDeleteProduct\x12\x1d.product.DeleteProductRequest\x1a\x16.google.protobuf.Empty\"!\x82\xd3\xe4\x93\x02\x1b*\x19/v1/products/{product_id}B9Z7github.com/DENFNC/Zappy/catalog_service/proto/gen/v1;v1b\x06proto3"
 
 var (
 	file_product_proto_rawDescOnce sync.Once
@@ -703,37 +704,36 @@ var file_product_proto_goTypes = []any{
 	(*DeleteProductRequest)(nil),  // 8: product.DeleteProductRequest
 	(*DeleteProductResponse)(nil), // 9: product.DeleteProductResponse
 	(*Product)(nil),               // 10: product.Product
-	(*ResourceID)(nil),            // 11: common.ResourceID
-	(*PaginationRequest)(nil),     // 12: common.PaginationRequest
-	(*PaginationResponse)(nil),    // 13: common.PaginationResponse
+	(*PaginationRequest)(nil),     // 11: common.PaginationRequest
+	(*PaginationResponse)(nil),    // 12: common.PaginationResponse
+	(*ResourceID)(nil),            // 13: common.ResourceID
 	(*timestamppb.Timestamp)(nil), // 14: google.protobuf.Timestamp
 	(*emptypb.Empty)(nil),         // 15: google.protobuf.Empty
 }
 var file_product_proto_depIdxs = []int32{
-	11, // 0: product.GetProductRequest.product_id:type_name -> common.ResourceID
-	10, // 1: product.GetProductResponse.product:type_name -> product.Product
-	12, // 2: product.ListProductsRequest.pagination:type_name -> common.PaginationRequest
-	10, // 3: product.ListProductsResponse.products:type_name -> product.Product
-	13, // 4: product.ListProductsResponse.pagination:type_name -> common.PaginationResponse
-	11, // 5: product.CreateProductResponse.product_id:type_name -> common.ResourceID
-	10, // 6: product.UpdateProductResponse.product:type_name -> product.Product
-	14, // 7: product.Product.created_at:type_name -> google.protobuf.Timestamp
-	14, // 8: product.Product.updated_at:type_name -> google.protobuf.Timestamp
-	0,  // 9: product.ProductService.GetProduct:input_type -> product.GetProductRequest
-	2,  // 10: product.ProductService.ListProducts:input_type -> product.ListProductsRequest
-	4,  // 11: product.ProductService.CreateProduct:input_type -> product.CreateProductRequest
-	6,  // 12: product.ProductService.UpdateProduct:input_type -> product.UpdateProductRequest
-	8,  // 13: product.ProductService.DeleteProduct:input_type -> product.DeleteProductRequest
-	1,  // 14: product.ProductService.GetProduct:output_type -> product.GetProductResponse
-	3,  // 15: product.ProductService.ListProducts:output_type -> product.ListProductsResponse
-	5,  // 16: product.ProductService.CreateProduct:output_type -> product.CreateProductResponse
-	7,  // 17: product.ProductService.UpdateProduct:output_type -> product.UpdateProductResponse
-	15, // 18: product.ProductService.DeleteProduct:output_type -> google.protobuf.Empty
-	14, // [14:19] is the sub-list for method output_type
-	9,  // [9:14] is the sub-list for method input_type
-	9,  // [9:9] is the sub-list for extension type_name
-	9,  // [9:9] is the sub-list for extension extendee
-	0,  // [0:9] is the sub-list for field type_name
+	10, // 0: product.GetProductResponse.product:type_name -> product.Product
+	11, // 1: product.ListProductsRequest.pagination:type_name -> common.PaginationRequest
+	10, // 2: product.ListProductsResponse.products:type_name -> product.Product
+	12, // 3: product.ListProductsResponse.pagination:type_name -> common.PaginationResponse
+	13, // 4: product.CreateProductResponse.product_id:type_name -> common.ResourceID
+	10, // 5: product.UpdateProductResponse.product:type_name -> product.Product
+	14, // 6: product.Product.created_at:type_name -> google.protobuf.Timestamp
+	14, // 7: product.Product.updated_at:type_name -> google.protobuf.Timestamp
+	0,  // 8: product.ProductService.GetProduct:input_type -> product.GetProductRequest
+	2,  // 9: product.ProductService.ListProducts:input_type -> product.ListProductsRequest
+	4,  // 10: product.ProductService.CreateProduct:input_type -> product.CreateProductRequest
+	6,  // 11: product.ProductService.UpdateProduct:input_type -> product.UpdateProductRequest
+	8,  // 12: product.ProductService.DeleteProduct:input_type -> product.DeleteProductRequest
+	1,  // 13: product.ProductService.GetProduct:output_type -> product.GetProductResponse
+	3,  // 14: product.ProductService.ListProducts:output_type -> product.ListProductsResponse
+	5,  // 15: product.ProductService.CreateProduct:output_type -> product.CreateProductResponse
+	7,  // 16: product.ProductService.UpdateProduct:output_type -> product.UpdateProductResponse
+	15, // 17: product.ProductService.DeleteProduct:output_type -> google.protobuf.Empty
+	13, // [13:18] is the sub-list for method output_type
+	8,  // [8:13] is the sub-list for method input_type
+	8,  // [8:8] is the sub-list for extension type_name
+	8,  // [8:8] is the sub-list for extension extendee
+	0,  // [0:8] is the sub-list for field type_name
 }
 
 func init() { file_product_proto_init() }

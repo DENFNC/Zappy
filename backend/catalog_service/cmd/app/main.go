@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"crypto/rand"
 	"os"
 	"os/signal"
@@ -34,16 +35,19 @@ func main() {
 	}
 
 	application, err := app.New(
+		context.TODO(),
 		logger,
 		dbpool,
 		cfg.GRPC.Port,
+		cfg.HTTP.Port,
 		paginateCoder,
 	)
 	if err != nil {
 		panic(err)
 	}
 
-	go application.App.MustRun()
+	go application.App.MustRunGrpc()
+	go application.App.MustRunHttp()
 
 	sigCh := make(chan os.Signal, 1)
 	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)

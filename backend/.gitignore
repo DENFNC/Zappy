@@ -29,6 +29,7 @@ vendor/
 
 # Если внутри third_party есть вложенный .git, можно игнорировать его
 protoc-gen-validate/
+googleapis/
 
 # Go workspace file
 go.work

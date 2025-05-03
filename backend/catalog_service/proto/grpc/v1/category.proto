@@ -4,9 +4,31 @@ package category;
 
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
 import "common.proto";
 
 option go_package = "github.com/DENFNC/Zappy/catalog_service/proto/gen/v1;v1";
+
+
+service CategoryService {
+  rpc ListCategories(ListCategoriesRequest) returns (ListCategoriesResponse) {
+    option (google.api.http) = {
+        get: "/api/v1/categories"
+    };
+  }
+  rpc CreateCategory(CreateCategoryRequest) returns (CreateCategoryResponse) {
+      option (google.api.http) = {
+        post: "/api/v1/categories"
+        body: "*"
+    };
+  }
+  rpc DeleteCategory(DeleteCategoryRequest) returns (google.protobuf.Empty) {
+      option (google.api.http) = {
+        delete: "/api/v1/categories/{category_id}"
+    };
+  }
+}
+
 
 message CreateCategoryRequest {
   string name = 1;
@@ -27,7 +49,7 @@ message ListCategoriesResponse {
 }
 
 message DeleteCategoryRequest {
-  common.ResourceID category_id = 1;
+  string category_id = 1;
 }
 
 message DeleteCategoryResponse {
@@ -40,10 +62,4 @@ message Category {
   string parent_id  = 3;
   google.protobuf.Timestamp created_at = 4;
   google.protobuf.Timestamp updated_at = 5;
-}
-
-service CategoryService {
-  rpc ListCategories(ListCategoriesRequest) returns (ListCategoriesResponse) {}
-  rpc CreateCategory(CreateCategoryRequest) returns (CreateCategoryResponse) {}
-  rpc DeleteCategory(DeleteCategoryRequest) returns (google.protobuf.Empty) {}
 }

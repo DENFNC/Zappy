@@ -11,10 +11,15 @@ type Config struct {
 	LogType        string `yaml:"log_type" env-default:"dev"`
 	PaginateSecret string `yaml:"paginate_secret" env-required:"true"`
 	GRPC           ConfigGRPC
+	HTTP           ConfigHTTP
 	Postgres       ConfigPSQL
 }
 
 type ConfigGRPC struct {
+	Port int `yaml:"port" env-required:"true"`
+}
+
+type ConfigHTTP struct {
 	Port int `yaml:"port" env-required:"true"`
 }
 

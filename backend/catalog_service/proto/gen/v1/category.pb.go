@@ -7,6 +7,7 @@
 package v1
 
 import (
+	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
@@ -217,7 +218,7 @@ func (x *ListCategoriesResponse) GetPagination() *PaginationResponse {
 
 type DeleteCategoryRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	CategoryId    *ResourceID            `protobuf:"bytes,1,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"`
+	CategoryId    string                 `protobuf:"bytes,1,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -252,11 +253,11 @@ func (*DeleteCategoryRequest) Descriptor() ([]byte, []int) {
 	return file_category_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *DeleteCategoryRequest) GetCategoryId() *ResourceID {
+func (x *DeleteCategoryRequest) GetCategoryId() string {
 	if x != nil {
 		return x.CategoryId
 	}
-	return nil
+	return ""
 }
 
 type DeleteCategoryResponse struct {
@@ -375,7 +376,7 @@ var File_category_proto protoreflect.FileDescriptor
 
 const file_category_proto_rawDesc = "" +
 	"\n" +
-	"\x0ecategory.proto\x12\bcategory\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\fcommon.proto\"[\n" +
+	"\x0ecategory.proto\x12\bcategory\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1cgoogle/api/annotations.proto\x1a\fcommon.proto\"[\n" +
 	"\x15CreateCategoryRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
 	"\tparent_id\x18\x02 \x01(\tH\x00R\bparentId\x88\x01\x01B\f\n" +
@@ -394,9 +395,9 @@ const file_category_proto_rawDesc = "" +
 	"categories\x12:\n" +
 	"\n" +
 	"pagination\x18\x02 \x01(\v2\x1a.common.PaginationResponseR\n" +
-	"pagination\"L\n" +
-	"\x15DeleteCategoryRequest\x123\n" +
-	"\vcategory_id\x18\x01 \x01(\v2\x12.common.ResourceIDR\n" +
+	"pagination\"8\n" +
+	"\x15DeleteCategoryRequest\x12\x1f\n" +
+	"\vcategory_id\x18\x01 \x01(\tR\n" +
 	"categoryId\"\x18\n" +
 	"\x16DeleteCategoryResponse\"\xc1\x01\n" +
 	"\bCategory\x12\x0e\n" +
@@ -406,11 +407,11 @@ const file_category_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt2\x8c\x02\n" +
-	"\x0fCategoryService\x12U\n" +
-	"\x0eListCategories\x12\x1f.category.ListCategoriesRequest\x1a .category.ListCategoriesResponse\"\x00\x12U\n" +
-	"\x0eCreateCategory\x12\x1f.category.CreateCategoryRequest\x1a .category.CreateCategoryResponse\"\x00\x12K\n" +
-	"\x0eDeleteCategory\x12\x1f.category.DeleteCategoryRequest\x1a\x16.google.protobuf.Empty\"\x00B9Z7github.com/DENFNC/Zappy/catalog_service/proto/gen/v1;v1b\x06proto3"
+	"updated_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt2\xeb\x02\n" +
+	"\x0fCategoryService\x12o\n" +
+	"\x0eListCategories\x12\x1f.category.ListCategoriesRequest\x1a .category.ListCategoriesResponse\"\x1a\x82\xd3\xe4\x93\x02\x14\x12\x12/api/v1/categories\x12r\n" +
+	"\x0eCreateCategory\x12\x1f.category.CreateCategoryRequest\x1a .category.CreateCategoryResponse\"\x1d\x82\xd3\xe4\x93\x02\x17:\x01*\"\x12/api/v1/categories\x12s\n" +
+	"\x0eDeleteCategory\x12\x1f.category.DeleteCategoryRequest\x1a\x16.google.protobuf.Empty\"(\x82\xd3\xe4\x93\x02\"* /api/v1/categories/{category_id}B9Z7github.com/DENFNC/Zappy/catalog_service/proto/gen/v1;v1b\x06proto3"
 
 var (
 	file_category_proto_rawDescOnce sync.Once
@@ -444,20 +445,19 @@ var file_category_proto_depIdxs = []int32{
 	8,  // 1: category.ListCategoriesRequest.pagination:type_name -> common.PaginationRequest
 	6,  // 2: category.ListCategoriesResponse.categories:type_name -> category.Category
 	9,  // 3: category.ListCategoriesResponse.pagination:type_name -> common.PaginationResponse
-	7,  // 4: category.DeleteCategoryRequest.category_id:type_name -> common.ResourceID
-	10, // 5: category.Category.created_at:type_name -> google.protobuf.Timestamp
-	10, // 6: category.Category.updated_at:type_name -> google.protobuf.Timestamp
-	2,  // 7: category.CategoryService.ListCategories:input_type -> category.ListCategoriesRequest
-	0,  // 8: category.CategoryService.CreateCategory:input_type -> category.CreateCategoryRequest
-	4,  // 9: category.CategoryService.DeleteCategory:input_type -> category.DeleteCategoryRequest
-	3,  // 10: category.CategoryService.ListCategories:output_type -> category.ListCategoriesResponse
-	1,  // 11: category.CategoryService.CreateCategory:output_type -> category.CreateCategoryResponse
-	11, // 12: category.CategoryService.DeleteCategory:output_type -> google.protobuf.Empty
-	10, // [10:13] is the sub-list for method output_type
-	7,  // [7:10] is the sub-list for method input_type
-	7,  // [7:7] is the sub-list for extension type_name
-	7,  // [7:7] is the sub-list for extension extendee
-	0,  // [0:7] is the sub-list for field type_name
+	10, // 4: category.Category.created_at:type_name -> google.protobuf.Timestamp
+	10, // 5: category.Category.updated_at:type_name -> google.protobuf.Timestamp
+	2,  // 6: category.CategoryService.ListCategories:input_type -> category.ListCategoriesRequest
+	0,  // 7: category.CategoryService.CreateCategory:input_type -> category.CreateCategoryRequest
+	4,  // 8: category.CategoryService.DeleteCategory:input_type -> category.DeleteCategoryRequest
+	3,  // 9: category.CategoryService.ListCategories:output_type -> category.ListCategoriesResponse
+	1,  // 10: category.CategoryService.CreateCategory:output_type -> category.CreateCategoryResponse
+	11, // 11: category.CategoryService.DeleteCategory:output_type -> google.protobuf.Empty
+	9,  // [9:12] is the sub-list for method output_type
+	6,  // [6:9] is the sub-list for method input_type
+	6,  // [6:6] is the sub-list for extension type_name
+	6,  // [6:6] is the sub-list for extension extendee
+	0,  // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_category_proto_init() }
