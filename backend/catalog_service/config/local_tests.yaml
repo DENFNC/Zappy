@@ -1,0 +1,9 @@
+app_log: "local"
+paginate_secret: "ap-P@M?8pW3vZHcCc%*chQv35s5D5R9p"
+grpc:
+  port: 50051
+  timeout: 10h
+http:
+  port: 8081
+postgres:
+  url: "postgres://postgres:admin@localhost:5434/catalog_service_test?sslmode=disable"

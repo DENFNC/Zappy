@@ -2,7 +2,8 @@ app_log: "dev"
 paginate_secret: "ap-P@M?8pW3vZHcCc%*chQv35s5D5R9p"
 grpc:
   port: 50051
+  timeout: 5s
 http:
-  port: 8080
+  port: 8081
 postgres:
-  url: "postgres://postgres:admin@localhost:5432/catalog_service?sslmode=disable"
+  url: "postgres://postgres:admin@localhost:5434/catalog_service?sslmode=disable"

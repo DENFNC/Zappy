@@ -16,6 +16,7 @@ import (
 
 func main() {
 	cfg := config.MustLoad("./config/config.yaml")
+
 	logger, err := logger.New(cfg.LogType)
 	if err != nil {
 		panic(err)
