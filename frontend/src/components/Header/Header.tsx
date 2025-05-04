@@ -1,5 +1,5 @@
 import CategoryItems from '../CategoryItems/CategoryItems';
-import LogoSvg from '../LogoSvg/LogoSvg';
+import LogoSvg from '../Logo/Logo';
 
 export default function Header() {
   return (
@@ -7,9 +7,9 @@ export default function Header() {
       <header className="bg-white sticky top-0 z-50">
         <div className="h-16 flex items-center justify-center">
           <nav className="flex w-full items-center space-x-6">
-            <LogoSvg width="215" height="80" />
+            <LogoSvg width={40} />
 
-            <button className="bg-gray-300 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded h-10">
+            <button className="bg-gray-300 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded h-10">
               Каталог
             </button>
 
@@ -23,15 +23,15 @@ export default function Header() {
             </div>
 
             <div className="flex m-auto space-x-4">
-              <button className="flex-1 bg-gray-300 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded h-10">
+              <button className="flex-1 bg-gray-300 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded h-10">
                 Войти
               </button>
 
-              <button className="flex-1 bg-gray-300 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded h-10">
+              <button className="flex-1 bg-gray-300 hover:hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded h-10">
                 Избранное
               </button>
 
-              <button className="flex-1 bg-gray-300 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded h-10">
+              <button className="flex-1 bg-gray-300 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded h-10">
                 Корзина
               </button>
             </div>

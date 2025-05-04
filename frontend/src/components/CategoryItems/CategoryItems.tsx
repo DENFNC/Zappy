@@ -4,12 +4,12 @@ export interface IListItems {
 
 export default function CategoryItems({ items }: IListItems) {
   return (
-    <div className="w-full h-16 flex items-center justify-center">
-      <ul className="flex w-full space-x-6">
+    <div className="w-full px-4 py-2">
+      <ul className="flex flex-wrap justify-center gap-3 sm:gap-4 md:gap-6">
         {items.map((item, index) => (
           <li
             key={index}
-            className="text-sm text-gray-500 hover:text-purple-500 hover:cursor-pointer font-extrabold"
+            className="text-sm text-gray-500 hover:text-yellow-700 cursor-pointer font-extrabold"
           >
             {item}
           </li>
