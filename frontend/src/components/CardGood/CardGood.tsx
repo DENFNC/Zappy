@@ -18,8 +18,8 @@ export default function CardGood(props: CardGoodType) {
         <h2 className="text-xl font-semibold text-gray-800">{props.name}</h2>
         <p className="text-gray-600 mt-2">{props.description}</p>
         <div className="mt-4 flex items-center justify-between">
-          <span className="text-lg font-bold text-indigo-600">${props.price}</span>
-          <button className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded hover:bg-indigo-500">
+          <span className="text-lg font-bold text-yellow-800">${props.price}</span>
+          <button className="px-4 py-2 bg-gray-400 text-white text-sm font-medium rounded hover:bg-yellow-700">
             Add to Cart
           </button>
         </div>
