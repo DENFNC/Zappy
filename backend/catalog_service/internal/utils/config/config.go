@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/ilyakaznacheev/cleanenv"
 )
@@ -16,7 +17,8 @@ type Config struct {
 }
 
 type ConfigGRPC struct {
-	Port int `yaml:"port" env-required:"true"`
+	Port    int           `yaml:"port" env-required:"true"`
+	Timeout time.Duration `yaml:"timeout"`
 }
 
 type ConfigHTTP struct {

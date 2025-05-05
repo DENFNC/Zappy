@@ -15,6 +15,7 @@ import (
 )
 
 func main() {
+	// Для тестов использовать ./config/config_test.yaml
 	cfg := config.MustLoad("./config/config.yaml")
 	logger, err := logger.New(cfg.LogType)
 	if err != nil {
