@@ -60,7 +60,29 @@ export default function Footer() {
               </li>
             </ul>
           </div>
-          <SocialLinks />
+          <div>
+            <h3 className="text-sm font-semibold mb-3">Ресурсы</h3>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <a href="#" className="hover:text-blue-600">
+                  Руководства
+                </a>
+              </li>
+              <li>
+                <a href="#" className="hover:text-blue-600">
+                  Партнёры
+                </a>
+              </li>
+              <li>
+                <a href="#" className="hover:text-blue-600">
+                  API
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <SocialLinks />
+          </div>
         </div>
         <div className="mt-10 text-sm text-center text-gray-500">
           © {new Date().getFullYear()} Ваша Компания. Все права защищены.
