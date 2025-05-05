@@ -57,6 +57,7 @@ export default function Header() {
             'Украшения',
             'Товары для дачи',
           ]}
+          limit={11}
         />
       </header>
     </>
