@@ -48,10 +48,8 @@ func (api *serverAPI) GRPCRegister(grpc *grpc.Server) {
 func (api *serverAPI) HTTPRegister(
 	ctx context.Context,
 	mux *runtime.ServeMux,
-	grpcEndpoint string,
-	opts []grpc.DialOption,
 ) {
-	v1.RegisterCategoryServiceHandlerFromEndpoint(ctx, mux, grpcEndpoint, opts)
+	v1.RegisterCategoryServiceHandlerServer(ctx, mux, api)
 }
 
 func (api *serverAPI) CreateCategory(

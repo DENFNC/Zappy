@@ -2,6 +2,8 @@ package repo
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"time"
 
 	"github.com/DENFNC/Zappy/catalog_service/internal/adapters/sql/postgres"
@@ -196,9 +198,80 @@ func (repo *ProductRepo) Update(
 	ctx context.Context,
 	uid string,
 	desc, name string,
+	categoryIDs []string,
 	price int64,
 ) error {
-	panic("implement me")
+	conn, err := repo.DB.Acquire(ctx)
+	if err != nil {
+		return errors.New("acquire conn err")
+	}
+	defer conn.Release()
+
+	now := time.Now().UTC()
+	return dbutils.WithTx(ctx, conn, func(tx pgx.Tx) error {
+		updSQL, updArgs, err := repo.goqu.Update("product").
+			Set(goqu.Record{
+				"product_name": name,
+				"description":  desc,
+				"price":        price,
+				"updated_at":   now,
+			}).
+			Where(goqu.C("product_id").Eq(uid)).
+			Prepared(true).
+			ToSQL()
+		if err != nil {
+			return errors.New("build update product SQL error")
+		}
+
+		tag, err := tx.Exec(ctx, updSQL, updArgs...)
+		if err != nil {
+			return errors.New("exec update product error")
+		}
+		if tag.RowsAffected() == 0 {
+			return fmt.Errorf("no product updated for id=%s", uid)
+		}
+
+		if len(categoryIDs) > 0 {
+			delSQL, delArgs, err := repo.goqu.Delete("product_category").
+				Where(goqu.C("product_id").Eq(uid)).
+				Prepared(true).
+				ToSQL()
+			if err != nil {
+				return errors.New("build delete categories SQL error")
+			}
+
+			if _, err := tx.Exec(ctx, delSQL, delArgs...); err != nil {
+				return errors.New("exec delete categories error")
+			}
+
+			recs := make([]interface{}, len(categoryIDs))
+			for i, cid := range categoryIDs {
+				recs[i] = goqu.Record{
+					"product_id":  uid,
+					"category_id": cid,
+					"assigned_at": now,
+				}
+			}
+
+			insSQL, insArgs, err := repo.goqu.Insert("product_category").
+				Rows(recs...).
+				Prepared(true).
+				ToSQL()
+			if err != nil {
+				return errors.New("build insert categories SQL")
+			}
+
+			tag, err := tx.Exec(ctx, insSQL, insArgs...)
+			if err != nil {
+				return errors.New("exec insert categories")
+			}
+			if tag.RowsAffected() == 0 {
+				return fmt.Errorf("no categories inserted for id=%s", uid)
+			}
+		}
+
+		return nil
+	})
 }
 
 func (repo *ProductRepo) Delete(

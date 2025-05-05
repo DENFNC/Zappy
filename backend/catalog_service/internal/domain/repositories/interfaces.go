@@ -51,6 +51,7 @@ type ProductRepo interface {
 		ctx context.Context,
 		uid string,
 		desc, name string,
+		categoryIDs []string,
 		price int64,
 	) error
 	Delete(

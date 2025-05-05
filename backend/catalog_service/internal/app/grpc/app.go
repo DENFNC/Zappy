@@ -9,7 +9,6 @@ import (
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
 )
 
@@ -18,8 +17,6 @@ type ServiceRegistrar interface {
 	HTTPRegister(
 		ctx context.Context,
 		mux *runtime.ServeMux,
-		grpcEndpoint string,
-		opts []grpc.DialOption,
 	)
 }
 
@@ -39,14 +36,13 @@ func New(
 	services ...ServiceRegistrar,
 ) *App {
 	mux := runtime.NewServeMux()
-	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
 
 	grpcServer := grpc.NewServer()
 	reflection.Register(grpcServer)
 
 	for _, service := range services {
 		service.GRPCRegister(grpcServer)
-		service.HTTPRegister(ctx, mux, fmt.Sprintf("localhost:%d", grpcPort), opts)
+		service.HTTPRegister(ctx, mux)
 	}
 
 	return &App{
@@ -63,7 +59,10 @@ func (a *App) MustRunGrpc() {
 
 	log := a.log.With("op", op)
 	if err := a.gRPCstart(); err != nil {
-		log.Error("Failed to start gRPC server", "error", err)
+		log.Error(
+			"Failed to start gRPC server",
+			"error", err,
+		)
 		panic(fmt.Errorf("failed to start gRPC server: %w", err))
 	}
 }
@@ -91,7 +90,7 @@ func (a *App) Stop() {
 }
 
 func (a *App) httpStart() error {
-	const op = "grpcapp.App.start"
+	const op = "grpcapp.App.httpStart"
 
 	log := a.log.With("op", op)
 	log.Info(
@@ -99,7 +98,7 @@ func (a *App) httpStart() error {
 		"addr", fmt.Sprintf(":%d", a.httpPort),
 	)
 
-	if err := http.ListenAndServe(fmt.Sprintf(":%d", a.httpPort), a.httpServer); err != nil {
+	if err := http.ListenAndServe(fmt.Sprintf("localhost:%d", a.httpPort), a.httpServer); err != nil {
 		return err
 	}
 
@@ -107,7 +106,7 @@ func (a *App) httpStart() error {
 }
 
 func (a *App) gRPCstart() error {
-	const op = "grpcapp.App.start"
+	const op = "grpcapp.App.gRPCstart"
 
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", a.grpcPort))
 	if err != nil {
