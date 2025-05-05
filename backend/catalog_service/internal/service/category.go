@@ -10,12 +10,12 @@ import (
 
 type Category struct {
 	log  *slog.Logger
-	repo repositories.Category
+	repo repositories.CategoryRepo
 }
 
 func NewCategory(
 	log *slog.Logger,
-	repo repositories.Category,
+	repo repositories.CategoryRepo,
 ) *Category {
 	return &Category{
 		log:  log,

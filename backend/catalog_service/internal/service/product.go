@@ -10,12 +10,12 @@ import (
 
 type Product struct {
 	log  *slog.Logger
-	repo repositories.Product
+	repo repositories.ProductRepo
 }
 
 func NewProduct(
 	log *slog.Logger,
-	repo repositories.Product,
+	repo repositories.ProductRepo,
 ) *Product {
 	return &Product{
 		log:  log,

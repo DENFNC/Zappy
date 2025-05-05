@@ -4,13 +4,13 @@ import (
 	"context"
 	"log/slog"
 
+	"github.com/DENFNC/Zappy/catalog_service/internal/adapters/sql/postgres"
+	"github.com/DENFNC/Zappy/catalog_service/internal/adapters/sql/postgres/repo"
 	grpcapp "github.com/DENFNC/Zappy/catalog_service/internal/app/grpc"
 	"github.com/DENFNC/Zappy/catalog_service/internal/handler/category"
 	"github.com/DENFNC/Zappy/catalog_service/internal/handler/product"
 	"github.com/DENFNC/Zappy/catalog_service/internal/pkg/paginate"
-	"github.com/DENFNC/Zappy/catalog_service/internal/repo"
 	"github.com/DENFNC/Zappy/catalog_service/internal/service"
-	psql "github.com/DENFNC/Zappy/catalog_service/internal/storage/postgres"
 )
 
 type App struct {
@@ -20,7 +20,7 @@ type App struct {
 func New(
 	ctx context.Context,
 	log *slog.Logger,
-	db *psql.Storage,
+	db *postgres.Storage,
 	grpcPort int,
 	httpPort int,
 	coder paginate.TokenCoder,
