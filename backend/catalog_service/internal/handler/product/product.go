@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/DENFNC/Zappy/catalog_service/internal/domain/models"
-	errpkg "github.com/DENFNC/Zappy/catalog_service/internal/errors"
+	errpkg "github.com/DENFNC/Zappy/catalog_service/internal/utils/errors"
 	v1 "github.com/DENFNC/Zappy/catalog_service/proto/gen/v1"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"

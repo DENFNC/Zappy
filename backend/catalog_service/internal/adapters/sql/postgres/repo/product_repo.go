@@ -6,27 +6,28 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/DENFNC/Zappy/catalog_service/internal/adapters/sql/postgres"
+	"github.com/DENFNC/Zappy/catalog_service/internal/adapters/sql/postgres/dao"
 	"github.com/DENFNC/Zappy/catalog_service/internal/domain/models"
-	errpkg "github.com/DENFNC/Zappy/catalog_service/internal/errors"
-	"github.com/DENFNC/Zappy/catalog_service/internal/pkg/dbutils"
 	"github.com/DENFNC/Zappy/catalog_service/internal/pkg/paginate"
-	psql "github.com/DENFNC/Zappy/catalog_service/internal/storage/postgres"
+	"github.com/DENFNC/Zappy/catalog_service/internal/utils/dbutils"
+	errpkg "github.com/DENFNC/Zappy/catalog_service/internal/utils/errors"
 	"github.com/doug-martin/goqu/v9"
 	"github.com/jackc/pgx/v5"
 )
 
 type ProductRepo struct {
-	*psql.Storage
+	*postgres.Storage
 	goqu     goqu.DialectWrapper
-	paginate *paginate.Paginator[psql.ProductDAO]
+	paginate *paginate.Paginator[dao.ProductDAO]
 }
 
 func NewProductRepo(
-	db *psql.Storage,
+	db *postgres.Storage,
 	goqu goqu.DialectWrapper,
 	coder paginate.TokenCoder,
 ) *ProductRepo {
-	paginate, err := paginate.NewPaginator[psql.ProductDAO](db.DB, goqu, coder)
+	paginate, err := paginate.NewPaginator[dao.ProductDAO](db.DB, goqu, coder)
 	if err != nil {
 		panic(err)
 	}
@@ -132,7 +133,7 @@ func (repo *ProductRepo) GetByID(
 		return nil, err
 	}
 
-	var productDAO psql.ProductDAO
+	var productDAO dao.ProductDAO
 	row := repo.DB.QueryRow(ctx, stmt, args...)
 	if err := dbutils.ScanStruct(row, &productDAO); err != nil {
 		return nil, err
