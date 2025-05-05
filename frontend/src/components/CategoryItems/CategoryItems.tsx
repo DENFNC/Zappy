@@ -1,15 +1,22 @@
 import { useState } from 'react';
+import { useResponsiveLimit } from '@/hooks/useResponsiveLimit';
 
 export interface IListItems {
   items: string[];
   limit?: number;
 }
 
-export default function CategoryItems({ items, limit = 6 }: IListItems) {
+export default function CategoryItems({ items, limit = 10 }: IListItems) {
+  const responsiveLimit = useResponsiveLimit(limit, {
+    640: 3, // for screens <= 640px
+    768: 4, // for screens <= 768px
+    1024: 5, // for screens <= 1024px
+  });
+
   const [isDropdownOpen, setDropdownOpen] = useState(false);
 
-  const visibleItems = items.slice(0, limit);
-  const hiddenItems = items.slice(limit);
+  const visibleItems = items.slice(0, responsiveLimit);
+  const hiddenItems = items.slice(responsiveLimit);
 
   return (
     <div className="w-full px-4 py-2">
@@ -24,7 +31,7 @@ export default function CategoryItems({ items, limit = 6 }: IListItems) {
         ))}
 
         {hiddenItems.length > 0 && (
-          <li className="relative">
+          <li className="relative items-center">
             <button
               onClick={() => setDropdownOpen(!isDropdownOpen)}
               className="text-sm text-gray-500 hover:text-yellow-700 cursor-pointer font-bold"

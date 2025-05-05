@@ -7,6 +7,12 @@ interface Props {
 
 export default function Logo(props: Props) {
   return (
-    <Image height={props.height ?? 20} width={props.width} alt={'Zappy'} src={'/logo.png'}></Image>
+    <Image
+      className="mr-2"
+      height={props.height ?? 20}
+      width={props.width}
+      alt={'Zappy'}
+      src={'/logo.png'}
+    ></Image>
   );
 }

@@ -1,43 +1,71 @@
 import CategoryItems from '../CategoryItems/CategoryItems';
 import LogoSvg from '../Logo/Logo';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faUser,
+  faHeart,
+  faShoppingCart,
+  faBars,
+  faSearch,
+} from '@fortawesome/free-solid-svg-icons';
+
 export default function Header() {
   return (
     <>
-      <header className="bg-white sticky top-0 z-50">
-        <div className="h-16 flex items-center justify-center">
-          <nav className="flex w-full items-center space-x-6">
+      <header className="bg-white top-0 z-50">
+        <div className="h-16 flex items-center justify-center px-2 sm:px-4">
+          <nav className="flex w-full items-center space-x-2 sm:space-x-4 overflow-x-auto">
             <LogoSvg width={40} />
 
-            <button className="bg-gray-300 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded h-10">
-              Каталог
+            <button
+              className="bg-gray-300 hover:bg-yellow-700 text-white p-2 rounded h-10 w-10 flex items-center justify-center"
+              aria-label="Меню"
+            >
+              <FontAwesomeIcon icon={faBars} className="h-5 w-5" />
             </button>
 
-            <div className="flex border-1 border-gray-200 rounded w-full">
+            {/* Search bar: takes remaining space, shrinks on small screens */}
+            <div className="relative flex items-center flex-grow max-w-full border border-gray-200 rounded-lg bg-white">
               <input
                 type="text"
-                className="bg-white h-10 w-full min-w-80 px-2 rounded-lg focus:outline-none hover:cursor-pointer rounded"
-                name=""
+                className="h-10 w-full px-10 pr-4 rounded-lg focus:outline-none"
                 placeholder="Искать товары и категории"
               />
+              <FontAwesomeIcon
+                icon={faSearch}
+                className="absolute left-3 text-gray-400 pointer-events-none"
+              />
+              <button className="h-10 px-4 bg-gray-300 hover:bg-yellow-700 text-white flex items-center justify-center rounded-r-lg">
+                <FontAwesomeIcon icon={faSearch} className="h-4 w-4" />
+              </button>
             </div>
 
-            <div className="flex m-auto space-x-4">
-              <button className="flex-1 bg-gray-300 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded h-10">
-                Войти
+            {/* Buttons shrink but stay in row */}
+            <div className="flex shrink-0 space-x-2">
+              <button
+                className="bg-gray-300 hover:bg-yellow-700 text-white p-2 rounded h-10 w-10"
+                aria-label="Войти"
+              >
+                <FontAwesomeIcon icon={faUser} className="h-5 w-5" />
               </button>
-
-              <button className="flex-1 bg-gray-300 hover:hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded h-10">
-                Избранное
+              <button
+                className="bg-gray-300 hover:bg-yellow-700 text-white p-2 rounded h-10 w-10"
+                aria-label="Избранное"
+              >
+                <FontAwesomeIcon icon={faHeart} className="h-5 w-5" />
               </button>
-
-              <button className="flex-1 bg-gray-300 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded h-10">
-                Корзина
+              <button
+                className="bg-gray-300 hover:bg-yellow-700 text-white p-2 rounded h-10 w-10"
+                aria-label="Корзина"
+              >
+                <FontAwesomeIcon icon={faShoppingCart} className="h-5 w-5" />
               </button>
             </div>
           </nav>
         </div>
 
+        {/* Keep CategoryItems visible only on larger screens if needed */}
         <CategoryItems
           items={[
             'Электроника',
@@ -57,7 +85,6 @@ export default function Header() {
             'Украшения',
             'Товары для дачи',
           ]}
-          limit={11}
         />
       </header>
     </>
