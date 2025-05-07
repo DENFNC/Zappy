@@ -141,7 +141,7 @@ func RegisterCategoryServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/category.CategoryService/ListCategories", runtime.WithHTTPPathPattern("/api/v1/categories"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/category.CategoryService/ListCategories", runtime.WithHTTPPathPattern("/api/v1/catalog_service/categories"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -161,7 +161,7 @@ func RegisterCategoryServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/category.CategoryService/CreateCategory", runtime.WithHTTPPathPattern("/api/v1/categories"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/category.CategoryService/CreateCategory", runtime.WithHTTPPathPattern("/api/v1/catalog_service/categories"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -181,7 +181,7 @@ func RegisterCategoryServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/category.CategoryService/DeleteCategory", runtime.WithHTTPPathPattern("/api/v1/categories/{category_id}"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/category.CategoryService/DeleteCategory", runtime.WithHTTPPathPattern("/api/v1/catalog_service/categories/{category_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -239,7 +239,7 @@ func RegisterCategoryServiceHandlerClient(ctx context.Context, mux *runtime.Serv
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/category.CategoryService/ListCategories", runtime.WithHTTPPathPattern("/api/v1/categories"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/category.CategoryService/ListCategories", runtime.WithHTTPPathPattern("/api/v1/catalog_service/categories"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -256,7 +256,7 @@ func RegisterCategoryServiceHandlerClient(ctx context.Context, mux *runtime.Serv
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/category.CategoryService/CreateCategory", runtime.WithHTTPPathPattern("/api/v1/categories"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/category.CategoryService/CreateCategory", runtime.WithHTTPPathPattern("/api/v1/catalog_service/categories"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -273,7 +273,7 @@ func RegisterCategoryServiceHandlerClient(ctx context.Context, mux *runtime.Serv
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/category.CategoryService/DeleteCategory", runtime.WithHTTPPathPattern("/api/v1/categories/{category_id}"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/category.CategoryService/DeleteCategory", runtime.WithHTTPPathPattern("/api/v1/catalog_service/categories/{category_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -290,9 +290,9 @@ func RegisterCategoryServiceHandlerClient(ctx context.Context, mux *runtime.Serv
 }
 
 var (
-	pattern_CategoryService_ListCategories_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"api", "v1", "categories"}, ""))
-	pattern_CategoryService_CreateCategory_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"api", "v1", "categories"}, ""))
-	pattern_CategoryService_DeleteCategory_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"api", "v1", "categories", "category_id"}, ""))
+	pattern_CategoryService_ListCategories_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"api", "v1", "catalog_service", "categories"}, ""))
+	pattern_CategoryService_CreateCategory_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"api", "v1", "catalog_service", "categories"}, ""))
+	pattern_CategoryService_DeleteCategory_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"api", "v1", "catalog_service", "categories", "category_id"}, ""))
 )
 
 var (

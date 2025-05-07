@@ -13,18 +13,18 @@ option go_package = "github.com/DENFNC/Zappy/catalog_service/proto/gen/v1;v1";
 service CategoryService {
   rpc ListCategories(ListCategoriesRequest) returns (ListCategoriesResponse) {
     option (google.api.http) = {
-        get: "/api/v1/categories"
+        get: "/api/v1/catalog_service/categories"
     };
   }
   rpc CreateCategory(CreateCategoryRequest) returns (CreateCategoryResponse) {
       option (google.api.http) = {
-        post: "/api/v1/categories"
+        post: "/api/v1/catalog_service/categories"
         body: "*"
     };
   }
   rpc DeleteCategory(DeleteCategoryRequest) returns (google.protobuf.Empty) {
       option (google.api.http) = {
-        delete: "/api/v1/categories/{category_id}"
+        delete: "/api/v1/catalog_service/categories/{category_id}"
     };
   }
 }

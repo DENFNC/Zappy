@@ -407,11 +407,11 @@ const file_category_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt2\xeb\x02\n" +
-	"\x0fCategoryService\x12o\n" +
-	"\x0eListCategories\x12\x1f.category.ListCategoriesRequest\x1a .category.ListCategoriesResponse\"\x1a\x82\xd3\xe4\x93\x02\x14\x12\x12/api/v1/categories\x12r\n" +
-	"\x0eCreateCategory\x12\x1f.category.CreateCategoryRequest\x1a .category.CreateCategoryResponse\"\x1d\x82\xd3\xe4\x93\x02\x17:\x01*\"\x12/api/v1/categories\x12s\n" +
-	"\x0eDeleteCategory\x12\x1f.category.DeleteCategoryRequest\x1a\x16.google.protobuf.Empty\"(\x82\xd3\xe4\x93\x02\"* /api/v1/categories/{category_id}B9Z7github.com/DENFNC/Zappy/catalog_service/proto/gen/v1;v1b\x06proto3"
+	"updated_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt2\x9d\x03\n" +
+	"\x0fCategoryService\x12\x7f\n" +
+	"\x0eListCategories\x12\x1f.category.ListCategoriesRequest\x1a .category.ListCategoriesResponse\"*\x82\xd3\xe4\x93\x02$\x12\"/api/v1/catalog_service/categories\x12\x82\x01\n" +
+	"\x0eCreateCategory\x12\x1f.category.CreateCategoryRequest\x1a .category.CreateCategoryResponse\"-\x82\xd3\xe4\x93\x02':\x01*\"\"/api/v1/catalog_service/categories\x12\x83\x01\n" +
+	"\x0eDeleteCategory\x12\x1f.category.DeleteCategoryRequest\x1a\x16.google.protobuf.Empty\"8\x82\xd3\xe4\x93\x022*0/api/v1/catalog_service/categories/{category_id}B9Z7github.com/DENFNC/Zappy/catalog_service/proto/gen/v1;v1b\x06proto3"
 
 var (
 	file_category_proto_rawDescOnce sync.Once
