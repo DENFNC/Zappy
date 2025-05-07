@@ -14,6 +14,7 @@ type Config struct {
 	GRPC           ConfigGRPC
 	HTTP           ConfigHTTP
 	Postgres       ConfigPSQL
+	ObjectStore    ObjectConfig `yaml:"object_store"`
 }
 
 type ConfigGRPC struct {
@@ -27,6 +28,10 @@ type ConfigHTTP struct {
 
 type ConfigPSQL struct {
 	URL string `yaml:"url" env-required:"true"`
+}
+
+type ObjectConfig struct {
+	AwsBucketImage string `yaml:"aws_bucket_image" end-required:"true"`
 }
 
 func MustLoad(path string) *Config {

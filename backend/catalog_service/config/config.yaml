@@ -6,4 +6,6 @@ grpc:
 http:
   port: 8081
 postgres:
-  url: "postgres://postgres:admin@localhost:5434/catalog_service?sslmode=disable"
+  url: "postgres://postgres:admin@localhost:5432/catalog_service?sslmode=disable"
+object_store:
+  aws_bucket_image: "test-bucket"
