@@ -6,13 +6,15 @@ services:
     volumes:
       - minio:/data
     environment:
+      # TODO: креды будут подставляться в проде иначе
       - MINIO_ROOT_USER=admin
       - MINIO_ROOT_PASSWORD=adminadmin
-      - AWS_ACCESS_KEY_ID=oYYBxPZd5eRUKGauMSnp
-      - AWS_SECRET_ACCESS_KEY=Atszh4W1ExvcbQ6PitVUtPdAI96jANm9q34jQqkJ
-      - AWS_REGION=us-east-1
-      - AWS_EC2_METADATA_DISABLED=true
-      - AWS_ENDPOINT_URL=http://localhost:9000
+      - MINIO_NOTIFY_AMQP_ENABLE_IMAGE=on
+      - MINIO_NOTIFY_AMQP_URL_IMAGE=amqp://admin:admin@rabbit:5672/
+      - MINIO_NOTIFY_AMQP_EXCHANGE_IMAGE=test-exchange
+      - MINIO_NOTIFY_AMQP_EXCHANGE_TYPE_IMAGE=topic
+      - MINIO_NOTIFY_AMQP_DURABLE_IMAGE=on
+      - MINIO_NOTIFY_AMQP_ROUTING_KEY_IMAGE=s3:ObjectCreated:*
     ports:
       - "9000:9000"
       - "9010:9010"
@@ -28,6 +30,19 @@ services:
       - postgres:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    networks:
+      - zappy
+
+  rabbitmq:
+    image: rabbitmq:4.1.0-management-alpine
+    container_name: rabbit
+    hostname: rabbit
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
+    ports:
+      - "5672:5672"
+      - "15672:15672"
     networks:
       - zappy
 
