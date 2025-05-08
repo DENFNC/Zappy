@@ -31,7 +31,8 @@ func Generate(
 	expires time.Duration,
 ) (string, error) {
 	// Создаем новый метод подписи, используя vault и имя
-	newMethod := NewSigningMethodVaultPS256(vault, keyName)
+	// newMethod := NewSigningMethodVaultPS256(vault, keyName)
+	newMethod := NewSigningMethodVaultEdDSA(vault, keyName)
 
 	// Формируем стандартные зарегистерованные клеймы токена
 	claims := jwt.NewWithClaims(
