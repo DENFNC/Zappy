@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"crypto/rand"
+	"fmt"
 	"log/slog"
 	"time"
 
@@ -17,6 +18,7 @@ import (
 	"github.com/DENFNC/Zappy/catalog_service/internal/pkg/paginate"
 	"github.com/DENFNC/Zappy/catalog_service/internal/service"
 	"github.com/DENFNC/Zappy/catalog_service/internal/utils/config"
+	"github.com/aws/aws-sdk-go-v2/credentials"
 )
 
 type App struct {
@@ -34,10 +36,12 @@ func New(
 		return nil, err
 	}
 
-	objectStore, err := InitStore()
+	client, objectStore, err := InitStore()
 	if err != nil {
 		return nil, err
 	}
+
+	InitStoreNotifyer(client)
 
 	productRepo := repo.NewProductRepo(db, db.Dial, paginateCoder)
 	productSvc := service.NewProduct(log, productRepo)
@@ -63,18 +67,48 @@ func New(
 	}, nil
 }
 
-func InitStore() (*store.Store, error) {
-	s3Store, err := s3client.NewClient(
+func InitStore() (*s3client.Client, *store.Store, error) {
+	// TODO: в prod креды должны передаваться через переменные среды
+	// TODO: Измени ключи для нормальной работы в локали (в minio вкладка -> Access Keys)
+	creds := credentials.NewStaticCredentialsProvider(
+		"IODsBpSGHPIdNXFKWltv",
+		"YAkkti2wknir6WkUarAxKVZHfWMzGsr4mjE70T2U",
+		"",
+	)
+
+	client, err := s3client.NewClient(
 		context.TODO(),
 		s3client.WithPresignExpiry(time.Second*5),
+		s3client.WithEndpoint("http://localhost:9000"),
+		s3client.WithCredentials(creds),
 	)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	store := store.NewStore(s3Store)
+	store := store.NewStore(client)
 
-	return store, nil
+	return client, store, nil
+}
+
+func InitStoreNotifyer(
+	client *s3client.Client,
+) {
+	notify := s3client.NewNotifyer(client)
+
+	// TODO: Временный хардкод, затем переменные будут передаваться через конфиг
+	// TODO: Регистрация сделана для теста AMQP
+	err := notify.RegisterNewNotify(
+		context.TODO(),
+		"MimeValidation",
+		"arn:minio:sqs::IMAGE:amqp",
+		"test-bucket",
+		"PUT",
+	)
+	if err != nil {
+		fmt.Println(err)
+		panic(err)
+	}
 }
 
 func InitPaginateCoder(
