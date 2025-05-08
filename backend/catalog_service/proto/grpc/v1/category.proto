@@ -5,7 +5,9 @@ package category;
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 import "google/api/annotations.proto";
+import "validate/validate.proto";
 import "common.proto";
+
 
 option go_package = "github.com/DENFNC/Zappy/catalog_service/proto/gen/v1;v1";
 
@@ -31,8 +33,11 @@ service CategoryService {
 
 
 message CreateCategoryRequest {
-  string name = 1;
-  optional string parent_id = 2;
+  string name = 1 [(validate.rules).string = {
+    min_len: 5,
+    max_len: 100
+  }];
+  optional string parent_id = 2 [(validate.rules).string.uuid = true];
 }
 
 message CreateCategoryResponse {
@@ -44,12 +49,14 @@ message ListCategoriesRequest {
 }
 
 message ListCategoriesResponse {
-  repeated Category categories = 1;
+  repeated Category categories = 1 [(validate.rules).repeated = {
+    max_items: 200
+  }];
   common.PaginationResponse pagination = 2;
 }
 
 message DeleteCategoryRequest {
-  string category_id = 1;
+  string category_id = 1 [(validate.rules).string.uuid = true];
 }
 
 message DeleteCategoryResponse {
@@ -57,9 +64,12 @@ message DeleteCategoryResponse {
 }
 
 message Category {
-  string id         = 1;
-  string name       = 2;
-  string parent_id  = 3;
+  string id   = 1 [(validate.rules).string.uuid = true];
+  string name = 2 [(validate.rules).string = {
+    min_len: 5,
+    max_len: 120
+  }];
+  string parent_id = 3 [(validate.rules).string.uuid = true];
   google.protobuf.Timestamp created_at = 4;
   google.protobuf.Timestamp updated_at = 5;
 }

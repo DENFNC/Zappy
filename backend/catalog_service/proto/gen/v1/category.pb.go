@@ -7,6 +7,7 @@
 package v1
 
 import (
+	_ "github.com/envoyproxy/protoc-gen-validate/validate"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -376,10 +377,10 @@ var File_category_proto protoreflect.FileDescriptor
 
 const file_category_proto_rawDesc = "" +
 	"\n" +
-	"\x0ecategory.proto\x12\bcategory\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1cgoogle/api/annotations.proto\x1a\fcommon.proto\"[\n" +
-	"\x15CreateCategoryRequest\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
-	"\tparent_id\x18\x02 \x01(\tH\x00R\bparentId\x88\x01\x01B\f\n" +
+	"\x0ecategory.proto\x12\bcategory\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x17validate/validate.proto\x1a\fcommon.proto\"p\n" +
+	"\x15CreateCategoryRequest\x12\x1d\n" +
+	"\x04name\x18\x01 \x01(\tB\t\xfaB\x06r\x04\x10\x05\x18dR\x04name\x12*\n" +
+	"\tparent_id\x18\x02 \x01(\tB\b\xfaB\x05r\x03\xb0\x01\x01H\x00R\bparentId\x88\x01\x01B\f\n" +
 	"\n" +
 	"_parent_id\"M\n" +
 	"\x16CreateCategoryResponse\x123\n" +
@@ -388,22 +389,22 @@ const file_category_proto_rawDesc = "" +
 	"\x15ListCategoriesRequest\x129\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x19.common.PaginationRequestR\n" +
-	"pagination\"\x88\x01\n" +
-	"\x16ListCategoriesResponse\x122\n" +
+	"pagination\"\x93\x01\n" +
+	"\x16ListCategoriesResponse\x12=\n" +
 	"\n" +
-	"categories\x18\x01 \x03(\v2\x12.category.CategoryR\n" +
+	"categories\x18\x01 \x03(\v2\x12.category.CategoryB\t\xfaB\x06\x92\x01\x03\x10\xc8\x01R\n" +
 	"categories\x12:\n" +
 	"\n" +
 	"pagination\x18\x02 \x01(\v2\x1a.common.PaginationResponseR\n" +
-	"pagination\"8\n" +
-	"\x15DeleteCategoryRequest\x12\x1f\n" +
-	"\vcategory_id\x18\x01 \x01(\tR\n" +
+	"pagination\"B\n" +
+	"\x15DeleteCategoryRequest\x12)\n" +
+	"\vcategory_id\x18\x01 \x01(\tB\b\xfaB\x05r\x03\xb0\x01\x01R\n" +
 	"categoryId\"\x18\n" +
-	"\x16DeleteCategoryResponse\"\xc1\x01\n" +
-	"\bCategory\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1b\n" +
-	"\tparent_id\x18\x03 \x01(\tR\bparentId\x129\n" +
+	"\x16DeleteCategoryResponse\"\xe0\x01\n" +
+	"\bCategory\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xfaB\x05r\x03\xb0\x01\x01R\x02id\x12\x1d\n" +
+	"\x04name\x18\x02 \x01(\tB\t\xfaB\x06r\x04\x10\x05\x18xR\x04name\x12%\n" +
+	"\tparent_id\x18\x03 \x01(\tB\b\xfaB\x05r\x03\xb0\x01\x01R\bparentId\x129\n" +
 	"\n" +
 	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +

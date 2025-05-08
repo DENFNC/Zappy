@@ -35,6 +35,9 @@ var (
 	_ = sort.Sort
 )
 
+// define the regex for a UUID once up-front
+var _category_uuidPattern = regexp.MustCompile("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$")
+
 // Validate checks the field values on CreateCategoryRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -57,14 +60,43 @@ func (m *CreateCategoryRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Name
+	if l := utf8.RuneCountInString(m.GetName()); l < 5 || l > 100 {
+		err := CreateCategoryRequestValidationError{
+			field:  "Name",
+			reason: "value length must be between 5 and 100 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if m.ParentId != nil {
-		// no validation rules for ParentId
+
+		if err := m._validateUuid(m.GetParentId()); err != nil {
+			err = CreateCategoryRequestValidationError{
+				field:  "ParentId",
+				reason: "value must be a valid UUID",
+				cause:  err,
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if len(errors) > 0 {
 		return CreateCategoryRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+func (m *CreateCategoryRequest) _validateUuid(uuid string) error {
+	if matched := _category_uuidPattern.MatchString(uuid); !matched {
+		return errors.New("invalid uuid format")
 	}
 
 	return nil
@@ -427,6 +459,17 @@ func (m *ListCategoriesResponse) validate(all bool) error {
 
 	var errors []error
 
+	if len(m.GetCategories()) > 200 {
+		err := ListCategoriesResponseValidationError{
+			field:  "Categories",
+			reason: "value must contain no more than 200 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	for idx, item := range m.GetCategories() {
 		_, _ = idx, item
 
@@ -592,10 +635,28 @@ func (m *DeleteCategoryRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for CategoryId
+	if err := m._validateUuid(m.GetCategoryId()); err != nil {
+		err = DeleteCategoryRequestValidationError{
+			field:  "CategoryId",
+			reason: "value must be a valid UUID",
+			cause:  err,
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return DeleteCategoryRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+func (m *DeleteCategoryRequest) _validateUuid(uuid string) error {
+	if matched := _category_uuidPattern.MatchString(uuid); !matched {
+		return errors.New("invalid uuid format")
 	}
 
 	return nil
@@ -798,11 +859,40 @@ func (m *Category) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Id
+	if err := m._validateUuid(m.GetId()); err != nil {
+		err = CategoryValidationError{
+			field:  "Id",
+			reason: "value must be a valid UUID",
+			cause:  err,
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Name
+	if l := utf8.RuneCountInString(m.GetName()); l < 5 || l > 120 {
+		err := CategoryValidationError{
+			field:  "Name",
+			reason: "value length must be between 5 and 120 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for ParentId
+	if err := m._validateUuid(m.GetParentId()); err != nil {
+		err = CategoryValidationError{
+			field:  "ParentId",
+			reason: "value must be a valid UUID",
+			cause:  err,
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if all {
 		switch v := interface{}(m.GetCreatedAt()).(type) {
@@ -864,6 +954,14 @@ func (m *Category) validate(all bool) error {
 
 	if len(errors) > 0 {
 		return CategoryMultiError(errors)
+	}
+
+	return nil
+}
+
+func (m *Category) _validateUuid(uuid string) error {
+	if matched := _category_uuidPattern.MatchString(uuid); !matched {
+		return errors.New("invalid uuid format")
 	}
 
 	return nil

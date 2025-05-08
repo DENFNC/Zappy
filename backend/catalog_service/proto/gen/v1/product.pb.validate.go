@@ -35,6 +35,9 @@ var (
 	_ = sort.Sort
 )
 
+// define the regex for a UUID once up-front
+var _product_uuidPattern = regexp.MustCompile("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$")
+
 // Validate checks the field values on GetProductRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, the
 // first error encountered is returned, or nil if there are no violations.
@@ -57,10 +60,28 @@ func (m *GetProductRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for ProductId
+	if err := m._validateUuid(m.GetProductId()); err != nil {
+		err = GetProductRequestValidationError{
+			field:  "ProductId",
+			reason: "value must be a valid UUID",
+			cause:  err,
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return GetProductRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+func (m *GetProductRequest) _validateUuid(uuid string) error {
+	if matched := _product_uuidPattern.MatchString(uuid); !matched {
+		return errors.New("invalid uuid format")
 	}
 
 	return nil
@@ -423,6 +444,17 @@ func (m *ListProductsResponse) validate(all bool) error {
 
 	var errors []error
 
+	if len(m.GetProducts()) > 150 {
+		err := ListProductsResponseValidationError{
+			field:  "Products",
+			reason: "value must contain no more than 150 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	for idx, item := range m.GetProducts() {
 		_, _ = idx, item
 
@@ -588,12 +620,32 @@ func (m *CreateProductRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Name
+	if l := utf8.RuneCountInString(m.GetName()); l < 5 || l > 120 {
+		err := CreateProductRequestValidationError{
+			field:  "Name",
+			reason: "value length must be between 5 and 120 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	// no validation rules for PriceCents
 
 	if m.Description != nil {
-		// no validation rules for Description
+
+		if l := utf8.RuneCountInString(m.GetDescription()); l < 50 || l > 5000 {
+			err := CreateProductRequestValidationError{
+				field:  "Description",
+				reason: "value length must be between 50 and 5000 runes, inclusive",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if len(errors) > 0 {
@@ -829,14 +881,46 @@ func (m *UpdateProductRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for ProductId
+	if err := m._validateUuid(m.GetProductId()); err != nil {
+		err = UpdateProductRequestValidationError{
+			field:  "ProductId",
+			reason: "value must be a valid UUID",
+			cause:  err,
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if m.Name != nil {
-		// no validation rules for Name
+
+		if l := utf8.RuneCountInString(m.GetName()); l < 5 || l > 120 {
+			err := UpdateProductRequestValidationError{
+				field:  "Name",
+				reason: "value length must be between 5 and 120 runes, inclusive",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if m.Description != nil {
-		// no validation rules for Description
+
+		if l := utf8.RuneCountInString(m.GetDescription()); l < 50 || l > 5000 {
+			err := UpdateProductRequestValidationError{
+				field:  "Description",
+				reason: "value length must be between 50 and 5000 runes, inclusive",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if m.PriceCents != nil {
@@ -845,6 +929,14 @@ func (m *UpdateProductRequest) validate(all bool) error {
 
 	if len(errors) > 0 {
 		return UpdateProductRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+func (m *UpdateProductRequest) _validateUuid(uuid string) error {
+	if matched := _product_uuidPattern.MatchString(uuid); !matched {
+		return errors.New("invalid uuid format")
 	}
 
 	return nil
@@ -1047,10 +1139,28 @@ func (m *DeleteProductRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for ProductId
+	if err := m._validateUuid(m.GetProductId()); err != nil {
+		err = DeleteProductRequestValidationError{
+			field:  "ProductId",
+			reason: "value must be a valid UUID",
+			cause:  err,
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return DeleteProductRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+func (m *DeleteProductRequest) _validateUuid(uuid string) error {
+	if matched := _product_uuidPattern.MatchString(uuid); !matched {
+		return errors.New("invalid uuid format")
 	}
 
 	return nil
@@ -1252,11 +1362,39 @@ func (m *Product) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Id
+	if err := m._validateUuid(m.GetId()); err != nil {
+		err = ProductValidationError{
+			field:  "Id",
+			reason: "value must be a valid UUID",
+			cause:  err,
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Name
+	if l := utf8.RuneCountInString(m.GetName()); l < 5 || l > 120 {
+		err := ProductValidationError{
+			field:  "Name",
+			reason: "value length must be between 5 and 120 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Description
+	if l := utf8.RuneCountInString(m.GetDescription()); l < 50 || l > 5000 {
+		err := ProductValidationError{
+			field:  "Description",
+			reason: "value length must be between 50 and 5000 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	// no validation rules for PriceCents
 
@@ -1320,6 +1458,14 @@ func (m *Product) validate(all bool) error {
 
 	if len(errors) > 0 {
 		return ProductMultiError(errors)
+	}
+
+	return nil
+}
+
+func (m *Product) _validateUuid(uuid string) error {
+	if matched := _product_uuidPattern.MatchString(uuid); !matched {
+		return errors.New("invalid uuid format")
 	}
 
 	return nil
