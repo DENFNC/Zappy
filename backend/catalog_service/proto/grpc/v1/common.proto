@@ -8,7 +8,10 @@ option go_package = "github.com/DENFNC/Zappy/catalog_service/proto/gen/v1;v1";
 
 
 message PaginationRequest {
-  uint32 page_size  = 1;
+  uint32 page_size  = 1 [(validate.rules).uint32 = {
+    gte: 0,
+    lte: 500
+  }];
   string page_token = 2;
 }
 

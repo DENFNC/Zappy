@@ -182,9 +182,10 @@ var File_common_proto protoreflect.FileDescriptor
 
 const file_common_proto_rawDesc = "" +
 	"\n" +
-	"\fcommon.proto\x12\x06common\x1a\x17validate/validate.proto\"O\n" +
-	"\x11PaginationRequest\x12\x1b\n" +
-	"\tpage_size\x18\x01 \x01(\rR\bpageSize\x12\x1d\n" +
+	"\fcommon.proto\x12\x06common\x1a\x17validate/validate.proto\"[\n" +
+	"\x11PaginationRequest\x12'\n" +
+	"\tpage_size\x18\x01 \x01(\rB\n" +
+	"\xfaB\a*\x05\x18\xf4\x03(\x00R\bpageSize\x12\x1d\n" +
 	"\n" +
 	"page_token\x18\x02 \x01(\tR\tpageToken\"o\n" +
 	"\x12PaginationResponse\x12\x1b\n" +

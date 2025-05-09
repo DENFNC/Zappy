@@ -60,7 +60,16 @@ func (m *PaginationRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for PageSize
+	if val := m.GetPageSize(); val < 0 || val > 500 {
+		err := PaginationRequestValidationError{
+			field:  "PageSize",
+			reason: "value must be inside range [0, 500]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	// no validation rules for PageToken
 

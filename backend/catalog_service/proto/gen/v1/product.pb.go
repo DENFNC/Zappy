@@ -7,6 +7,7 @@
 package v1
 
 import (
+	_ "github.com/envoyproxy/protoc-gen-validate/validate"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -600,51 +601,54 @@ var File_product_proto protoreflect.FileDescriptor
 
 const file_product_proto_rawDesc = "" +
 	"\n" +
-	"\rproduct.proto\x12\aproduct\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1cgoogle/api/annotations.proto\x1a\fcommon.proto\"2\n" +
-	"\x11GetProductRequest\x12\x1d\n" +
+	"\rproduct.proto\x12\aproduct\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x17validate/validate.proto\x1a\fcommon.proto\"<\n" +
+	"\x11GetProductRequest\x12'\n" +
 	"\n" +
-	"product_id\x18\x01 \x01(\tR\tproductId\"@\n" +
+	"product_id\x18\x01 \x01(\tB\b\xfaB\x05r\x03\xb0\x01\x01R\tproductId\"@\n" +
 	"\x12GetProductResponse\x12*\n" +
 	"\aproduct\x18\x01 \x01(\v2\x10.product.ProductR\aproduct\"P\n" +
 	"\x13ListProductsRequest\x129\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x19.common.PaginationRequestR\n" +
-	"pagination\"\x80\x01\n" +
-	"\x14ListProductsResponse\x12,\n" +
-	"\bproducts\x18\x01 \x03(\v2\x10.product.ProductR\bproducts\x12:\n" +
+	"pagination\"\x8b\x01\n" +
+	"\x14ListProductsResponse\x127\n" +
+	"\bproducts\x18\x01 \x03(\v2\x10.product.ProductB\t\xfaB\x06\x92\x01\x03\x10\x96\x01R\bproducts\x12:\n" +
 	"\n" +
 	"pagination\x18\x02 \x01(\v2\x1a.common.PaginationResponseR\n" +
-	"pagination\"\xa5\x01\n" +
-	"\x14CreateProductRequest\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04name\x12%\n" +
-	"\vdescription\x18\x02 \x01(\tH\x00R\vdescription\x88\x01\x01\x12\x1f\n" +
+	"pagination\"\xbc\x01\n" +
+	"\x14CreateProductRequest\x12\x1d\n" +
+	"\x04name\x18\x01 \x01(\tB\t\xfaB\x06r\x04\x10\x05\x18xR\x04name\x121\n" +
+	"\vdescription\x18\x02 \x01(\tB\n" +
+	"\xfaB\ar\x05\x102\x18\x88'H\x00R\vdescription\x88\x01\x01\x12\x1f\n" +
 	"\vprice_cents\x18\x03 \x01(\x03R\n" +
 	"priceCents\x12!\n" +
 	"\fcategory_ids\x18\x04 \x03(\tR\vcategoryIdsB\x0e\n" +
 	"\f_description\"J\n" +
 	"\x15CreateProductResponse\x121\n" +
 	"\n" +
-	"product_id\x18\x01 \x01(\v2\x12.common.ResourceIDR\tproductId\"\xe7\x01\n" +
-	"\x14UpdateProductRequest\x12\x1d\n" +
+	"product_id\x18\x01 \x01(\v2\x12.common.ResourceIDR\tproductId\"\x88\x02\n" +
+	"\x14UpdateProductRequest\x12'\n" +
 	"\n" +
-	"product_id\x18\x01 \x01(\tR\tproductId\x12\x17\n" +
-	"\x04name\x18\x02 \x01(\tH\x00R\x04name\x88\x01\x01\x12%\n" +
-	"\vdescription\x18\x03 \x01(\tH\x01R\vdescription\x88\x01\x01\x12$\n" +
+	"product_id\x18\x01 \x01(\tB\b\xfaB\x05r\x03\xb0\x01\x01R\tproductId\x12\"\n" +
+	"\x04name\x18\x02 \x01(\tB\t\xfaB\x06r\x04\x10\x05\x18xH\x00R\x04name\x88\x01\x01\x121\n" +
+	"\vdescription\x18\x03 \x01(\tB\n" +
+	"\xfaB\ar\x05\x102\x18\x88'H\x01R\vdescription\x88\x01\x01\x12$\n" +
 	"\vprice_cents\x18\x04 \x01(\x03H\x02R\n" +
 	"priceCents\x88\x01\x01\x12!\n" +
 	"\fcategory_ids\x18\x05 \x03(\tR\vcategoryIdsB\a\n" +
 	"\x05_nameB\x0e\n" +
 	"\f_descriptionB\x0e\n" +
 	"\f_price_cents\"\x17\n" +
-	"\x15UpdateProductResponse\"5\n" +
-	"\x14DeleteProductRequest\x12\x1d\n" +
+	"\x15UpdateProductResponse\"?\n" +
+	"\x14DeleteProductRequest\x12'\n" +
 	"\n" +
-	"product_id\x18\x01 \x01(\tR\tproductId\"\x17\n" +
-	"\x15DeleteProductResponse\"\xe6\x01\n" +
-	"\aProduct\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
-	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x1f\n" +
+	"product_id\x18\x01 \x01(\tB\b\xfaB\x05r\x03\xb0\x01\x01R\tproductId\"\x17\n" +
+	"\x15DeleteProductResponse\"\x87\x02\n" +
+	"\aProduct\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xfaB\x05r\x03\xb0\x01\x01R\x02id\x12\x1d\n" +
+	"\x04name\x18\x02 \x01(\tB\t\xfaB\x06r\x04\x10\x05\x18xR\x04name\x12,\n" +
+	"\vdescription\x18\x03 \x01(\tB\n" +
+	"\xfaB\ar\x05\x102\x18\x88'R\vdescription\x12\x1f\n" +
 	"\vprice_cents\x18\x04 \x01(\x03R\n" +
 	"priceCents\x129\n" +
 	"\n" +
