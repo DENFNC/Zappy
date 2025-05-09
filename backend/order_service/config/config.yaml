@@ -1,0 +1,8 @@
+app_log: "dev"
+grpc:
+  port: 50055
+  timeout: 5s
+http:
+  port: 8085
+postgres:
+  url: "postgres://postgres:admin@localhost:5435/catalog_service?sslmode=disable"

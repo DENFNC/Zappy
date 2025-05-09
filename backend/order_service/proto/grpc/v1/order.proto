@@ -1,0 +1,117 @@
+syntax = "proto3";
+
+package order;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
+
+
+option go_package = "github.com/DENFNC/Zappy/order_service/proto/gen/v1;v1";
+
+// Сервис управления заказами
+service OrderService {
+  // Создание черновика заказа
+  rpc CreateDraft(CreateDraftRequest) returns (CreateDraftResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/orders"
+      body: "*"
+    };
+  }
+
+  // Получение информации о заказе
+  rpc GetOrder(GetOrderRequest) returns (GetOrderResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/orders/{order_id}"
+    };
+  }
+
+  // Отмена заказа
+  rpc CancelOrder(CancelOrderRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/api/v1/orders/{order_id}:cancel"
+    };
+  }
+}
+
+// Запрос на создание черновика заказа
+message CreateDraftRequest {
+  string profile_id = 1;
+  repeated OrderItemSpec items = 2;
+  ShippingAddress shipping_address = 3;
+  PaymentMethod payment_method = 4;
+  int64 total_amount_cents = 5;
+  string currency = 6;
+}
+
+// Ответ после создания черновика
+message CreateDraftResponse {
+  string order_id = 1;
+  OrderStatus status = 2;
+  google.protobuf.Timestamp created_at = 3;
+}
+
+// Запрос на получение заказа
+message GetOrderRequest {
+  string order_id = 1;
+}
+
+message GetOrderResponse {
+  Order order = 1;
+}
+
+// Запрос на отмену заказа
+message CancelOrderRequest {
+  string order_id = 1;
+}
+
+// Описание заказа
+message Order {
+  string order_id = 1;
+  string profile_id = 2;
+  OrderStatus status = 3;
+  int64 total_amount_cents = 4;
+  string currency = 5;
+  repeated OrderItem items = 6;
+  ShippingAddress shipping_snapshot = 7;
+  PaymentMethod payment_snapshot = 8;
+  google.protobuf.Timestamp created_at = 9;
+  google.protobuf.Timestamp updated_at = 10;
+}
+
+// Спецификация позиции при создании
+message OrderItemSpec {
+  string product_id = 1;
+  int32 quantity = 2;
+}
+
+// Позиция в заказе
+message OrderItem {
+  string order_item_id = 1;
+  string product_id = 2;
+  int32 quantity = 3;
+  int64 unit_price_cents = 4;
+  string currency = 5;
+}
+
+// Структурированные типы вместо JSON
+message ShippingAddress {
+  string street = 1;
+  string city = 2;
+  string postal_code = 3;
+  string country = 4;
+}
+
+message PaymentMethod {
+  string method = 1;
+  string details = 2;
+}
+
+// Статус заказа
+enum OrderStatus {
+  UNKNOWN = 0;
+  DRAFT = 1;
+  RESERVED = 2;
+  CONFIRMED = 3;
+  CANCELLED = 4;
+}
