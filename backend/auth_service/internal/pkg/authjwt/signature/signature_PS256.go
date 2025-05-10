@@ -1,7 +1,7 @@
-// Package vaulttoken реализует алгоритмы подписи и верификации токенов JWT с использованием Hashicorp Vault.
+// Package signature реализует алгоритмы подписи и верификации токенов JWT с использованием Hashicorp Vault.
 // Реализована подпись с использованием алгоритма RSA-PSS (PS256), где приватный ключ хранится в Vault,
 // а публичный ключ извлекается посредством интерфейса.
-package vaulttoken
+package signature
 
 import (
 	"crypto"

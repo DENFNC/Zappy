@@ -6,7 +6,7 @@ import (
 	grpcapp "github.com/DENFNC/Zappy/auth_service/internal/app/grpc"
 	"github.com/DENFNC/Zappy/auth_service/internal/config"
 	"github.com/DENFNC/Zappy/auth_service/internal/infrastructure/repo"
-	vaulttoken "github.com/DENFNC/Zappy/auth_service/internal/pkg/authjwt"
+	"github.com/DENFNC/Zappy/auth_service/internal/pkg/authjwt/signature"
 	authservice "github.com/DENFNC/Zappy/auth_service/internal/service/auth"
 	psql "github.com/DENFNC/Zappy/auth_service/internal/storage/postgres"
 )
@@ -18,7 +18,7 @@ type App struct {
 func New(
 	log *slog.Logger,
 	db *psql.Storage,
-	vault vaulttoken.VaultKMS,
+	vault signature.VaultKMS,
 	cfgVault config.ConfigVault,
 	port int,
 ) (*App, error) {

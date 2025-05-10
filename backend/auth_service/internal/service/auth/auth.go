@@ -10,6 +10,7 @@ import (
 	"github.com/DENFNC/Zappy/auth_service/internal/domain/models"
 	errpkg "github.com/DENFNC/Zappy/auth_service/internal/errors"
 	vaulttoken "github.com/DENFNC/Zappy/auth_service/internal/pkg/authjwt"
+	"github.com/DENFNC/Zappy/auth_service/internal/pkg/authjwt/signature"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -20,14 +21,14 @@ const (
 type Auth struct {
 	log      *slog.Logger
 	repo     models.UserRepository
-	vault    vaulttoken.VaultKMS
+	vault    signature.VaultKMS
 	tokenCfg config.ConfigVault
 }
 
 func NewAuth(
 	log *slog.Logger,
 	repo models.UserRepository,
-	vault vaulttoken.VaultKMS,
+	vault signature.VaultKMS,
 	tokenCfg config.ConfigVault,
 ) *Auth {
 	return &Auth{

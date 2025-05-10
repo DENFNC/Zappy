@@ -35,6 +35,14 @@ func New(t *testing.T) (context.Context, *Suite) {
 
 	cfg := config.MustLoad("../../config/config_test.yaml")
 
+	// db, err := postgres.New(cfg.Postgres.URL)
+	// require.NoError(t, err, "DB connection failed")
+	// // defer db.Close()
+	// defer db.DB.Close()
+
+	// _, err = db.DB.Exec(context.Background(), `DELETE FROM categories;`)
+	// require.NoError(t, err, "failed to clean categories table")
+
 	// Основной родительский контекст
 	ctx, cancelCtx := context.WithTimeout(context.Background(), cfg.GRPC.Timeout)
 
