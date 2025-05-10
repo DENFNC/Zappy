@@ -96,8 +96,7 @@ func (m *SigningMethodVaultPS256) Sign(signingString string, key interface{}) ([
 
 func (m *SigningMethodVaultEdDSA) Sign(signingString string, key interface{}) ([]byte, error) {
 	payload := map[string]any{
-		"input":                base64.StdEncoding.EncodeToString([]byte(signingString)),
-		"marshaling_algorithm": "string",
+		"input": base64.StdEncoding.EncodeToString([]byte(signingString)),
 	}
 	secret, err := m.Vault.Sign(m.keyName, payload)
 	if err != nil {
