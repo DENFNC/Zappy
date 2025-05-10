@@ -5,4 +5,4 @@ grpc:
 http:
   port: 8085
 postgres:
-  url: "postgres://postgres:admin@localhost:5435/catalog_service?sslmode=disable"
+  url: "postgres://postgres:admin@localhost:5435/order_service?sslmode=disable"
