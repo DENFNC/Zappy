@@ -1,11 +1,10 @@
 // Package vaulttoken реализует алгоритмы подписи и верификации токенов JWT с использованием Hashicorp Vault.
 // Реализована подпись с использованием алгоритма RSA-PSS (PS256), где приватный ключ хранится в Vault,
 // а публичный ключ извлекается посредством интерфейса.
-package vaulttoken
+package signature
 
 import (
 	"crypto"
-	"crypto/ed25519"
 	"crypto/rsa"
 	"crypto/sha256"
 	"crypto/x509"
@@ -19,7 +18,6 @@ import (
 
 const (
 	methodVaultPS256 = "PS256"
-	methodVaultEdDSA = "EdDSA"
 )
 
 type VaultKMS interface {
@@ -30,12 +28,6 @@ type VaultKMS interface {
 // SigningMethodVaultPS256 реализует метод подписи, основанный на алгоритме PS256(RSA-PSS с SHA256)
 // с использованием Vault для выполнения криптографических операций.
 type SigningMethodVaultPS256 struct {
-	Vault   VaultKMS
-	keyName string
-	name    string
-}
-
-type SigningMethodVaultEdDSA struct {
 	Vault   VaultKMS
 	keyName string
 	name    string
@@ -52,23 +44,8 @@ func NewSigningMethodVaultPS256(
 	}
 }
 
-func NewSigningMethodVaultEdDSA(
-	vault VaultKMS,
-	keyName string,
-) *SigningMethodVaultEdDSA {
-	return &SigningMethodVaultEdDSA{
-		Vault:   vault,
-		keyName: keyName,
-		name:    methodVaultEdDSA,
-	}
-}
-
 // Alg возвращает имя алгоритма подписи, используемого в SigningMethodVaultPS256.
 func (m *SigningMethodVaultPS256) Alg() string {
-	return m.name
-}
-
-func (m *SigningMethodVaultEdDSA) Alg() string {
 	return m.name
 }
 
@@ -92,18 +69,6 @@ func (m *SigningMethodVaultPS256) Sign(signingString string, key interface{}) ([
 	}
 
 	return sigRaw, nil
-}
-
-func (m *SigningMethodVaultEdDSA) Sign(signingString string, key interface{}) ([]byte, error) {
-	payload := map[string]any{
-		"input": base64.StdEncoding.EncodeToString([]byte(signingString)),
-	}
-	secret, err := m.Vault.Sign(m.keyName, payload)
-	if err != nil {
-		return nil, err
-	}
-
-	return extractSignatureFromVaultResponse(secret)
 }
 
 // Verify проверяет корректность подписи для заданной строки signingString,
@@ -136,18 +101,6 @@ func (m *SigningMethodVaultPS256) Verify(signingString string, sig []byte, key i
 	return nil
 }
 
-func (m *SigningMethodVaultEdDSA) Verify(signingString string, sig []byte, key interface{}) error {
-	pubKey, err := m.fetchPublicKey()
-	if err != nil {
-		return fmt.Errorf("verify error: failed to fetch public key from vault: %w", err)
-	}
-
-	if !ed25519.Verify(pubKey, []byte(signingString), sig) {
-		return fmt.Errorf("verify error: EdDSA verification failed")
-	}
-	return nil
-}
-
 // fetchPublicKey получает публичный RSA ключ из Vault для данного ключа подписания.
 // Данный метод декомпозирован на несколько вспомогательных функций, каждая из которых
 // отвечает за отдельный этап обработки:
@@ -170,33 +123,6 @@ func (m *SigningMethodVaultPS256) fetchPublicKey() (*rsa.PublicKey, error) {
 	}
 
 	return parseRSAPublicKeyFromPEM(pubPem)
-}
-
-func (m *SigningMethodVaultEdDSA) fetchPublicKey() (ed25519.PublicKey, error) {
-	secret, err := m.Vault.Read(m.keyName)
-	if err != nil {
-		return nil, err
-	}
-
-	pubPem, err := extractPublicKeyPEM(secret, m.keyName)
-	if err != nil {
-		return nil, err
-	}
-
-	block, _ := pem.Decode([]byte(pubPem))
-	if block == nil {
-		return nil, fmt.Errorf("failed to PEM-decode public key")
-	}
-
-	pubKey, err := x509.ParsePKIXPublicKey(block.Bytes)
-	if err != nil {
-		return nil, err
-	}
-	edPub, ok := pubKey.(ed25519.PublicKey)
-	if !ok {
-		return nil, fmt.Errorf("public key is not Ed25519")
-	}
-	return edPub, nil
 }
 
 // extractPublicKeyPEM извлекает строку с PEM-представлением публичного ключа из ответа Vault.

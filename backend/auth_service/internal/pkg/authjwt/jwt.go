@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/DENFNC/Zappy/auth_service/internal/pkg/authjwt/signature"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 )
@@ -25,14 +26,14 @@ import (
 //   - строка с подписанным JWT-токеном.
 //   - ошибка, если в процессе создания или подписания токена возникли проблемы.
 func Generate(
-	vault VaultKMS,
+	vault signature.VaultKMS,
 	iss string,
 	keyName string,
 	expires time.Duration,
 ) (string, error) {
 	// Создаем новый метод подписи, используя vault и имя
-	// newMethod := NewSigningMethodVaultPS256(vault, keyName)
-	newMethod := NewSigningMethodVaultEdDSA(vault, keyName)
+	// newMethod := signature.NewSigningMethodVaultPS256(vault, keyName)
+	newMethod := signature.NewSigningMethodVaultEdDSA(vault, keyName)
 
 	// Формируем стандартные зарегистерованные клеймы токена
 	claims := jwt.NewWithClaims(
