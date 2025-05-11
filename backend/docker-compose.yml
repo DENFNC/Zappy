@@ -7,12 +7,20 @@ services:
       # TODO: креды будут подставляться в проде иначе
       - MINIO_ROOT_USER=admin
       - MINIO_ROOT_PASSWORD=adminadmin
-      - MINIO_NOTIFY_AMQP_ENABLE_IMAGE=on
-      - MINIO_NOTIFY_AMQP_URL_IMAGE=amqp://admin:admin@rabbit:5672/
-      - MINIO_NOTIFY_AMQP_EXCHANGE_IMAGE=test-exchange
-      - MINIO_NOTIFY_AMQP_EXCHANGE_TYPE_IMAGE=topic
-      - MINIO_NOTIFY_AMQP_DURABLE_IMAGE=on
-      - MINIO_NOTIFY_AMQP_ROUTING_KEY_IMAGE=s3.ObjectCreated.Put
+      # - MINIO_NOTIFY_AMQP_ENABLE_IMAGE=on
+      # - MINIO_NOTIFY_AMQP_URL_IMAGE=amqp://admin:admin@rabbit:5672/ # TODO: В будущем будет использоваться для EDA
+      # - MINIO_NOTIFY_AMQP_EXCHANGE_IMAGE=test-exchange              # TODO: В будущем будет использоваться для EDA
+      # - MINIO_NOTIFY_AMQP_EXCHANGE_TYPE_IMAGE=topic                 # TODO: В будущем будет использоваться для EDA
+      # - MINIO_NOTIFY_AMQP_DURABLE_IMAGE=on                          # TODO: В будущем будет использоваться для EDA
+      # - MINIO_NOTIFY_AMQP_ROUTING_KEY_IMAGE=s3.ObjectCreated.Put    # TODO: В будущем будет использоваться для EDA
+      - MINIO_NOTIFY_WEBHOOK_ENABLE_MIME=on
+      # TODO: host.docker.internal для тестов 
+      # TODO: Потом сменить на DNS
+      - MINIO_NOTIFY_WEBHOOK_ENDPOINT_MIME=http://host.docker.internal:8081/api/v1/webhook/checkmime
+      # - MINIO_NOTIFY_WEBHOOK_AUTH_TOKEN_MIME=123                    # TODO: Токен аутентификации для Webhook-сервиса (Bearer)
+      # - MINIO_NOTIFY_WEBHOOK_QUEUE_DIR_MIME=path                    # TODO: Путь к директории для хранения неотправленных сообщений
+      # - MINIO_NOTIFY_WEBHOOK_CLIENT_CERT_MIME=path/to               # TODO: Путь к клиентскому сертификату для mTLS-аутентификации
+      # - MINIO_NOTIFY_WEBHOOK_CLIENT_KEY_MIME=path/to                # TODO: Путь к приватному ключу для mTLS-аутентификации
     ports:
       - "9000:9000"
       - "9010:9010"

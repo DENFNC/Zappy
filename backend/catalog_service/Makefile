@@ -1,38 +1,12 @@
-APP_PROTO         = proto/grpc/v1
-APP_PROTO_GEN     = proto/gen/v1
+APP_PROTO          = proto/grpc/v1
+APP_PROTO_GEN      = proto/gen/v1
 APP_PROTO_VALIDATE = proto/protoc-gen-validate
-APP_PROTO_API     = proto/googleapis
+APP_PROTO_API      = proto/googleapis
+APP_PROTO_HOOKS    = proto/grpc/v1/hooks
 GOPATH            ?= $(shell go env GOPATH)
 BIN_PATH          := $(GOPATH)/bin
 
-.PHONY: grpc-gen grpc-clean grpc-rebuild check-plugins mig-up mig-drop
-
-# Generate gRPC and validation code
-grpc-gen: check-plugins
-	@echo "🔧 Generating gRPC code..."
-	@mkdir -p $(APP_PROTO_GEN)
-	PATH="$(BIN_PATH):$$PATH" \
-	protoc \
-		-I=$(APP_PROTO) \
-		-I=$(APP_PROTO_VALIDATE) \
-		-I=$(APP_PROTO_API) \
-		--go_out=$(APP_PROTO_GEN) --go_opt=paths=source_relative \
-		--go-grpc_out=$(APP_PROTO_GEN) --go-grpc_opt=paths=source_relative \
-		--validate_out=$(APP_PROTO_GEN) \
-		--validate_opt=lang=go \
-		--validate_opt=paths=source_relative \
-		--grpc-gateway_out=$(APP_PROTO_GEN) \
-		--grpc-gateway_opt=paths=source_relative \
-		$(wildcard $(APP_PROTO)/*.proto)
-
-# Clean generated files
-grpc-clean:
-	@echo "🧹 Cleaning generated gRPC files..."
-	rm -rf $(APP_PROTO_GEN)
-	@echo "✅ Clean complete"
-
-# Rebuild everything
-grpc-rebuild: grpc-clean grpc-gen
+.PHONY: check-plugins mig-up mig-drop
 
 mig-up:
 	@echo "🚀 Migrating database..."

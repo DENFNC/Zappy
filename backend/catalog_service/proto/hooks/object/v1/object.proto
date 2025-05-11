@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package object.v1;
+
+import "google/api/annotations.proto";
+import "hook_common/v1/object_storage_event.proto";
+
+option go_package = "github.com/DENFNC/Zappy/catalog_service/proto/gen/go/object/v1;hooks";
+
+service WebHookService {
+    rpc CheckMimeObjectStorage(WebHookServiceCheckMimeObjectStorageRequest) returns (WebHookServiceCheckMimeObjectStorageResponse) {
+        option (google.api.http) = {
+            post: "/api/v1/webhook/checkmime"
+            body: "*"
+        };
+    }
+}
+
+message WebHookServiceCheckMimeObjectStorageRequest {
+    string event_name = 1 [json_name = "EventName"];
+    string key        = 2 [json_name = "Key"];
+    repeated hooks.common.v1.ObjectStorageRecord records = 3 [json_name = "Records"];
+}
+
+message WebHookServiceCheckMimeObjectStorageResponse {
+    string detected_content_type = 2;
+    string message               = 3;
+    bool   valid                 = 1;
+}

@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+
+package hooks.common.v1;
+
+
+option go_package = "github.com/DENFNC/Zappy/catalog_service/proto/gen/go/hook_common/v1;resources";
+
+
+message ObjectStorageRecord {
+    ObjectStorageS3 s3 = 1 [json_name = "s3"];
+}
+
+message ObjectStorageS3 {
+    ObjectStorageBucket bucket = 1 [json_name = "buckets"];
+    ObjectStorageObject object = 2 [json_name = "object"];
+}
+
+message ObjectStorageBucket {
+    string name = 1 [json_name = "name"];
+    string arn  = 2 [json_name = "arn"];
+}
+
+message ObjectStorageObject {
+    string key  = 1 [json_name = "key"];
+    int64  size = 2 [json_name = "size"];
+    string content_type = 3 [json_name = "contentType"];
+}
