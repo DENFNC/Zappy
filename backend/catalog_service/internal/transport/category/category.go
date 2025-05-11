@@ -5,12 +5,13 @@ import (
 
 	"github.com/DENFNC/Zappy/catalog_service/internal/domain/models"
 	errpkg "github.com/DENFNC/Zappy/catalog_service/internal/utils/errors"
-	v1 "github.com/DENFNC/Zappy/catalog_service/proto/gen/v1"
+	v1 "github.com/DENFNC/Zappy/catalog_service/proto/gen/go/category/v1"
+	"github.com/DENFNC/Zappy/catalog_service/proto/gen/go/common/v1"
+
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -65,7 +66,7 @@ func (api *serverAPI) CreateCategory(
 	}
 
 	return &v1.CreateCategoryResponse{
-		CategoryId: &v1.ResourceID{
+		CategoryId: &common.ResourceID{
 			Id: categoryID,
 		},
 	}, nil
@@ -104,7 +105,7 @@ func (api *serverAPI) ListCategories(
 
 	return &v1.ListCategoriesResponse{
 		Categories: v1Category,
-		Pagination: &v1.PaginationResponse{
+		Pagination: &common.PaginationResponse{
 			PageSize:  req.Pagination.GetPageSize(),
 			PageToken: nextPageToken,
 			AfterPage: afterPage,
@@ -112,7 +113,7 @@ func (api *serverAPI) ListCategories(
 	}, nil
 }
 
-func (api *serverAPI) DeleteCategory(ctx context.Context, req *v1.DeleteCategoryRequest) (*emptypb.Empty, error) {
+func (api *serverAPI) DeleteCategory(ctx context.Context, req *v1.DeleteCategoryRequest) (*v1.DeleteCategoryResponse, error) {
 	if err := api.svc.Delete(
 		ctx,
 		req.GetCategoryId(),
@@ -123,5 +124,5 @@ func (api *serverAPI) DeleteCategory(ctx context.Context, req *v1.DeleteCategory
 		)
 	}
 
-	return &emptypb.Empty{}, nil
+	return &v1.DeleteCategoryResponse{}, nil
 }

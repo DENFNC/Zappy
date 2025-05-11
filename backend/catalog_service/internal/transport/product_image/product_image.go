@@ -4,7 +4,7 @@ import (
 	"context"
 
 	errpkg "github.com/DENFNC/Zappy/catalog_service/internal/utils/errors"
-	v1 "github.com/DENFNC/Zappy/catalog_service/proto/gen/v1"
+	v1 "github.com/DENFNC/Zappy/catalog_service/proto/gen/go/product_image/v1"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -44,8 +44,8 @@ func (api *serverAPI) HTTPRegister(
 
 func (api *serverAPI) UploadFileURL(
 	ctx context.Context,
-	req *v1.UploadURLRequest,
-) (*v1.UploadURLResponse, error) {
+	req *v1.ProductImageServiceUploadFileURLRequest,
+) (*v1.ProductImageServiceUploadFileURLResponse, error) {
 	url, err := api.svc.GetUploadURL(
 		ctx,
 		api.bucketName,
@@ -60,7 +60,7 @@ func (api *serverAPI) UploadFileURL(
 		)
 	}
 
-	return &v1.UploadURLResponse{
+	return &v1.ProductImageServiceUploadFileURLResponse{
 		UploadUrl: url,
 		ObjectKey: req.GetFilename(),
 	}, nil

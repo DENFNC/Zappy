@@ -5,12 +5,12 @@ import (
 
 	"github.com/DENFNC/Zappy/catalog_service/internal/domain/models"
 	errpkg "github.com/DENFNC/Zappy/catalog_service/internal/utils/errors"
-	v1 "github.com/DENFNC/Zappy/catalog_service/proto/gen/v1"
+	"github.com/DENFNC/Zappy/catalog_service/proto/gen/go/common/v1"
+	v1 "github.com/DENFNC/Zappy/catalog_service/proto/gen/go/product/v1"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -84,7 +84,7 @@ func (api *serverAPI) CreateProduct(
 	}
 
 	return &v1.CreateProductResponse{
-		ProductId: &v1.ResourceID{
+		ProductId: &common.ResourceID{
 			Id: productID,
 		},
 	}, nil
@@ -148,7 +148,7 @@ func (api *serverAPI) ListProducts(
 
 	return &v1.ListProductsResponse{
 		Products: v1Products,
-		Pagination: &v1.PaginationResponse{
+		Pagination: &common.PaginationResponse{
 			PageSize:  req.Pagination.GetPageSize(),
 			PageToken: nextPageToken,
 			AfterPage: afterPage,
@@ -181,7 +181,7 @@ func (api *serverAPI) UpdateProduct(
 func (api *serverAPI) DeleteProduct(
 	ctx context.Context,
 	req *v1.DeleteProductRequest,
-) (*emptypb.Empty, error) {
+) (*v1.DeleteProductResponse, error) {
 	err := api.svc.Delete(ctx, req.GetProductId())
 	if err != nil {
 		return nil, status.Error(
@@ -190,5 +190,5 @@ func (api *serverAPI) DeleteProduct(
 		)
 	}
 
-	return &emptypb.Empty{}, nil
+	return &v1.DeleteProductResponse{}, nil
 }
