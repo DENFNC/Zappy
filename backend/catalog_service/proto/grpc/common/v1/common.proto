@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package common.v1;
+
+import "validate/validate.proto";
+
+option go_package = "github.com/DENFNC/Zappy/catalog_service/proto/gen/go/common/v1;common";
+
+
+message PaginationRequest {
+  uint32 page_size  = 1 [(validate.rules).uint32 = {
+    gte: 0,
+    lte: 500
+  }];
+  string page_token = 2;
+}
+
+message PaginationResponse {
+  uint32 page_size  = 1;
+  string page_token = 2;
+  bool   after_page = 3;
+}
+
+
+message ResourceID {
+  string id = 1 [(validate.rules).string.uuid = true];
+}

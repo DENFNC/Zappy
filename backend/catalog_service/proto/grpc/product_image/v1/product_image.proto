@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package product_image.v1;
+
+import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
+
+option go_package = "github.com/DENFNC/Zappy/catalog_service/proto/gen/v1;v1";
+
+service ProductImageService {
+  rpc UploadFileURL(ProductImageServiceUploadFileURLRequest) returns (ProductImageServiceUploadFileURLResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/catalog_service/uploads:prepare"
+      body: "*"
+    };
+  }
+}
+
+message ProductImage {
+  string image_id = 1;
+  string product_id = 2;
+  string url = 3;
+  string alt = 4;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
+}
+
+message ProductImageServiceUploadFileURLRequest {
+  string product_id = 1;
+  string filename = 2;
+  string content_type = 3;
+}
+
+message ProductImageServiceUploadFileURLResponse {
+  string upload_url = 1;
+  string object_key = 2;
+}
