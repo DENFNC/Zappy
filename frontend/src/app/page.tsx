@@ -1,103 +1,101 @@
-import Image from "next/image";
+'use client';
+import CardDiscount from '@/components/CardDiscount/CardDiscount';
+import CarouselDiscountItems from '@/components/CarouselDiscountItems/CarouselDiscountItems';
+import Footer from '@/components/Footer/Footer';
+import Header from '@/components/Header/Header';
+
+import GoodList from '@/components/GoodsList/GoodList';
+import { CardGoodType } from '@/types/card-goods.type';
+
+const goods: CardGoodType[] = [
+  {
+    id: '1',
+    name: 'Wireless Headphones',
+    description: 'High-quality sound with noise cancellation.',
+    image:
+      'https://images.unsplash.com/photo-1603791440384-56cd371ee9a7?crop=entropy&cs=tinysrgb&fit=max&ixid=MXwyMDg5OHwwfDF8c2VhY2h8MXx8aGVhZHBob25lfGVufDB8fHx8fDE2NTg4NDA0NjI&ixlib=rb-1.2.1&q=80&w=400',
+    price: 89.99,
+  },
+  {
+    id: '2',
+    name: 'Smart Watch',
+    description: 'Stay connected with fitness tracking.',
+    image:
+      'https://images.unsplash.com/photo-1571944692545-e34e2cf80065?crop=entropy&cs=tinysrgb&fit=max&ixid=MXwyMDg5OHwwfDF8c2VhY2h8MnwxfGZpdG5lc3MlMkZyZWQgdGVsZXZpc2lvbnxlbnwwfDF8fHx8fDE2NjI0NzYzMzc&ixlib=rb-1.2.1&q=80&w=400',
+    price: 129.99,
+  },
+  {
+    id: '3',
+    name: 'Bluetooth Speaker',
+    description: 'Portable speaker with powerful bass.',
+    image:
+      'https://images.unsplash.com/photo-1591101215045-c73e26bff53f?crop=entropy&cs=tinysrgb&fit=max&ixid=MXwyMDg5OHwwfDF8c2VhY2h8Mnx8YnJlYWtmYXJlZCBzcGVha2VydxlhbGwxfDB8fHx8fDE2NjI0NzYzMzc&ixlib=rb-1.2.1&q=80&w=400',
+    price: 49.99,
+  },
+  {
+    id: '4',
+    name: 'Laptop Backpack',
+    description: 'Durable backpack for your laptop and accessories.',
+    image:
+      'https://images.unsplash.com/photo-1573185599930-44128306e6b7?crop=entropy&cs=tinysrgb&fit=max&ixid=MXwyMDg5OHwwfDF8c2VhY2h8Mnx8Y2FwdHVyZSBpbnNlY3R8ZW58MHx8fHx8fDE2NjI0NzY2NDA&ixlib=rb-1.2.1&q=80&w=400',
+    price: 59.99,
+  },
+];
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <main className="flex-grow">
+        <CarouselDiscountItems />
+        <div className="flex mt-4 space-x-3 text-center">
+          <CardDiscount
+            title={'Детский мир'}
+            description="Скидки на игрушки, одежду и товары для детей."
+          />
+          <CardDiscount
+            title={'Выгода'}
+            description="Товары по лучшим ценам для экономных покупателей."
+          />
+          <CardDiscount
+            title={'Модный базар'}
+            description="Актуальные тренды и модные новинки по привлекательным ценам."
+          />
+          <CardDiscount
+            title={'Товары недели'}
+            description="Лучшие предложения и акции этой недели."
+          />
+        </div>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+        <div className="flex">
+          <GoodList title="Модная распродажа" cards={goods}></GoodList>
+        </div>
+
+        <div className="flex">
+          <GoodList title="Турецкий бренд посуды" cards={goods}></GoodList>
+        </div>
+
+        <div className="flex">
+          <GoodList title="Ваша красота" cards={goods}></GoodList>
+        </div>
+
+        <div className="flex">
+          <GoodList title="Холодильники" cards={goods}></GoodList>
+        </div>
+
+        <div className="flex">
+          <GoodList title="Все для здоровья" cards={goods}></GoodList>
+        </div>
+
+        <div className="flex">
+          <GoodList title="Бренды малышей" cards={goods}></GoodList>
+        </div>
+
+        <div className="flex">
+          <GoodList title="Скидки" cards={goods}></GoodList>
         </div>
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      <Footer />
     </div>
   );
 }
