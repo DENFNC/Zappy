@@ -58,6 +58,7 @@ services:
 
   vault:
     image: hashicorp/vault:1.19
+    container_name: vault
     environment:
       - VAULT_ADDR=http://127.0.0.1:8200 # TODO: DEV разработка, будет переход на TLS (HTTPS)
       - VAULT_API_ADDR=http://127.0.0.1:8200 # TODO: DEV разработка, будет переход на TLS (HTTPS)
@@ -74,6 +75,16 @@ services:
       - vault:/vault/logs
       - vault:/vault/plugins
 
+  redis:
+    image: redis:8.0.0-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - zappy
+      # volumes:
+      # - redis:
+
 networks:
   zappy:
     driver: bridge
@@ -84,3 +95,4 @@ volumes:
   postgres:
   vault:
   rabbitmq:
+  redis:
