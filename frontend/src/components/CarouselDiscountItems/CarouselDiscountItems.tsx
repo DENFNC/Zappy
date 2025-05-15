@@ -29,10 +29,11 @@ export default function CarouselDiscountItems() {
         >
           <Image
             src={src}
-            width={3000}
-            height={3000}
             alt={`Slide ${index + 1}`}
             className="w-full h-full"
+            width={0}
+            height={0}
+            sizes="100vw"
           />
         </div>
       ))}
