@@ -32,10 +32,15 @@ type App struct {
 func New(
 	ctx context.Context,
 	log *slog.Logger,
+	reflect bool,
 	grpcPort int,
 	httpPort int,
 	services ...ServiceRegistrar,
 ) *App {
+	const op = "grpcapp.New"
+
+	log = log.With("op", op)
+
 	mux := runtime.NewServeMux()
 
 	grpcServer := grpc.NewServer(
@@ -43,7 +48,13 @@ func New(
 			interceptors.ValidateArgsInterceptor(ctx),
 		),
 	)
-	reflection.Register(grpcServer)
+
+	if reflect {
+		log.Warn(
+			"Reflection enabled",
+		)
+		reflection.Register(grpcServer)
+	}
 
 	for _, service := range services {
 		service.GRPCRegister(grpcServer)
@@ -103,7 +114,7 @@ func (a *App) httpStart() error {
 		"addr", fmt.Sprintf(":%d", a.httpPort),
 	)
 
-	if err := http.ListenAndServe(fmt.Sprintf("localhost:%d", a.httpPort), a.httpServer); err != nil {
+	if err := http.ListenAndServe(fmt.Sprintf("127.0.0.1:%d", a.httpPort), a.httpServer); err != nil {
 		return err
 	}
 

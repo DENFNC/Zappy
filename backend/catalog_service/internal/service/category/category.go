@@ -1,21 +1,20 @@
-package service
+package categoryservice
 
 import (
 	"context"
 	"log/slog"
 
 	"github.com/DENFNC/Zappy/catalog_service/internal/domain/models"
-	"github.com/DENFNC/Zappy/catalog_service/internal/domain/repositories"
 )
 
 type Category struct {
 	log  *slog.Logger
-	repo repositories.CategoryRepo
+	repo CategoryRepo
 }
 
 func NewCategory(
 	log *slog.Logger,
-	repo repositories.CategoryRepo,
+	repo CategoryRepo,
 ) *Category {
 	return &Category{
 		log:  log,

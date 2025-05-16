@@ -2,15 +2,19 @@ package hooks
 
 import (
 	"context"
-	"fmt"
 
 	hooks "github.com/DENFNC/Zappy/catalog_service/proto/gen/go/object/v1"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
 )
 
 type WebHook interface {
-	CheckMIME(data []byte) error
+	CheckMime(
+		ctx context.Context,
+		bucket, key string,
+		byteRange string,
+	) error
 }
 
 type serverAPI struct {
@@ -39,7 +43,22 @@ func (api *serverAPI) CheckMimeObjectStorage(
 	ctx context.Context,
 	req *hooks.WebHookServiceCheckMimeObjectStorageRequest,
 ) (*hooks.WebHookServiceCheckMimeObjectStorageResponse, error) {
-	fmt.Println(req.String())
+	group, ctx := errgroup.WithContext(ctx)
+	hookRecords := req.GetRecords()
+
+	for _, rec := range hookRecords {
+		group.Go(func() error {
+			return api.svc.CheckMime(
+				ctx,
+				rec.GetS3().Bucket.Name,
+				rec.GetS3().Object.Key,
+				"bytes=0-511",
+			)
+		})
+	}
+	if err := group.Wait(); err != nil {
+		return nil, err
+	}
 
 	return &hooks.WebHookServiceCheckMimeObjectStorageResponse{}, nil
 }

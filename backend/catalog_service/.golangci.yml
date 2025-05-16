@@ -1,0 +1,67 @@
+version: "2"
+
+run:
+  timeout: 5m
+  tests: true
+  modules-download-mode: readonly
+
+linters:
+  enable:
+    - govet
+    - staticcheck
+    - errcheck
+    - ineffassign
+    - unused
+    - gocyclo
+    - dupl
+    - gocritic
+    - unconvert
+    - bodyclose
+    - gosec
+    - misspell
+    - contextcheck
+    - copyloopvar
+    - containedctx
+    - dogsled
+    - durationcheck
+    - exhaustruct
+    - goconst
+    - gomodguard
+    - iface
+    - interfacebloat
+    - sqlclosecheck
+    - rowserrcheck
+
+  settings:
+    gocyclo:
+      min-complexity: 15
+    dupl:
+      threshold: 100
+    gosec:
+      severity: high
+    misspell:
+      locale: US
+    gomodguard:
+      blocked:
+        modules:
+          - github.com/old/dependency: {}
+    interfacebloat:
+      max: 6
+
+  exclusions:
+    rules:
+      - path: "_gen\\.go$"
+        linters:
+          - gocyclo
+      - path: "^vendor/"
+        linters:
+          - errcheck
+
+issues:
+  max-same-issues: 0
+  max-issues-per-linter: 0
+
+formatters:
+  enable:
+    - gofmt
+    - goimports

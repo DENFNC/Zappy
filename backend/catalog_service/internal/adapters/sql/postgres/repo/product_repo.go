@@ -16,7 +16,7 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-type ProductRepo struct {
+type Product struct {
 	*postgres.Storage
 	goqu     goqu.DialectWrapper
 	paginate *paginate.Paginator[dao.ProductDAO]
@@ -24,28 +24,26 @@ type ProductRepo struct {
 
 func NewProductRepo(
 	db *postgres.Storage,
-	goqu goqu.DialectWrapper,
 	coder paginate.TokenCoder,
-) *ProductRepo {
-	paginate, err := paginate.NewPaginator[dao.ProductDAO](db.DB, goqu, coder)
+) *Product {
+	paginate, err := paginate.NewPaginator[dao.ProductDAO](db.Client, db.Dialect, coder)
 	if err != nil {
 		panic(err)
 	}
 
-	return &ProductRepo{
+	return &Product{
 		Storage:  db,
-		goqu:     goqu,
 		paginate: paginate,
 	}
 }
 
-func (repo *ProductRepo) Create(
+func (repo *Product) Create(
 	ctx context.Context,
 	name, desc string,
 	categoryIDs []string,
 	price int64,
 ) (string, error) {
-	conn, err := repo.DB.Acquire(ctx)
+	conn, err := repo.Client.Acquire(ctx)
 	if err != nil {
 		return "", err
 	}
@@ -113,7 +111,7 @@ func (repo *ProductRepo) Create(
 	return productID, nil
 }
 
-func (repo *ProductRepo) GetByID(
+func (repo *Product) GetByID(
 	ctx context.Context,
 	productID string,
 ) (*models.Product, error) {
@@ -134,7 +132,7 @@ func (repo *ProductRepo) GetByID(
 	}
 
 	var productDAO dao.ProductDAO
-	row := repo.DB.QueryRow(ctx, stmt, args...)
+	row := repo.Client.QueryRow(ctx, stmt, args...)
 	if err := dbutils.ScanStruct(row, &productDAO); err != nil {
 		return nil, err
 	}
@@ -151,7 +149,7 @@ func (repo *ProductRepo) GetByID(
 	return &product, nil
 }
 
-func (repo *ProductRepo) List(
+func (repo *Product) List(
 	ctx context.Context,
 	pageSize uint32,
 	pageToken string,
@@ -194,14 +192,14 @@ func (repo *ProductRepo) List(
 	return products, nextPageToken, nil
 }
 
-func (repo *ProductRepo) Update(
+func (repo *Product) Update(
 	ctx context.Context,
 	uid string,
 	desc, name string,
 	categoryIDs []string,
 	price int64,
 ) error {
-	conn, err := repo.DB.Acquire(ctx)
+	conn, err := repo.Client.Acquire(ctx)
 	if err != nil {
 		return errors.New("acquire conn err")
 	}
@@ -274,7 +272,7 @@ func (repo *ProductRepo) Update(
 	})
 }
 
-func (repo *ProductRepo) Delete(
+func (repo *Product) Delete(
 	ctx context.Context,
 	productID string,
 ) error {
@@ -286,7 +284,7 @@ func (repo *ProductRepo) Delete(
 		return err
 	}
 
-	cmdTags, err := repo.DB.Exec(ctx, stmt, args...)
+	cmdTags, err := repo.Client.Exec(ctx, stmt, args...)
 	if err != nil {
 		return err
 	}

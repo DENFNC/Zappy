@@ -1,21 +1,20 @@
-package service
+package productservice
 
 import (
 	"context"
 	"log/slog"
 
 	"github.com/DENFNC/Zappy/catalog_service/internal/domain/models"
-	"github.com/DENFNC/Zappy/catalog_service/internal/domain/repositories"
 )
 
 type Product struct {
 	log  *slog.Logger
-	repo repositories.ProductRepo
+	repo ProductRepo
 }
 
 func NewProduct(
 	log *slog.Logger,
-	repo repositories.ProductRepo,
+	repo ProductRepo,
 ) *Product {
 	return &Product{
 		log:  log,

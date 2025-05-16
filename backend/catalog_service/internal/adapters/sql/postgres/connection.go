@@ -10,11 +10,11 @@ import (
 )
 
 type Storage struct {
-	DB   *pgxpool.Pool
-	Dial goqu.DialectWrapper
+	Client  *pgxpool.Pool
+	Dialect goqu.DialectWrapper
 }
 
-func New(conn string) (*Storage, error) {
+func NewStorage(conn string) (*Storage, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -30,11 +30,11 @@ func New(conn string) (*Storage, error) {
 	dialect := goqu.Dialect("postgres")
 
 	return &Storage{
-		DB:   dbpool,
-		Dial: dialect,
+		Client:  dbpool,
+		Dialect: dialect,
 	}, nil
 }
 
 func (s *Storage) Stop() {
-	s.DB.Close()
+	s.Client.Close()
 }

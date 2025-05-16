@@ -7,6 +7,7 @@ type ProductImage struct {
 	ProductID string
 	URL       string
 	ALT       string
+	ObjectKey string
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
