@@ -9,8 +9,6 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
 
-var NotifyConfigs []*types.NotificationConfiguration
-
 type Notifyer struct {
 	client *Client
 }
