@@ -11,6 +11,7 @@ import (
 	"github.com/DENFNC/Zappy/catalog_service/internal/pkg/paginate"
 	"github.com/DENFNC/Zappy/catalog_service/internal/utils/dbutils"
 	"github.com/doug-martin/goqu/v9"
+	"github.com/gofrs/uuid"
 )
 
 type ProductImage struct {
@@ -37,11 +38,11 @@ func (repo *ProductImage) Create(
 	ctx context.Context,
 	image *models.ProductImage,
 ) (string, error) {
-	uid := dbutils.NewUUIDV7().String()
+	uid, _ := uuid.NewV7()
 
 	stmt, args, err := repo.Dialect.Insert("product_image").Rows(
 		goqu.Record{
-			"image_id":   uid,
+			"image_id":   uid.String(),
 			"product_id": goqu.L("NULLIF(?, '')::uuid", image.ProductID),
 			"url":        image.URL,
 			"alt":        image.ALT,
@@ -63,7 +64,7 @@ func (repo *ProductImage) Create(
 		return "", errors.New("no rows affected")
 	}
 
-	return uid, nil
+	return uid.String(), nil
 }
 
 func (repo *ProductImage) GetByID(

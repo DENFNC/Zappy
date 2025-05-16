@@ -13,6 +13,7 @@ import (
 	"github.com/DENFNC/Zappy/catalog_service/internal/utils/dbutils"
 	errpkg "github.com/DENFNC/Zappy/catalog_service/internal/utils/errors"
 	"github.com/doug-martin/goqu/v9"
+	"github.com/gofrs/uuid"
 	"github.com/jackc/pgx/v5"
 )
 
@@ -49,14 +50,14 @@ func (repo *Product) Create(
 	}
 	defer conn.Release()
 
-	productID := dbutils.NewUUIDV7().String()
+	uid, _ := uuid.NewV7()
 	dateNow := time.Now().UTC()
 
-	if err := dbutils.WithTx(ctx, conn, func(tx pgx.Tx) error {
+	if err := repo.WithTx(ctx, func(tx pgx.Tx) error {
 		stmt, args, err := repo.goqu.Insert("product").
 			Rows(
 				goqu.Record{
-					"product_id":   productID,
+					"product_id":   uid.String(),
 					"product_name": name,
 					"description":  desc,
 					"price":        price,
@@ -81,7 +82,7 @@ func (repo *Product) Create(
 		records := make([]interface{}, len(categoryIDs))
 		for i, cid := range categoryIDs {
 			records[i] = goqu.Record{
-				"product_id":  productID,
+				"product_id":  uid.String(),
 				"category_id": cid,
 				"assigned_at": dateNow,
 			}
@@ -108,7 +109,7 @@ func (repo *Product) Create(
 		return "", err
 	}
 
-	return productID, nil
+	return uid.String(), nil
 }
 
 func (repo *Product) GetByID(
@@ -206,7 +207,7 @@ func (repo *Product) Update(
 	defer conn.Release()
 
 	now := time.Now().UTC()
-	return dbutils.WithTx(ctx, conn, func(tx pgx.Tx) error {
+	return repo.WithTx(ctx, func(tx pgx.Tx) error {
 		updSQL, updArgs, err := repo.goqu.Update("product").
 			Set(goqu.Record{
 				"product_name": name,

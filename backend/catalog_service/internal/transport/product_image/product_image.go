@@ -6,10 +6,10 @@ import (
 	"strings"
 
 	"github.com/DENFNC/Zappy/catalog_service/internal/domain/models"
-	"github.com/DENFNC/Zappy/catalog_service/internal/utils/dbutils"
 	errpkg "github.com/DENFNC/Zappy/catalog_service/internal/utils/errors"
 	"github.com/DENFNC/Zappy/catalog_service/proto/gen/go/common/v1"
 	v1 "github.com/DENFNC/Zappy/catalog_service/proto/gen/go/product_image/v1"
+	"github.com/gofrs/uuid"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -172,10 +172,10 @@ func (api *serverAPI) UploadFileURL(
 	ctx context.Context,
 	req *v1.UploadFileURLRequest,
 ) (*v1.UploadFileURLResponse, error) {
-	uid := dbutils.NewUUIDV7().String()
+	uid, _ := uuid.NewV7()
 
 	var builder strings.Builder
-	builder.WriteString(uid)
+	builder.WriteString(uid.String())
 	builder.WriteString(filepath.Ext(req.GetFilename()))
 	key := builder.String()
 

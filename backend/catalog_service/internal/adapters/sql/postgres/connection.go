@@ -6,6 +6,7 @@ import (
 
 	"github.com/doug-martin/goqu/v9"
 	_ "github.com/doug-martin/goqu/v9/dialect/postgres"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -34,7 +35,26 @@ func NewStorage(conn string) (*Storage, error) {
 		Dialect: dialect,
 	}, nil
 }
+func (s *Storage) WithTx(ctx context.Context, f func(tx pgx.Tx) error) (err error) {
+	tx, err := s.Client.Begin(ctx)
+	if err != nil {
+		return err
+	}
 
+	defer func() {
+		if r := recover(); r != nil {
+			_ = tx.Rollback(ctx)
+			panic(r)
+		} else if err != nil {
+			_ = tx.Rollback(ctx)
+		}
+	}()
+
+	if err = f(tx); err != nil {
+		return err
+	}
+	return tx.Commit(ctx)
+}
 func (s *Storage) Stop() {
 	s.Client.Close()
 }

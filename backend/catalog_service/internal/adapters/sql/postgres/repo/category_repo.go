@@ -8,8 +8,8 @@ import (
 	"github.com/DENFNC/Zappy/catalog_service/internal/adapters/sql/postgres"
 	"github.com/DENFNC/Zappy/catalog_service/internal/adapters/sql/postgres/dao"
 	"github.com/DENFNC/Zappy/catalog_service/internal/domain/models"
-	"github.com/DENFNC/Zappy/catalog_service/internal/utils/dbutils"
 	errpkg "github.com/DENFNC/Zappy/catalog_service/internal/utils/errors"
+	"github.com/gofrs/uuid"
 
 	"github.com/DENFNC/Zappy/catalog_service/internal/pkg/paginate"
 	"github.com/doug-martin/goqu/v9"
@@ -39,12 +39,12 @@ func (repo *Category) Create(
 	ctx context.Context,
 	name, parentID string,
 ) (string, error) {
-	uid := dbutils.NewUUIDV7().String()
+	uid, _ := uuid.NewV7()
 	dateTimeNow := time.Now().UTC()
 
 	stmt, args, err := repo.Dialect.Insert("category").
 		Rows(goqu.Record{
-			"category_id":   uid,
+			"category_id":   uid.String(),
 			"category_name": name,
 			"parent_id":     goqu.L("NULLIF(?, '')::uuid", parentID),
 			"created_at":    dateTimeNow,
@@ -64,7 +64,7 @@ func (repo *Category) Create(
 		return "", errors.New("no rows affected")
 	}
 
-	return uid, nil
+	return uid.String(), nil
 }
 
 func (repo *Category) GetByID(
