@@ -10,7 +10,7 @@ option go_package = "github.com/DENFNC/Zappy/catalog_service/proto/gen/go/object
 service WebHookService {
     rpc CheckMimeObjectStorage(WebHookServiceCheckMimeObjectStorageRequest) returns (WebHookServiceCheckMimeObjectStorageResponse) {
         option (google.api.http) = {
-            post: "/api/v1/webhook/checkmime"
+            post: "/api/v1/catalog_service/webhook/checkmime"
             body: "*"
         };
     }
@@ -22,8 +22,4 @@ message WebHookServiceCheckMimeObjectStorageRequest {
     repeated hooks.common.v1.ObjectStorageRecord records = 3 [json_name = "Records"];
 }
 
-message WebHookServiceCheckMimeObjectStorageResponse {
-    string detected_content_type = 2;
-    string message               = 3;
-    bool   valid                 = 1;
-}
+message WebHookServiceCheckMimeObjectStorageResponse {}

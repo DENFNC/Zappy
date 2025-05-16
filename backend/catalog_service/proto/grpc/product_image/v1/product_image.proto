@@ -3,35 +3,129 @@ syntax = "proto3";
 package product_image.v1;
 
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
 import "google/api/annotations.proto";
+import "common/v1/common.proto";
 
 option go_package = "github.com/DENFNC/Zappy/catalog_service/proto/gen/v1;v1";
 
+
 service ProductImageService {
-  rpc UploadFileURL(ProductImageServiceUploadFileURLRequest) returns (ProductImageServiceUploadFileURLResponse) {
+  rpc UploadFileURL(UploadFileURLRequest) 
+      returns (UploadFileURLResponse) {
     option (google.api.http) = {
       post: "/api/v1/catalog_service/uploads:prepare"
       body: "*"
     };
   }
+  rpc UploadStatus(UploadStatusRequest) 
+      returns (UploadStatusResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/catalog_service/upload-status"
+    };
+  }
+  rpc GetProductImage(GetProductImageRequest)
+      returns (GetProductImageResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/catalog_service/product_images/{image_id}"
+    };
+  }
+  rpc ListProductImages(ListProductImagesRequest)
+      returns (ListProductImagesResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/catalog_service/products/{product_id}/images"
+    };
+  }
+  rpc UpdateProductImage(UpdateProductImageRequest)
+      returns (UpdateProductImageResponse) {
+    option (google.api.http) = {
+      patch: "/api/v1/catalog_service/product_images/{image_id}"
+      body: "*"
+    };
+  }
+  rpc DeleteProductImage(DeleteProductImageRequest)
+      returns (DeleteProductImageResponse) {
+    option (google.api.http) = {
+      delete: "/api/v1/catalog_service/product_images/{image_id}"
+    };
+  }
 }
 
+
 message ProductImage {
-  string image_id = 1;
+  string image_id   = 1;
   string product_id = 2;
   string url = 3;
   string alt = 4;
-  google.protobuf.Timestamp created_at = 5;
-  google.protobuf.Timestamp updated_at = 6;
+  string object_key = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
 }
 
-message ProductImageServiceUploadFileURLRequest {
+
+message UploadFileURLRequest {
   string product_id = 1;
-  string filename = 2;
+  string filename   = 2;
   string content_type = 3;
+  string alt = 4;
 }
 
-message ProductImageServiceUploadFileURLResponse {
+
+message UploadFileURLResponse {
   string upload_url = 1;
   string object_key = 2;
+}
+
+
+message UploadStatusRequest {
+  string key = 1;
+}
+
+
+message UploadStatusResponse {
+  string key    = 1;
+  Status status = 2;
+}
+
+message GetProductImageRequest {
+  string image_id = 1;
+}
+
+message GetProductImageResponse {
+  ProductImage product_image = 1;
+}
+
+message ListProductImagesRequest {
+  string product_id = 1;
+  common.v1.PaginationRequest pagination = 2;
+}
+
+
+message ListProductImagesResponse {
+  repeated ProductImage product_image = 1;
+  common.v1.PaginationResponse pagination = 2;
+}
+
+
+message UpdateProductImageRequest {
+  string image_id = 1;
+  google.protobuf.FieldMask update_mask = 2;
+}
+
+message UpdateProductImageResponse {
+  ProductImage product_image = 1;
+}
+
+message DeleteProductImageRequest {
+  string image_id = 1;
+}
+
+
+message DeleteProductImageResponse {}
+
+enum Status {
+  STATUS_UNSPECIFIED = 0;
+  STATUS_PENDING = 1;
+  STATUS_SUCCESS = 2;
+  STATUS_FAILED  = 3;
 }

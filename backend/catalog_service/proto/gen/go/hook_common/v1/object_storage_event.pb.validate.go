@@ -537,3 +537,111 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ObjectStorageObjectValidationError{}
+
+// Validate checks the field values on MessageFields with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *MessageFields) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on MessageFields with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in MessageFieldsMultiError, or
+// nil if none found.
+func (m *MessageFields) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *MessageFields) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for DetectedContentType
+
+	// no validation rules for Message
+
+	// no validation rules for Key
+
+	// no validation rules for Valid
+
+	if len(errors) > 0 {
+		return MessageFieldsMultiError(errors)
+	}
+
+	return nil
+}
+
+// MessageFieldsMultiError is an error wrapping multiple validation errors
+// returned by MessageFields.ValidateAll() if the designated constraints
+// aren't met.
+type MessageFieldsMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m MessageFieldsMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m MessageFieldsMultiError) AllErrors() []error { return m }
+
+// MessageFieldsValidationError is the validation error returned by
+// MessageFields.Validate if the designated constraints aren't met.
+type MessageFieldsValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e MessageFieldsValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e MessageFieldsValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e MessageFieldsValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e MessageFieldsValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e MessageFieldsValidationError) ErrorName() string { return "MessageFieldsValidationError" }
+
+// Error satisfies the builtin error interface
+func (e MessageFieldsValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sMessageFields.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = MessageFieldsValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = MessageFieldsValidationError{}
