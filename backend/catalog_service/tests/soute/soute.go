@@ -35,8 +35,6 @@ package suite
 
 // 	cfg := config.MustLoad("../../config/config_test.yaml")
 
-// 	// Основной родительский контекст
-// 	ctx, cancelCtx := context.WithTimeout(context.Background(), cfg.GRPC.Timeout)
 
 // 	// Когда тесты пройдут, закрываем контекст
 // 	t.Cleanup(func() {

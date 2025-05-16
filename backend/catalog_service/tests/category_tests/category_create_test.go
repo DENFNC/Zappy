@@ -10,13 +10,9 @@ package category_tests
 // 	"github.com/stretchr/testify/require"
 // )
 
-// func TestCreateCategory_HappyPath(t *testing.T) {
-// 	ctx, st := suite.New(t)
-
 // 	name := gofakeit.Name()
 // 	parentId := ""
 // 	// parentId := gofakeit.UUID()
-
 // 	// Сначала зарегистрируем нового клиента
 // 	respClient, err := st.CategoryServiceClient.CreateCategory(ctx, &proto.CreateCategoryRequest{
 // 		Name:     name,
