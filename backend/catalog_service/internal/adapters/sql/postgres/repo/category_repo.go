@@ -15,41 +15,34 @@ import (
 	"github.com/doug-martin/goqu/v9"
 )
 
-type CategoryRepo struct {
+type Category struct {
 	*postgres.Storage
-	goqu     goqu.DialectWrapper
 	paginate *paginate.Paginator[dao.CategoryDAO]
 }
 
 func NewCategoryRepo(
 	db *postgres.Storage,
-	goqu goqu.DialectWrapper,
 	coder paginate.TokenCoder,
-) *CategoryRepo {
-	paginate, err := paginate.NewPaginator[dao.CategoryDAO](
-		db.DB,
-		goqu,
-		coder,
-	)
+) *Category {
+	paginate, err := paginate.NewPaginator[dao.CategoryDAO](db.Client, db.Dialect, coder)
 	if err != nil {
 		panic(err)
 	}
 
-	return &CategoryRepo{
+	return &Category{
 		Storage:  db,
-		goqu:     goqu,
 		paginate: paginate,
 	}
 }
 
-func (repo *CategoryRepo) Create(
+func (repo *Category) Create(
 	ctx context.Context,
 	name, parentID string,
 ) (string, error) {
 	uid := dbutils.NewUUIDV7().String()
 	dateTimeNow := time.Now().UTC()
 
-	stmt, args, err := repo.goqu.Insert("category").
+	stmt, args, err := repo.Dialect.Insert("category").
 		Rows(goqu.Record{
 			"category_id":   uid,
 			"category_name": name,
@@ -63,7 +56,7 @@ func (repo *CategoryRepo) Create(
 		return "", err
 	}
 
-	cmdTags, err := repo.DB.Exec(ctx, stmt, args...)
+	cmdTags, err := repo.Client.Exec(ctx, stmt, args...)
 	if err != nil {
 		return "", err
 	}
@@ -74,14 +67,14 @@ func (repo *CategoryRepo) Create(
 	return uid, nil
 }
 
-func (repo *CategoryRepo) GetByID(
+func (repo *Category) GetByID(
 	ctx context.Context,
 	categoryID string,
 ) (*models.Category, error) {
 	panic("implement me!")
 }
 
-func (repo *CategoryRepo) List(
+func (repo *Category) List(
 	ctx context.Context,
 	pageSize uint,
 	pageToken string,
@@ -116,7 +109,7 @@ func (repo *CategoryRepo) List(
 	return items, nextToken, nil
 }
 
-func (repo *CategoryRepo) ListByParentID(
+func (repo *Category) ListByParentID(
 	ctx context.Context,
 	pageSize uint,
 	parentID, pageToken string,
@@ -124,11 +117,11 @@ func (repo *CategoryRepo) ListByParentID(
 	panic("implement me!")
 }
 
-func (repo *CategoryRepo) Delete(
+func (repo *Category) Delete(
 	ctx context.Context,
 	categoryID string,
 ) error {
-	stmt, args, err := repo.goqu.Delete("category").
+	stmt, args, err := repo.Dialect.Delete("category").
 		Where(goqu.C("category_id").Eq(categoryID)).
 		Prepared(true).
 		ToSQL()
@@ -136,7 +129,7 @@ func (repo *CategoryRepo) Delete(
 		return err
 	}
 
-	cmdTags, err := repo.DB.Exec(ctx, stmt, args...)
+	cmdTags, err := repo.Client.Exec(ctx, stmt, args...)
 	if err != nil {
 		return err
 	}
