@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package common.v1;
+
+import "google/protobuf/timestamp.proto";
+
+
+option go_package = "github.com/DENFNC/Zappy/review_service/proto/gen/go/common/v1;common";
+
+
+message ResourceID {
+    string id = 1;
+}
+
+message PaginationRequest {
+    uint32 page_size  = 1;
+    string page_token = 2;
+}
+  
+message PaginationResponse {
+    uint32 page_size  = 1;
+    string page_token = 2;
+    bool   after_page = 3;
+}
+
+message Review {
+    string review_id = 1;
+    string product_id = 2;
+    string profile_id = 3;
+    int32 rating = 4;
+    repeated string comments = 5;
+    google.protobuf.Timestamp created_at = 6;
+    google.protobuf.Timestamp updated_at = 7;
+}
