@@ -27,7 +27,7 @@ func New(
 	pgCoder := initPaginateCoder(cfg.PaginateSecret)
 
 	reviewRepo := repositories.NewReviewRepo(db, pgCoder)
-	reviewSvc := service.New(reviewRepo)
+	reviewSvc := service.New(log, reviewRepo)
 	reviewHandle := review.New(reviewSvc)
 
 	return &App{

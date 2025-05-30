@@ -4,8 +4,8 @@ CREATE TABLE
         product_id UUID NOT NULL,
         profile_id UUID NOT NULL,
         rating SMALLINT NOT NULL,
-        COMMENTS TEXT,
+        COMMENT TEXT,
         created_at TIMESTAMP DEFAULT NOW() NOT NULL,
         updated_at TIMESTAMP DEFAULT NOW() NOT NULL,
-        CONSTRAINT CHECK rating_check (rating BETWEEN 1 AND 5)
+        CONSTRAINT rating_check CHECK (rating BETWEEN 1 AND 5)
     );

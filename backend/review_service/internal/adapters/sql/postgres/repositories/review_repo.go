@@ -3,12 +3,14 @@ package repositories
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/DENFNC/Zappy/review_service/internal/adapters/sql/postgres"
 	"github.com/DENFNC/Zappy/review_service/internal/adapters/sql/postgres/dao"
 	"github.com/DENFNC/Zappy/review_service/internal/domain/models"
 	"github.com/DENFNC/Zappy/review_service/internal/pkg/paginate"
+	"github.com/DENFNC/Zappy/review_service/internal/utils/dbutils"
 	"github.com/doug-martin/goqu/v9"
 	"github.com/gofrs/uuid"
 )
@@ -48,6 +50,7 @@ func (repo *Review) Create(
 			"product_id": review.ProductID,
 			"profile_id": review.ProfileID,
 			"rating":     review.Rating,
+			"comment":    review.Comment,
 			"created_at": dateTimeNow,
 			"updated_at": dateTimeNow,
 		}).
@@ -66,4 +69,43 @@ func (repo *Review) Create(
 	}
 
 	return uid.String(), nil
+}
+
+func (repo *Review) GetByID(
+	ctx context.Context,
+	uid string,
+) (*models.Review, error) {
+	stmt, args, err := repo.Dialect.Select(
+		"review_id",
+		"product_id",
+		"profile_id",
+		"rating",
+		"comment",
+		"created_at",
+		"updated_at",
+	).
+		From("review").
+		Where(goqu.C("review_id").Eq(uid)).
+		Prepared(true).
+		ToSQL()
+	if err != nil {
+		return nil, err
+	}
+
+	var reviewDAO dao.ReviewDAO
+	row := repo.Client.QueryRow(ctx, stmt, args...)
+	if err := dbutils.ScanStruct(row, &reviewDAO); err != nil {
+		fmt.Println("Ошибка тут")
+		return nil, err
+	}
+
+	return &models.Review{
+		ReviewID:  reviewDAO.ReviewID.String(),
+		ProductID: reviewDAO.ProductId.String(),
+		ProfileID: reviewDAO.ProfileID.String(),
+		Rating:    reviewDAO.Rating,
+		Comment:   reviewDAO.Comment.String,
+		CreatedAt: reviewDAO.CreatedAt.Time,
+		UpdatedAt: reviewDAO.UpdatedAt.Time,
+	}, nil
 }

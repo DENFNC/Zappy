@@ -24,11 +24,11 @@ message PaginationResponse {
 }
 
 message Review {
-    string review_id = 1;
+    string review_id  = 1;
     string product_id = 2;
     string profile_id = 3;
-    int32 rating = 4;
-    repeated string comments = 5;
+    uint32 rating   = 4;
+    string comment = 5;
     google.protobuf.Timestamp created_at = 6;
     google.protobuf.Timestamp updated_at = 7;
 }

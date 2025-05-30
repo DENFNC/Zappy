@@ -15,12 +15,12 @@ mig-create:
 mig-up:
 	@echo "🚀 Migrating database..."
 	migrate -source file://./migrations/ \
-		-database pgx5://postgres:admin@localhost:5432/catalog_service up
+		-database pgx5://postgres:admin@localhost:5432/review_service up
 
 mig-drop:
 	@echo "💥 Dropping all database objects"
 	migrate -source file://./migrations/ \
-		-database pgx5://postgres:admin@localhost:5432/catalog_service drop -f
+		-database pgx5://postgres:admin@localhost:5432/review_service drop -f
 
 # Ensure required plugins and proto files are installed
 check-plugins:

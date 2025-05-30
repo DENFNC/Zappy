@@ -57,7 +57,7 @@ func initLogger(logType string) *slog.Logger {
 }
 
 func initStorage(url string) *postgres.Storage {
-	db, err := postgres.New(url)
+	db, err := postgres.NewStorage(url)
 	if err != nil {
 		panic(err)
 	}

@@ -183,8 +183,8 @@ type Review struct {
 	ReviewId      string                 `protobuf:"bytes,1,opt,name=review_id,json=reviewId,proto3" json:"review_id,omitempty"`
 	ProductId     string                 `protobuf:"bytes,2,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
 	ProfileId     string                 `protobuf:"bytes,3,opt,name=profile_id,json=profileId,proto3" json:"profile_id,omitempty"`
-	Rating        int32                  `protobuf:"varint,4,opt,name=rating,proto3" json:"rating,omitempty"`
-	Comments      []string               `protobuf:"bytes,5,rep,name=comments,proto3" json:"comments,omitempty"`
+	Rating        uint32                 `protobuf:"varint,4,opt,name=rating,proto3" json:"rating,omitempty"`
+	Comment       string                 `protobuf:"bytes,5,opt,name=comment,proto3" json:"comment,omitempty"`
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -242,18 +242,18 @@ func (x *Review) GetProfileId() string {
 	return ""
 }
 
-func (x *Review) GetRating() int32 {
+func (x *Review) GetRating() uint32 {
 	if x != nil {
 		return x.Rating
 	}
 	return 0
 }
 
-func (x *Review) GetComments() []string {
+func (x *Review) GetComment() string {
 	if x != nil {
-		return x.Comments
+		return x.Comment
 	}
-	return nil
+	return ""
 }
 
 func (x *Review) GetCreatedAt() *timestamppb.Timestamp {
@@ -287,15 +287,15 @@ const file_common_v1_common_proto_rawDesc = "" +
 	"\n" +
 	"page_token\x18\x02 \x01(\tR\tpageToken\x12\x1d\n" +
 	"\n" +
-	"after_page\x18\x03 \x01(\bR\tafterPage\"\x8d\x02\n" +
+	"after_page\x18\x03 \x01(\bR\tafterPage\"\x8b\x02\n" +
 	"\x06Review\x12\x1b\n" +
 	"\treview_id\x18\x01 \x01(\tR\breviewId\x12\x1d\n" +
 	"\n" +
 	"product_id\x18\x02 \x01(\tR\tproductId\x12\x1d\n" +
 	"\n" +
 	"profile_id\x18\x03 \x01(\tR\tprofileId\x12\x16\n" +
-	"\x06rating\x18\x04 \x01(\x05R\x06rating\x12\x1a\n" +
-	"\bcomments\x18\x05 \x03(\tR\bcomments\x129\n" +
+	"\x06rating\x18\x04 \x01(\rR\x06rating\x12\x18\n" +
+	"\acomment\x18\x05 \x01(\tR\acomment\x129\n" +
 	"\n" +
 	"created_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
