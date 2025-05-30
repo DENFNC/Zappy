@@ -15,10 +15,10 @@ import (
 
 type ServiceRegistrar interface {
 	GRPCRegister(server *grpc.Server)
-	HTTPRegister(
-		ctx context.Context,
-		mux *runtime.ServeMux,
-	)
+	// HTTPRegister(
+	// 	ctx context.Context,
+	// 	mux *runtime.ServeMux,
+	// )
 }
 
 type App struct {
@@ -58,7 +58,7 @@ func New(
 
 	for _, service := range services {
 		service.GRPCRegister(grpcServer)
-		service.HTTPRegister(ctx, mux)
+		// service.HTTPRegister(ctx, mux)
 	}
 
 	return &App{

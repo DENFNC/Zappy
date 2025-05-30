@@ -7,6 +7,7 @@ import "common/v1/common.proto";
 option go_package = "github.com/DENFNC/Zappy/review_service/proto/gen/go/v1;v1";
 
 service ReviewService{
+    rpc CreateReview(CreateReviewRequest) returns (CreateReviewResponse) {}
     rpc GetReview(GetReviewRequest) returns (GetReviewResponse) {}
     rpc ListReviews (ListReviewsRequest) returns (ListReviewsResponse) {}
     rpc DeleteReview(DeleteReviewRequest) returns (DeleteReviewResponse) {}
@@ -16,11 +17,11 @@ service ReviewService{
 message CreateReviewRequest {
     string product_id = 1;
     string profile_id = 2;
-    int32 rating   = 3;
+    uint32 rating  = 3;
     string comment = 4;
 }
 message CreateReviewResponse {
-    string review_id = 1;
+    common.v1.ResourceID review_id = 1;
 }
 
 

@@ -6,8 +6,8 @@ type Review struct {
 	ReviewID  string
 	ProductID string
 	ProfileID string
-	Rating    int16
-	Comments  string
+	Rating    uint32
+	Comment   string
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }

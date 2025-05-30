@@ -12,4 +12,3 @@ http:
 
 storage:
   url: postgres://postgres:admin@localhost:5432/review_service?sslmode=disable
-ё
