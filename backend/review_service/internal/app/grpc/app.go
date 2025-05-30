@@ -45,6 +45,7 @@ func New(
 
 	grpcServer := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
+			interceptor.TimingInterceptor(ctx, log),
 			interceptor.ValidateArgsInterceptor(ctx, log),
 		),
 	)

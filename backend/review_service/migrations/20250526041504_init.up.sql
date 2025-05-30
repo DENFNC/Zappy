@@ -7,5 +7,5 @@ CREATE TABLE
         COMMENT TEXT,
         created_at TIMESTAMP DEFAULT NOW() NOT NULL,
         updated_at TIMESTAMP DEFAULT NOW() NOT NULL,
-        CONSTRAINT rating_check CHECK (rating BETWEEN 1 AND 5)
+        CONSTRAINT rating_check CHECK (rating BETWEEN 0 AND 5)
     );
