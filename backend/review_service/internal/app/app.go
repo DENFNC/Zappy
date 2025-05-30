@@ -12,6 +12,7 @@ import (
 	"github.com/DENFNC/Zappy/review_service/internal/service"
 	"github.com/DENFNC/Zappy/review_service/internal/transport/review"
 	"github.com/DENFNC/Zappy/review_service/utils/config"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type App struct {
@@ -49,6 +50,10 @@ func initPaginateCoder(key string) *paginate.Encryptor {
 	if err != nil {
 		panic(err)
 	}
+	paginate.PaginateTypeRegister(
+		pgtype.Timestamp{},
+		pgtype.UUID{},
+	)
 
 	return paginateCoder
 }

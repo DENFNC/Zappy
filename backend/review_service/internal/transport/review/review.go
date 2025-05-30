@@ -6,6 +6,7 @@ import (
 	"github.com/DENFNC/Zappy/review_service/internal/domain/models"
 	"github.com/DENFNC/Zappy/review_service/proto/gen/go/common/v1"
 	v1 "github.com/DENFNC/Zappy/review_service/proto/gen/go/review/v1"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -19,14 +20,22 @@ type Review interface {
 	) (string, error)
 	GetReviewByID(
 		ctx context.Context,
-		id string,
+		uid string,
 	) (*models.Review, error)
-	// ListReviews(ctx context.Context, filter ReviewFilter) ([]Review, error)
-	// UpdateReview(ctx context.Context, id string, input UpdateReviewInput) (Review, error)
-	// DeleteReview(
-	// 	ctx context.Context,
-	// 	id string,
-	// ) error
+	ListReviews(
+		ctx context.Context,
+		pageSize uint32,
+		pageToken string,
+	) ([]models.Review, string, error)
+	UpdateReview(
+		ctx context.Context,
+		uid string,
+		comment string,
+	) error
+	DeleteReviewByID(
+		ctx context.Context,
+		uid string,
+	) error
 }
 
 type serverAPI struct {
@@ -42,6 +51,13 @@ func New(svc Review) *serverAPI {
 
 func (api *serverAPI) GRPCRegister(grpc *grpc.Server) {
 	v1.RegisterReviewServiceServer(grpc, api)
+}
+
+func (api *serverAPI) HTTPRegister(
+	ctx context.Context,
+	mux *runtime.ServeMux,
+) {
+	v1.RegisterReviewServiceHandlerServer(ctx, mux, api)
 }
 
 func (api serverAPI) CreateReview(
@@ -72,7 +88,7 @@ func (api *serverAPI) GetReview(
 	req *v1.GetReviewRequest,
 ) (*v1.GetReviewResponse, error) {
 	data, err := api.Review.GetReviewByID(ctx,
-		req.GetReviewId(),
+		req.ReviewId.GetId(),
 	)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "Internal error")
@@ -95,12 +111,64 @@ func (api *serverAPI) ListReviews(
 	ctx context.Context,
 	req *v1.ListReviewsRequest,
 ) (*v1.ListReviewsResponse, error) {
-	panic("implement me!")
+	afterPage := true
+	items, pageToken, err := api.Review.ListReviews(ctx,
+		req.Pagination.GetPageSize(),
+		req.Pagination.GetPageToken(),
+	)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "Internal error")
+	}
+	if pageToken == "" {
+		afterPage = false
+	}
+
+	reviews := make([]*common.Review, len(items))
+	for i, item := range items {
+		reviews[i] = &common.Review{
+			ReviewId:  item.ReviewID,
+			ProductId: item.ProductID,
+			ProfileId: item.ProfileID,
+			Rating:    item.Rating,
+			Comment:   item.Comment,
+			CreatedAt: timestamppb.New(item.CreatedAt),
+			UpdatedAt: timestamppb.New(item.UpdatedAt),
+		}
+	}
+
+	return &v1.ListReviewsResponse{
+		Reviews: reviews,
+		Pagination: &common.PaginationResponse{
+			PageSize:  uint32(len(items)),
+			PageToken: pageToken,
+			AfterPage: afterPage,
+		},
+	}, nil
+}
+
+func (api *serverAPI) UpdateReview(
+	ctx context.Context,
+	req *v1.UpdateReviewRequest,
+) (*v1.UpdateReviewResponse, error) {
+	if err := api.Review.UpdateReview(ctx,
+		req.ReviewId.GetId(),
+		req.GetComment(),
+	); err != nil {
+		return nil, status.Error(codes.Internal, "Internal error")
+	}
+
+	return &v1.UpdateReviewResponse{}, nil
 }
 
 func (api *serverAPI) DeleteReview(
 	ctx context.Context,
 	req *v1.DeleteReviewRequest,
 ) (*v1.DeleteReviewResponse, error) {
-	panic("implement me!")
+	if err := api.Review.DeleteReviewByID(ctx,
+		req.ReviewId.GetId(),
+	); err != nil {
+		return nil, status.Error(codes.Internal, "Internal error")
+	}
+
+	return &v1.DeleteReviewResponse{}, nil
 }

@@ -10,23 +10,18 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
-	"time"
 
 	"github.com/doug-martin/goqu/v9"
 	"github.com/doug-martin/goqu/v9/exp"
-	"github.com/gofrs/uuid"
 	"github.com/jackc/pgx/v5"
-	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-// * init регистрирует типы, используемые в курсорах, в пакете encoding/gob для сериализации.
-func init() {
-	gob.Register(time.Time{})          // * Регистрация time.Time для курсоров с отметкой времени
-	gob.Register(uuid.UUID{})          // * Регистрация uuid.UUID для UUID-курсоров
-	gob.Register([]byte{})             // * Регистрация []byte для бинарных данных
-	gob.Register(pgtype.Timestamptz{}) // * Регистрация типа pgx timestamptz
-	gob.Register(pgtype.UUID{})        // * Регистрация типа pgx UUID
+// * PaginateTypeRegister регистрирует типы, используемые в курсорах, в пакете encoding/gob для сериализации.
+func PaginateTypeRegister(value ...any) {
+	for i := 0; i < len(value); i++ {
+		gob.Register(value[i])
+	}
 }
 
 // * TokenCoder определяет интерфейс для шифрования и расшифровки токенов курсора.

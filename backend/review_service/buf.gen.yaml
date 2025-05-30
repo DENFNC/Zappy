@@ -18,11 +18,11 @@ plugins:
     opt:
       - paths=source_relative
 
-  # - local: protoc-gen-validate
-  #   out: proto/gen/go
-  #   opt:
-  #     - lang=go
-  #     - paths=source_relative
+  - local: protoc-gen-validate
+    out: proto/gen/go
+    opt:
+      - lang=go
+      - paths=source_relative
 
 inputs:
   - directory: proto

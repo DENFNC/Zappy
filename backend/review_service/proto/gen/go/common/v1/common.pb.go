@@ -7,6 +7,8 @@
 package common
 
 import (
+	_ "github.com/envoyproxy/protoc-gen-validate/validate"
+	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
@@ -274,12 +276,13 @@ var File_common_v1_common_proto protoreflect.FileDescriptor
 
 const file_common_v1_common_proto_rawDesc = "" +
 	"\n" +
-	"\x16common/v1/common.proto\x12\tcommon.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x1c\n" +
+	"\x16common/v1/common.proto\x12\tcommon.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x17validate/validate.proto\")\n" +
 	"\n" +
-	"ResourceID\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"O\n" +
-	"\x11PaginationRequest\x12\x1b\n" +
-	"\tpage_size\x18\x01 \x01(\rR\bpageSize\x12\x1d\n" +
+	"ResourceID\x12\x1b\n" +
+	"\x02id\x18\x01 \x01(\tB\v\xe0A\x02\xfaB\x05r\x03\xb0\x01\x01R\x02id\"[\n" +
+	"\x11PaginationRequest\x12'\n" +
+	"\tpage_size\x18\x01 \x01(\rB\n" +
+	"\xfaB\a*\x05\x18\xfa\x01(\x00R\bpageSize\x12\x1d\n" +
 	"\n" +
 	"page_token\x18\x02 \x01(\tR\tpageToken\"o\n" +
 	"\x12PaginationResponse\x12\x1b\n" +
@@ -287,14 +290,14 @@ const file_common_v1_common_proto_rawDesc = "" +
 	"\n" +
 	"page_token\x18\x02 \x01(\tR\tpageToken\x12\x1d\n" +
 	"\n" +
-	"after_page\x18\x03 \x01(\bR\tafterPage\"\x8b\x02\n" +
-	"\x06Review\x12\x1b\n" +
-	"\treview_id\x18\x01 \x01(\tR\breviewId\x12\x1d\n" +
+	"after_page\x18\x03 \x01(\bR\tafterPage\"\xb4\x02\n" +
+	"\x06Review\x12%\n" +
+	"\treview_id\x18\x01 \x01(\tB\b\xfaB\x05r\x03\xb0\x01\x01R\breviewId\x12'\n" +
 	"\n" +
-	"product_id\x18\x02 \x01(\tR\tproductId\x12\x1d\n" +
+	"product_id\x18\x02 \x01(\tB\b\xfaB\x05r\x03\xb0\x01\x01R\tproductId\x12'\n" +
 	"\n" +
-	"profile_id\x18\x03 \x01(\tR\tprofileId\x12\x16\n" +
-	"\x06rating\x18\x04 \x01(\rR\x06rating\x12\x18\n" +
+	"profile_id\x18\x03 \x01(\tB\b\xfaB\x05r\x03\xb0\x01\x01R\tprofileId\x12!\n" +
+	"\x06rating\x18\x04 \x01(\rB\t\xfaB\x06*\x04\x18\x05(\x00R\x06rating\x12\x18\n" +
 	"\acomment\x18\x05 \x01(\tR\acomment\x129\n" +
 	"\n" +
 	"created_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +

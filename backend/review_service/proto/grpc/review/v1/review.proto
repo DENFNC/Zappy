@@ -3,21 +3,51 @@ syntax = "proto3";
 package review.v1;
 
 import "common/v1/common.proto";
+import "google/api/annotations.proto";
+import "validate/validate.proto";
 
 option go_package = "github.com/DENFNC/Zappy/review_service/proto/gen/go/v1;v1";
 
-service ReviewService{
-    rpc CreateReview(CreateReviewRequest) returns (CreateReviewResponse) {}
-    rpc GetReview(GetReviewRequest) returns (GetReviewResponse) {}
-    rpc ListReviews (ListReviewsRequest) returns (ListReviewsResponse) {}
-    rpc DeleteReview(DeleteReviewRequest) returns (DeleteReviewResponse) {}
+service ReviewService {
+    rpc CreateReview(CreateReviewRequest) 
+        returns (CreateReviewResponse) {
+            option (google.api.http) = {
+                post: "/api/v1/reviews"
+                body: "*"
+        };
+    }
+    rpc GetReview(GetReviewRequest) 
+        returns (GetReviewResponse) {
+            option (google.api.http) = {
+                get: "/api/v1/reviews/{review_id.id}"
+        };
+    }
+    rpc ListReviews(ListReviewsRequest) 
+        returns (ListReviewsResponse) {
+            option (google.api.http) = {
+                get: "/api/v1/reviews"
+        };
+    }
+    rpc UpdateReview(UpdateReviewRequest) 
+        returns (UpdateReviewResponse) {
+            option (google.api.http) = {
+                patch: "/api/v1/reviews/{review_id.id}"
+                body: "*"
+            };
+        } 
+    rpc DeleteReview(DeleteReviewRequest) 
+        returns (DeleteReviewResponse) {
+            option (google.api.http) = {
+                delete: "/api/v1/reviews/{review_id.id}"
+        };
+    }
 }
 
 
 message CreateReviewRequest {
-    string product_id = 1;
-    string profile_id = 2;
-    uint32 rating  = 3;
+    string product_id = 1 [(validate.rules).string.uuid = true];
+    string profile_id = 2 [(validate.rules).string.uuid = true];
+    uint32 rating  = 3 [(validate.rules).uint32 = {gte: 0, lte: 5}];
     string comment = 4;
 }
 message CreateReviewResponse {
@@ -26,18 +56,25 @@ message CreateReviewResponse {
 
 
 message GetReviewRequest {
-    string review_id = 1;
+    common.v1.ResourceID review_id = 1;
 }
 message GetReviewResponse {
     common.v1.Review review = 1;
 }
 
 
+message UpdateReviewRequest {
+    common.v1.ResourceID review_id = 1;
+    string comment = 2;
+}
+message UpdateReviewResponse {}
+
+
 message ListReviewsRequest {
     common.v1.PaginationRequest pagination = 1;
 }
 message ListReviewsResponse {
-    repeated common.v1.Review reviews = 1;
+    repeated common.v1.Review reviews = 1 [(validate.rules).repeated.max_items = 250];
     common.v1.PaginationResponse pagination = 2;
 }
 

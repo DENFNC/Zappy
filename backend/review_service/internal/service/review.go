@@ -16,6 +16,20 @@ type ReviewRepo interface {
 		ctx context.Context,
 		uid string,
 	) (*models.Review, error)
+	List(
+		ctx context.Context,
+		pageSize uint32,
+		pageToken string,
+	) ([]models.Review, string, error)
+	Update(
+		ctx context.Context,
+		uid string,
+		comment string,
+	) error
+	DeleteByID(
+		ctx context.Context,
+		uid string,
+	) error
 }
 
 type Review struct {
@@ -77,4 +91,64 @@ func (svc *Review) GetReviewByID(
 	}
 
 	return data, nil
+}
+
+func (svc *Review) ListReviews(
+	ctx context.Context,
+	pageSize uint32,
+	pageToken string,
+) ([]models.Review, string, error) {
+	const op = "service.Review.ListReviews"
+
+	log := svc.Logger.With("op", op)
+
+	items, pageToken, err := svc.ReviewRepo.List(ctx, pageSize, pageToken)
+	if err != nil {
+		log.Error(
+			"Critical error",
+			slog.String("error", err.Error()),
+		)
+		return nil, "", err
+	}
+
+	return items, pageToken, nil
+}
+
+func (svc *Review) UpdateReview(
+	ctx context.Context,
+	uid string,
+	comment string,
+) error {
+	const op = "service.Review.ListReviews"
+
+	log := svc.Logger.With("op", op)
+
+	if err := svc.ReviewRepo.Update(ctx, uid, comment); err != nil {
+		log.Error(
+			"Critical error",
+			slog.String("error", err.Error()),
+		)
+		return err
+	}
+
+	return nil
+}
+
+func (svc *Review) DeleteReviewByID(
+	ctx context.Context,
+	uid string,
+) error {
+	const op = "service.Review.DeleteReviewByID"
+
+	log := svc.Logger.With("op", op)
+
+	if err := svc.ReviewRepo.DeleteByID(ctx, uid); err != nil {
+		log.Error(
+			"Critical error",
+			slog.String("error", err.Error()),
+		)
+		return err
+	}
+
+	return nil
 }

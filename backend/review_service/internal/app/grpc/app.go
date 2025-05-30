@@ -7,7 +7,7 @@ import (
 	"net"
 	"net/http"
 
-	// "github.com/DENFNC/Zappy/catalog_service/internal/app/interceptors"
+	"github.com/DENFNC/Zappy/review_service/internal/app/interceptor"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -15,10 +15,10 @@ import (
 
 type ServiceRegistrar interface {
 	GRPCRegister(server *grpc.Server)
-	// HTTPRegister(
-	// 	ctx context.Context,
-	// 	mux *runtime.ServeMux,
-	// )
+	HTTPRegister(
+		ctx context.Context,
+		mux *runtime.ServeMux,
+	)
 }
 
 type App struct {
@@ -44,9 +44,9 @@ func New(
 	mux := runtime.NewServeMux()
 
 	grpcServer := grpc.NewServer(
-	// grpc.ChainUnaryInterceptor(
-	// 	interceptors.ValidateArgsInterceptor(ctx),
-	// ),
+		grpc.ChainUnaryInterceptor(
+			interceptor.ValidateArgsInterceptor(ctx, log),
+		),
 	)
 
 	if reflect {
@@ -58,7 +58,7 @@ func New(
 
 	for _, service := range services {
 		service.GRPCRegister(grpcServer)
-		// service.HTTPRegister(ctx, mux)
+		service.HTTPRegister(ctx, mux)
 	}
 
 	return &App{

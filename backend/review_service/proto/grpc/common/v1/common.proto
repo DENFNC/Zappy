@@ -3,17 +3,21 @@ syntax = "proto3";
 package common.v1;
 
 import "google/protobuf/timestamp.proto";
-
+import "google/api/field_behavior.proto";
+import "validate/validate.proto";
 
 option go_package = "github.com/DENFNC/Zappy/review_service/proto/gen/go/common/v1;common";
 
 
 message ResourceID {
-    string id = 1;
+    string id = 1 [
+        (google.api.field_behavior) = REQUIRED,
+        (validate.rules).string.uuid = true  
+    ];
 }
 
 message PaginationRequest {
-    uint32 page_size  = 1;
+    uint32 page_size  = 1 [(validate.rules).uint32 = {gte: 0, lte: 250}];
     string page_token = 2;
 }
   
@@ -24,10 +28,10 @@ message PaginationResponse {
 }
 
 message Review {
-    string review_id  = 1;
-    string product_id = 2;
-    string profile_id = 3;
-    uint32 rating   = 4;
+    string review_id  = 1 [(validate.rules).string.uuid = true];
+    string product_id = 2 [(validate.rules).string.uuid = true];
+    string profile_id = 3 [(validate.rules).string.uuid = true];
+    uint32 rating  = 4 [(validate.rules).uint32 = {gte: 0, lte: 5}];
     string comment = 5;
     google.protobuf.Timestamp created_at = 6;
     google.protobuf.Timestamp updated_at = 7;
