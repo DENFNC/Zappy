@@ -1,6 +1,7 @@
 package app
 
 import (
+	"context"
 	"log/slog"
 
 	"github.com/DENFNC/Zappy/user_service/internal/adapters/sql/postgres"
@@ -10,6 +11,7 @@ import (
 	"github.com/DENFNC/Zappy/user_service/internal/transport/payment"
 	"github.com/DENFNC/Zappy/user_service/internal/transport/profile"
 	"github.com/DENFNC/Zappy/user_service/internal/transport/shipping"
+	"github.com/DENFNC/Zappy/user_service/internal/utils/config"
 )
 
 type App struct {
@@ -17,10 +19,11 @@ type App struct {
 }
 
 func New(
+	ctx context.Context,
 	log *slog.Logger,
 	db *postgres.Storage,
-	port int,
-) *App {
+	cfg *config.Config,
+) (*App, error) {
 
 	profileRepo := repo.NewProfileRepo(db)
 	profileSvc := service.NewProfile(log, profileRepo)
@@ -36,11 +39,14 @@ func New(
 
 	return &App{
 		App: *grpcapp.New(
+			ctx,
 			log,
-			port,
+			cfg.GRPC.Reflection,
+			cfg.GRPC.Port,
+			cfg.HTTP.Port,
 			profileHandle,
 			shippingHandle,
 			paymentHandle,
 		),
-	}
+	}, nil
 }

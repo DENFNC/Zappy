@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log/slog"
 	"os"
 	"os/signal"
@@ -14,31 +15,38 @@ import (
 
 func main() {
 	cfg := config.MustLoad("./config/config.yaml")
-	logger, err := logger.New(cfg.LogType)
+	log, err := logger.New(cfg.LogType)
 	if err != nil {
 		panic(err)
 	}
 	dbpool, err := postgres.NewStorage(cfg.Postgres.URL)
 	if err != nil {
-		logger.Error(
+		log.Error(
 			"Error connection to database",
 			slog.String("error", err.Error()),
 		)
 		os.Exit(1)
 	}
-	application := app.New(
-		logger,
-		dbpool,
-		cfg.GRPC.Port,
+	application, err := app.New(
+		context.TODO(),
+		log, dbpool,
+		cfg,
 	)
+	if err != nil {
+		log.Error(
+			"Error when launching the application",
+			slog.String("error", err.Error()),
+		)
+	}
 
-	go application.App.MustRun()
+	go application.App.MustRunGrpc()
+	go application.App.MustRunHttp()
 
 	sigCh := make(chan os.Signal, 1)
 	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
 
 	sig := <-sigCh
-	logger.Info(
+	log.Info(
 		"Stopped application with signal",
 		"signal", sig.String(),
 	)

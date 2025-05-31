@@ -9,6 +9,7 @@ package v1
 import (
 	v1 "github.com/DENFNC/Zappy/user_service/proto/gen/go/common/v1"
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
+	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -664,7 +665,7 @@ var File_payment_v1_payment_proto protoreflect.FileDescriptor
 const file_payment_v1_payment_proto_rawDesc = "" +
 	"\n" +
 	"\x18payment/v1/payment.proto\x12\n" +
-	"payment.v1\x1a\x17validate/validate.proto\x1a\x16common/v1/common.proto\"\x8f\x01\n" +
+	"payment.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x17validate/validate.proto\x1a\x16common/v1/common.proto\"\x8f\x01\n" +
 	"\x14CreatePaymentRequest\x12'\n" +
 	"\n" +
 	"profile_id\x18\x01 \x01(\tB\b\xfaB\x05r\x03\x98\x01$R\tprofileId\x12/\n" +
@@ -712,15 +713,15 @@ const file_payment_v1_payment_proto_rawDesc = "" +
 	"payment_id\x18\x01 \x01(\v2\x15.common.v1.ResourceIDR\tpaymentId\x12'\n" +
 	"\n" +
 	"profile_id\x18\x02 \x01(\tB\b\xfaB\x05r\x03\x98\x01$R\tprofileId\"\x1b\n" +
-	"\x19SetDefaultPaymentResponse2\x94\x04\n" +
-	"\x0ePaymentService\x12T\n" +
-	"\rCreatePayment\x12 .payment.v1.CreatePaymentRequest\x1a!.payment.v1.CreatePaymentResponse\x12K\n" +
+	"\x19SetDefaultPaymentResponse2\xdd\x05\n" +
+	"\x0ePaymentService\x12p\n" +
+	"\rCreatePayment\x12 .payment.v1.CreatePaymentRequest\x1a!.payment.v1.CreatePaymentResponse\"\x1a\x82\xd3\xe4\x93\x02\x14:\x01*\"\x0f/api/v1/payment\x12l\n" +
 	"\n" +
-	"GetPayment\x12\x1d.payment.v1.GetPaymentRequest\x1a\x1e.payment.v1.GetPaymentResponse\x12T\n" +
-	"\rDeletePayment\x12 .payment.v1.DeletePaymentRequest\x1a!.payment.v1.DeletePaymentResponse\x12T\n" +
-	"\rUpdatePayment\x12 .payment.v1.UpdatePaymentRequest\x1a!.payment.v1.UpdatePaymentResponse\x12Q\n" +
-	"\fListPayments\x12\x1f.payment.v1.ListPaymentsRequest\x1a .payment.v1.ListPaymentsResponse\x12`\n" +
-	"\x11SetDefaultPayment\x12$.payment.v1.SetDefaultPaymentRequest\x1a%.payment.v1.SetDefaultPaymentResponseB9Z7github.com/DENFNC/Zappy/user_service/proto/gen/go/v1;v1b\x06proto3"
+	"GetPayment\x12\x1d.payment.v1.GetPaymentRequest\x1a\x1e.payment.v1.GetPaymentResponse\"\x1f\x82\xd3\xe4\x93\x02\x19\x12\x17/api/v1/payment/{id.id}\x12u\n" +
+	"\rDeletePayment\x12 .payment.v1.DeletePaymentRequest\x1a!.payment.v1.DeletePaymentResponse\"\x1f\x82\xd3\xe4\x93\x02\x19*\x17/api/v1/payment/{id.id}\x12\x80\x01\n" +
+	"\rUpdatePayment\x12 .payment.v1.UpdatePaymentRequest\x1a!.payment.v1.UpdatePaymentResponse\"*\x82\xd3\xe4\x93\x02$:\x01*2\x1f/api/v1/payment/{payment_id.id}\x12j\n" +
+	"\fListPayments\x12\x1f.payment.v1.ListPaymentsRequest\x1a .payment.v1.ListPaymentsResponse\"\x17\x82\xd3\xe4\x93\x02\x11\x12\x0f/api/v1/payment\x12\x84\x01\n" +
+	"\x11SetDefaultPayment\x12$.payment.v1.SetDefaultPaymentRequest\x1a%.payment.v1.SetDefaultPaymentResponse\"\"\x82\xd3\xe4\x93\x02\x1c:\x01*\"\x17/api/v1/payment/defaultB9Z7github.com/DENFNC/Zappy/user_service/proto/gen/go/v1;v1b\x06proto3"
 
 var (
 	file_payment_v1_payment_proto_rawDescOnce sync.Once

@@ -3,8 +3,48 @@ syntax = "proto3";
 package shipping.v1;
 option go_package = "github.com/DENFNC/Zappy/user_service/proto/gen/go/v1;v1";
 
+import "google/api/annotations.proto";
+
 import "validate/validate.proto";
 import "common/v1/common.proto";
+
+
+service ShippingService {
+  rpc CreateShipping(CreateShippingRequest) returns (CreateShippingResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/shipping"
+      body: "*"
+    };
+  }
+  rpc GetShipping(GetShippingRequest) returns (GetShippingResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/shipping/{id.id}"
+    };
+  }
+  rpc UpdateShipping(UpdateShippingRequest) returns (UpdateShippingResponse) {
+    option (google.api.http) = {
+      patch: "/api/v1/shipping/{id.id}"
+      body: "*"
+    };
+  }
+  rpc SetDefaultShipping(SetDefaultShippingRequest) returns (SetDefaultShippingResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/shipping/default"
+      body: "*"
+    };
+  }
+  rpc DeleteShipping(DeleteShippingRequest) returns (DeleteShippingResponse) {
+    option (google.api.http) = {
+      delete: "/api/v1/shipping/{id.id}"
+    };
+  }
+  rpc ListShipping(ListShippingRequest) returns (ListShippingResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/shipping"
+    };
+  }
+}
+
 
 message Shipping {
   string address_id = 1 [(validate.rules).string = {len: 36}];
@@ -15,7 +55,6 @@ message Shipping {
   string postal_code= 6 [(validate.rules).string = {min_len: 1, max_len: 20}];
   bool   is_default = 7;
 }
-
 message ShippingInput {
   string profile_id = 1 [(validate.rules).string = {len: 36}];
   string country    = 2 [(validate.rules).string = {min_len: 1, max_len: 50}];
@@ -75,13 +114,4 @@ message ListShippingRequest {
 message ListShippingResponse {
   repeated Shipping shippings = 1;
   common.v1.PaginationResponse pagination = 2;
-}
-
-service ShippingService {
-  rpc CreateShipping(CreateShippingRequest) returns (CreateShippingResponse);
-  rpc GetShipping(GetShippingRequest) returns (GetShippingResponse);
-  rpc UpdateShipping(UpdateShippingRequest) returns (UpdateShippingResponse);
-  rpc SetDefaultShipping(SetDefaultShippingRequest) returns (SetDefaultShippingResponse);
-  rpc DeleteShipping(DeleteShippingRequest) returns (DeleteShippingResponse);
-  rpc ListShipping(ListShippingRequest) returns (ListShippingResponse);
 }

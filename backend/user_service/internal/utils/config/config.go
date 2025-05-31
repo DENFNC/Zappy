@@ -12,17 +12,22 @@ import (
 type (
 	Config struct {
 		LogType  string     `yaml:"log_type" env:"LOG_TYPE" env-default:"dev"`
-		GRPC     ConfigGRPC `yaml:"grpc"`
-		Postgres ConfigPSQL `yaml:"postgres"`
+		GRPC     gRPConfig  `yaml:"grpc"`
+		HTTP     httpConfig `yaml:"http"`
+		Postgres configPSQL `yaml:"postgres"`
 	}
 
-	ConfigGRPC struct {
+	gRPConfig struct {
 		Port       int           `yaml:"port" env:"GRPC_PORT" env-required:"true"`
 		Timeout    time.Duration `yaml:"timeout" env:"GRPC_TIMEOUT"`
 		Reflection bool          `yaml:"reflection" env:"GRPC_REFLECTION"`
 	}
 
-	ConfigPSQL struct {
+	httpConfig struct {
+		Port int `yaml:"port" env:"HTTP_PORT" env-default:"8081"`
+	}
+
+	configPSQL struct {
 		URL string `yaml:"url" env:"POSTGRES_URL" env-required:"true"`
 	}
 )

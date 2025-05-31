@@ -4,19 +4,51 @@ package profile.v1;
 option go_package = "github.com/DENFNC/Zappy/user_service/proto/gen/go/v1;v1";
 
 import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
+
 import "validate/validate.proto";
 import "common/v1/common.proto";
+
+
+service UserProfileService {
+  rpc CreateProfile(CreateProfileRequest) returns (CreateProfileResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/profile"
+      body: "*"
+    };
+  }
+  rpc GetProfile(GetProfileRequest) returns (GetProfileResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/profile/{profile_id.id}"
+    };
+  }
+  rpc UpdateProfile(UpdateProfileRequest) returns (UpdateProfileResponse) {
+    option (google.api.http) = {
+      patch: "/api/v1/profile/{profile_id.id}"
+      body: "*"
+    };
+  }
+  rpc DeleteProfile(DeleteProfileRequest) returns (DeleteProfileResponse) {
+    option (google.api.http) = {
+      delete: "/api/v1/profile/{profile_id.id}"
+    };
+  }
+  rpc ListProfiles(ListProfilesRequest) returns (ListProfilesResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/profile"
+    };
+  }
+}
+
 
 message FullName {
   string first_name = 1 [(validate.rules).string = {min_len: 1, max_len: 50}];
   string last_name  = 2 [(validate.rules).string = {min_len: 1, max_len: 50}];
 }
-
 message ProfileInput {
   FullName name = 1;
   string auth_user_id = 2 [(validate.rules).string = {len: 36}];
 }
-
 message Profile {
   string profile_id   = 1 [(validate.rules).string = {len: 36}];
   string auth_user_id = 2 [(validate.rules).string = {len: 36}];
@@ -25,52 +57,44 @@ message Profile {
   google.protobuf.Timestamp updated_at = 5;
 }
 
-message CreateProfileResponse {
-  common.v1.ResourceID profile_id = 1;
-}
-
-message GetProfileResponse {
-  Profile profile = 1;
-}
-
-message UpdateProfileResponse {
-  common.v1.ResourceID profile_id = 1;
-}
-
-message DeleteProfileResponse {
-  common.v1.ResourceID profile_id = 1;
-}
 
 message CreateProfileRequest {
   ProfileInput profile = 1;
 }
-
-message GetProfileRequest {
+message CreateProfileResponse {
   common.v1.ResourceID profile_id = 1;
 }
 
+
+message UpdateProfileResponse {
+  common.v1.ResourceID profile_id = 1;
+}
 message UpdateProfileRequest {
   common.v1.ResourceID profile_id = 1;
   FullName profile  = 2;
 }
 
+
+message GetProfileRequest {
+  common.v1.ResourceID profile_id = 1;
+}
+message GetProfileResponse {
+  Profile profile = 1;
+}
+
+
 message DeleteProfileRequest {
   common.v1.ResourceID profile_id = 1;
 }
+message DeleteProfileResponse {
+  common.v1.ResourceID profile_id = 1;
+}
+
 
 message ListProfilesRequest {
   common.v1.PaginationRequest pagination = 1;
 }
-
 message ListProfilesResponse {
   repeated Profile profiles = 1;
   common.v1.PaginationResponse pagination = 2;
-}
-
-service UserProfileService {
-  rpc CreateProfile(CreateProfileRequest) returns (CreateProfileResponse);
-  rpc GetProfile(GetProfileRequest) returns (GetProfileResponse);
-  rpc UpdateProfile(UpdateProfileRequest) returns (UpdateProfileResponse);
-  rpc DeleteProfile(DeleteProfileRequest) returns (DeleteProfileResponse);
-  rpc ListProfiles(ListProfilesRequest) returns (ListProfilesResponse);
 }

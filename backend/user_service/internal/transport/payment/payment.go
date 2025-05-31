@@ -8,6 +8,7 @@ import (
 	errpkg "github.com/DENFNC/Zappy/user_service/internal/errors"
 	"github.com/DENFNC/Zappy/user_service/proto/gen/go/common/v1"
 	v1 "github.com/DENFNC/Zappy/user_service/proto/gen/go/payment/v1"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -52,8 +53,15 @@ func New(service Payment) *serverAPI {
 	}
 }
 
-func (sa *serverAPI) Register(grpc *grpc.Server) {
+func (sa *serverAPI) GRPCRegister(grpc *grpc.Server) {
 	v1.RegisterPaymentServiceServer(grpc, sa)
+}
+
+func (api *serverAPI) HTTPRegister(
+	ctx context.Context,
+	mux *runtime.ServeMux,
+) {
+	v1.RegisterPaymentServiceHandlerServer(ctx, mux, api)
 }
 
 func (sa *serverAPI) CreatePayment(ctx context.Context, req *v1.CreatePaymentRequest) (*v1.CreatePaymentResponse, error) {

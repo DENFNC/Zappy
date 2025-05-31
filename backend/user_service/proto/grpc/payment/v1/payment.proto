@@ -4,8 +4,47 @@ package payment.v1;
 
 option go_package = "github.com/DENFNC/Zappy/user_service/proto/gen/go/v1;v1";
 
+import "google/api/annotations.proto";
+
 import "validate/validate.proto";
 import "common/v1/common.proto";
+
+
+service PaymentService {
+  rpc CreatePayment(CreatePaymentRequest) returns (CreatePaymentResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/payment"
+      body: "*"
+    };
+  }
+  rpc GetPayment(GetPaymentRequest) returns (GetPaymentResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/payment/{id.id}"
+    };
+  }
+  rpc DeletePayment(DeletePaymentRequest) returns (DeletePaymentResponse) {
+    option (google.api.http) = {
+      delete: "/api/v1/payment/{id.id}"
+    };
+  }
+  rpc UpdatePayment(UpdatePaymentRequest) returns (UpdatePaymentResponse) {
+    option (google.api.http) = {
+      patch: "/api/v1/payment/{payment_id.id}"
+      body: "*"
+    };
+  }
+  rpc ListPayments(ListPaymentsRequest) returns (ListPaymentsResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/payment"
+    };
+  }
+  rpc SetDefaultPayment(SetDefaultPaymentRequest) returns (SetDefaultPaymentResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/payment/default"
+      body: "*"
+    };
+  }
+}
 
 message CreatePaymentRequest {
   string profile_id    = 1 [(validate.rules).string = {len: 36}];
@@ -65,12 +104,3 @@ message SetDefaultPaymentRequest {
 }
 
 message SetDefaultPaymentResponse {}
-
-service PaymentService {
-  rpc CreatePayment(CreatePaymentRequest) returns (CreatePaymentResponse);
-  rpc GetPayment(GetPaymentRequest) returns (GetPaymentResponse);
-  rpc DeletePayment(DeletePaymentRequest) returns (DeletePaymentResponse);
-  rpc UpdatePayment(UpdatePaymentRequest) returns (UpdatePaymentResponse);
-  rpc ListPayments(ListPaymentsRequest) returns (ListPaymentsResponse);
-  rpc SetDefaultPayment(SetDefaultPaymentRequest) returns (SetDefaultPaymentResponse);
-}

@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package common.v1;
 
+import "google/api/field_behavior.proto";
+
 import "validate/validate.proto";
 
 option go_package = "github.com/DENFNC/Zappy/user_service/proto/gen/go/common/v1;common";
@@ -22,5 +24,8 @@ message PaginationResponse {
 
 
 message ResourceID {
-  string id = 1 [(validate.rules).string = {len: 36}];
+  string id = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (validate.rules).string.uuid = true  
+  ];
 }

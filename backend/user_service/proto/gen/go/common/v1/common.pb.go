@@ -8,6 +8,7 @@ package common
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
+	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -182,7 +183,7 @@ var File_common_v1_common_proto protoreflect.FileDescriptor
 
 const file_common_v1_common_proto_rawDesc = "" +
 	"\n" +
-	"\x16common/v1/common.proto\x12\tcommon.v1\x1a\x17validate/validate.proto\"[\n" +
+	"\x16common/v1/common.proto\x12\tcommon.v1\x1a\x1fgoogle/api/field_behavior.proto\x1a\x17validate/validate.proto\"[\n" +
 	"\x11PaginationRequest\x12'\n" +
 	"\tpage_size\x18\x01 \x01(\rB\n" +
 	"\xfaB\a*\x05\x18\xf4\x03(\x00R\bpageSize\x12\x1d\n" +
@@ -193,10 +194,10 @@ const file_common_v1_common_proto_rawDesc = "" +
 	"\n" +
 	"page_token\x18\x02 \x01(\tR\tpageToken\x12\x1d\n" +
 	"\n" +
-	"after_page\x18\x03 \x01(\bR\tafterPage\"&\n" +
+	"after_page\x18\x03 \x01(\bR\tafterPage\")\n" +
 	"\n" +
-	"ResourceID\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\tB\b\xfaB\x05r\x03\x98\x01$R\x02idBDZBgithub.com/DENFNC/Zappy/user_service/proto/gen/go/common/v1;commonb\x06proto3"
+	"ResourceID\x12\x1b\n" +
+	"\x02id\x18\x01 \x01(\tB\v\xe0A\x02\xfaB\x05r\x03\xb0\x01\x01R\x02idBDZBgithub.com/DENFNC/Zappy/user_service/proto/gen/go/common/v1;commonb\x06proto3"
 
 var (
 	file_common_v1_common_proto_rawDescOnce sync.Once

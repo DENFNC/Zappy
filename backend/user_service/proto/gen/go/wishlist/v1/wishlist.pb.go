@@ -9,9 +9,9 @@ package v1
 import (
 	v1 "github.com/DENFNC/Zappy/user_service/proto/gen/go/common/v1"
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
+	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	_ "google.golang.org/protobuf/types/known/emptypb"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
@@ -279,7 +279,8 @@ func (x *CreateWishlistItemResponse) GetItemId() *v1.ResourceID {
 
 type UpdateWishlistItemRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	WishlistItem  *WishlistItem          `protobuf:"bytes,1,opt,name=wishlist_item,json=wishlistItem,proto3" json:"wishlist_item,omitempty"`
+	ItemId        *v1.ResourceID         `protobuf:"bytes,1,opt,name=item_id,json=itemId,proto3" json:"item_id,omitempty"`
+	WishlistItem  *WishlistItem          `protobuf:"bytes,2,opt,name=wishlist_item,json=wishlistItem,proto3" json:"wishlist_item,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -312,6 +313,13 @@ func (x *UpdateWishlistItemRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use UpdateWishlistItemRequest.ProtoReflect.Descriptor instead.
 func (*UpdateWishlistItemRequest) Descriptor() ([]byte, []int) {
 	return file_wishlist_v1_wishlist_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *UpdateWishlistItemRequest) GetItemId() *v1.ResourceID {
+	if x != nil {
+		return x.ItemId
+	}
+	return nil
 }
 
 func (x *UpdateWishlistItemRequest) GetWishlistItem() *WishlistItem {
@@ -545,13 +553,13 @@ var File_wishlist_v1_wishlist_proto protoreflect.FileDescriptor
 
 const file_wishlist_v1_wishlist_proto_rawDesc = "" +
 	"\n" +
-	"\x1awishlist/v1/wishlist.proto\x12\vwishlist.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x17validate/validate.proto\x1a\x16common/v1/common.proto\"\xd7\x01\n" +
+	"\x1awishlist/v1/wishlist.proto\x12\vwishlist.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x17validate/validate.proto\x1a\x16common/v1/common.proto\"\xd7\x01\n" +
 	"\fWishlistItem\x12!\n" +
-	"\aitem_id\x18\x01 \x01(\tB\b\xfaB\x05r\x03\x98\x01$R\x06itemId\x12'\n" +
+	"\aitem_id\x18\x01 \x01(\tB\b\xfaB\x05r\x03\xb0\x01\x01R\x06itemId\x12'\n" +
 	"\n" +
-	"profile_id\x18\x02 \x01(\tB\b\xfaB\x05r\x03\x98\x01$R\tprofileId\x12'\n" +
+	"profile_id\x18\x02 \x01(\tB\b\xfaB\x05r\x03\xb0\x01\x01R\tprofileId\x12'\n" +
 	"\n" +
-	"product_id\x18\x03 \x01(\tB\b\xfaB\x05r\x03\x98\x01$R\tproductId\x125\n" +
+	"product_id\x18\x03 \x01(\tB\b\xfaB\x05r\x03\xb0\x01\x01R\tproductId\x125\n" +
 	"\badded_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\aaddedAt\x12\x1b\n" +
 	"\tis_active\x18\x05 \x01(\bR\bisActive\"H\n" +
 	"\x16GetWishlistItemRequest\x12.\n" +
@@ -561,16 +569,17 @@ const file_wishlist_v1_wishlist_proto_rawDesc = "" +
 	"\x19CreateWishlistItemRequest\x12>\n" +
 	"\rwishlist_item\x18\x01 \x01(\v2\x19.wishlist.v1.WishlistItemR\fwishlistItem\"L\n" +
 	"\x1aCreateWishlistItemResponse\x12.\n" +
-	"\aitem_id\x18\x01 \x01(\v2\x15.common.v1.ResourceIDR\x06itemId\"[\n" +
-	"\x19UpdateWishlistItemRequest\x12>\n" +
-	"\rwishlist_item\x18\x01 \x01(\v2\x19.wishlist.v1.WishlistItemR\fwishlistItem\"\x1c\n" +
+	"\aitem_id\x18\x01 \x01(\v2\x15.common.v1.ResourceIDR\x06itemId\"\x8b\x01\n" +
+	"\x19UpdateWishlistItemRequest\x12.\n" +
+	"\aitem_id\x18\x01 \x01(\v2\x15.common.v1.ResourceIDR\x06itemId\x12>\n" +
+	"\rwishlist_item\x18\x02 \x01(\v2\x19.wishlist.v1.WishlistItemR\fwishlistItem\"\x1c\n" +
 	"\x1aUpdateWishlistItemResponse\"K\n" +
 	"\x19DeleteWishlistItemRequest\x12.\n" +
 	"\aitem_id\x18\x01 \x01(\v2\x15.common.v1.ResourceIDR\x06itemId\"\x1c\n" +
 	"\x1aDeleteWishlistItemResponse\"\x81\x01\n" +
 	"\x18ListWishlistItemsRequest\x12'\n" +
 	"\n" +
-	"profile_id\x18\x01 \x01(\tB\b\xfaB\x05r\x03\x98\x01$R\tprofileId\x12<\n" +
+	"profile_id\x18\x01 \x01(\tB\b\xfaB\x05r\x03\xb0\x01\x01R\tprofileId\x12<\n" +
 	"\n" +
 	"pagination\x18\x02 \x01(\v2\x1c.common.v1.PaginationRequestR\n" +
 	"pagination\"\x9c\x01\n" +
@@ -578,13 +587,13 @@ const file_wishlist_v1_wishlist_proto_rawDesc = "" +
 	"\x0ewishlist_items\x18\x01 \x03(\v2\x19.wishlist.v1.WishlistItemR\rwishlistItems\x12=\n" +
 	"\n" +
 	"pagination\x18\x02 \x01(\v2\x1d.common.v1.PaginationResponseR\n" +
-	"pagination2\x8c\x04\n" +
-	"\x13WishlistItemService\x12e\n" +
-	"\x12CreateWishlistItem\x12&.wishlist.v1.CreateWishlistItemRequest\x1a'.wishlist.v1.CreateWishlistItemResponse\x12\\\n" +
-	"\x0fGetWishlistItem\x12#.wishlist.v1.GetWishlistItemRequest\x1a$.wishlist.v1.GetWishlistItemResponse\x12e\n" +
-	"\x12UpdateWishlistItem\x12&.wishlist.v1.UpdateWishlistItemRequest\x1a'.wishlist.v1.UpdateWishlistItemResponse\x12e\n" +
-	"\x12DeleteWishlistItem\x12&.wishlist.v1.DeleteWishlistItemRequest\x1a'.wishlist.v1.DeleteWishlistItemResponse\x12b\n" +
-	"\x11ListWishlistItems\x12%.wishlist.v1.ListWishlistItemsRequest\x1a&.wishlist.v1.ListWishlistItemsResponseB9Z7github.com/DENFNC/Zappy/user_service/proto/gen/go/v1;v1b\x06proto3"
+	"pagination2\xbf\x05\n" +
+	"\x13WishlistItemService\x12\x82\x01\n" +
+	"\x12CreateWishlistItem\x12&.wishlist.v1.CreateWishlistItemRequest\x1a'.wishlist.v1.CreateWishlistItemResponse\"\x1b\x82\xd3\xe4\x93\x02\x15:\x01*\"\x10/api/v1/wishlist\x12\x83\x01\n" +
+	"\x0fGetWishlistItem\x12#.wishlist.v1.GetWishlistItemRequest\x1a$.wishlist.v1.GetWishlistItemResponse\"%\x82\xd3\xe4\x93\x02\x1f\x12\x1d/api/v1/wishlist/{item_id.id}\x12\x8f\x01\n" +
+	"\x12UpdateWishlistItem\x12&.wishlist.v1.UpdateWishlistItemRequest\x1a'.wishlist.v1.UpdateWishlistItemResponse\"(\x82\xd3\xe4\x93\x02\":\x01*2\x1d/api/v1/wishlist/{item_id.id}\x12\x8c\x01\n" +
+	"\x12DeleteWishlistItem\x12&.wishlist.v1.DeleteWishlistItemRequest\x1a'.wishlist.v1.DeleteWishlistItemResponse\"%\x82\xd3\xe4\x93\x02\x1f*\x1d/api/v1/wishlist/{item_id.id}\x12|\n" +
+	"\x11ListWishlistItems\x12%.wishlist.v1.ListWishlistItemsRequest\x1a&.wishlist.v1.ListWishlistItemsResponse\"\x18\x82\xd3\xe4\x93\x02\x12\x12\x10/api/v1/wishlistB9Z7github.com/DENFNC/Zappy/user_service/proto/gen/go/v1;v1b\x06proto3"
 
 var (
 	file_wishlist_v1_wishlist_proto_rawDescOnce sync.Once
@@ -622,26 +631,27 @@ var file_wishlist_v1_wishlist_proto_depIdxs = []int32{
 	0,  // 2: wishlist.v1.GetWishlistItemResponse.wishlist_item:type_name -> wishlist.v1.WishlistItem
 	0,  // 3: wishlist.v1.CreateWishlistItemRequest.wishlist_item:type_name -> wishlist.v1.WishlistItem
 	12, // 4: wishlist.v1.CreateWishlistItemResponse.item_id:type_name -> common.v1.ResourceID
-	0,  // 5: wishlist.v1.UpdateWishlistItemRequest.wishlist_item:type_name -> wishlist.v1.WishlistItem
-	12, // 6: wishlist.v1.DeleteWishlistItemRequest.item_id:type_name -> common.v1.ResourceID
-	13, // 7: wishlist.v1.ListWishlistItemsRequest.pagination:type_name -> common.v1.PaginationRequest
-	0,  // 8: wishlist.v1.ListWishlistItemsResponse.wishlist_items:type_name -> wishlist.v1.WishlistItem
-	14, // 9: wishlist.v1.ListWishlistItemsResponse.pagination:type_name -> common.v1.PaginationResponse
-	3,  // 10: wishlist.v1.WishlistItemService.CreateWishlistItem:input_type -> wishlist.v1.CreateWishlistItemRequest
-	1,  // 11: wishlist.v1.WishlistItemService.GetWishlistItem:input_type -> wishlist.v1.GetWishlistItemRequest
-	5,  // 12: wishlist.v1.WishlistItemService.UpdateWishlistItem:input_type -> wishlist.v1.UpdateWishlistItemRequest
-	7,  // 13: wishlist.v1.WishlistItemService.DeleteWishlistItem:input_type -> wishlist.v1.DeleteWishlistItemRequest
-	9,  // 14: wishlist.v1.WishlistItemService.ListWishlistItems:input_type -> wishlist.v1.ListWishlistItemsRequest
-	4,  // 15: wishlist.v1.WishlistItemService.CreateWishlistItem:output_type -> wishlist.v1.CreateWishlistItemResponse
-	2,  // 16: wishlist.v1.WishlistItemService.GetWishlistItem:output_type -> wishlist.v1.GetWishlistItemResponse
-	6,  // 17: wishlist.v1.WishlistItemService.UpdateWishlistItem:output_type -> wishlist.v1.UpdateWishlistItemResponse
-	8,  // 18: wishlist.v1.WishlistItemService.DeleteWishlistItem:output_type -> wishlist.v1.DeleteWishlistItemResponse
-	10, // 19: wishlist.v1.WishlistItemService.ListWishlistItems:output_type -> wishlist.v1.ListWishlistItemsResponse
-	15, // [15:20] is the sub-list for method output_type
-	10, // [10:15] is the sub-list for method input_type
-	10, // [10:10] is the sub-list for extension type_name
-	10, // [10:10] is the sub-list for extension extendee
-	0,  // [0:10] is the sub-list for field type_name
+	12, // 5: wishlist.v1.UpdateWishlistItemRequest.item_id:type_name -> common.v1.ResourceID
+	0,  // 6: wishlist.v1.UpdateWishlistItemRequest.wishlist_item:type_name -> wishlist.v1.WishlistItem
+	12, // 7: wishlist.v1.DeleteWishlistItemRequest.item_id:type_name -> common.v1.ResourceID
+	13, // 8: wishlist.v1.ListWishlistItemsRequest.pagination:type_name -> common.v1.PaginationRequest
+	0,  // 9: wishlist.v1.ListWishlistItemsResponse.wishlist_items:type_name -> wishlist.v1.WishlistItem
+	14, // 10: wishlist.v1.ListWishlistItemsResponse.pagination:type_name -> common.v1.PaginationResponse
+	3,  // 11: wishlist.v1.WishlistItemService.CreateWishlistItem:input_type -> wishlist.v1.CreateWishlistItemRequest
+	1,  // 12: wishlist.v1.WishlistItemService.GetWishlistItem:input_type -> wishlist.v1.GetWishlistItemRequest
+	5,  // 13: wishlist.v1.WishlistItemService.UpdateWishlistItem:input_type -> wishlist.v1.UpdateWishlistItemRequest
+	7,  // 14: wishlist.v1.WishlistItemService.DeleteWishlistItem:input_type -> wishlist.v1.DeleteWishlistItemRequest
+	9,  // 15: wishlist.v1.WishlistItemService.ListWishlistItems:input_type -> wishlist.v1.ListWishlistItemsRequest
+	4,  // 16: wishlist.v1.WishlistItemService.CreateWishlistItem:output_type -> wishlist.v1.CreateWishlistItemResponse
+	2,  // 17: wishlist.v1.WishlistItemService.GetWishlistItem:output_type -> wishlist.v1.GetWishlistItemResponse
+	6,  // 18: wishlist.v1.WishlistItemService.UpdateWishlistItem:output_type -> wishlist.v1.UpdateWishlistItemResponse
+	8,  // 19: wishlist.v1.WishlistItemService.DeleteWishlistItem:output_type -> wishlist.v1.DeleteWishlistItemResponse
+	10, // 20: wishlist.v1.WishlistItemService.ListWishlistItems:output_type -> wishlist.v1.ListWishlistItemsResponse
+	16, // [16:21] is the sub-list for method output_type
+	11, // [11:16] is the sub-list for method input_type
+	11, // [11:11] is the sub-list for extension type_name
+	11, // [11:11] is the sub-list for extension extendee
+	0,  // [0:11] is the sub-list for field type_name
 }
 
 func init() { file_wishlist_v1_wishlist_proto_init() }

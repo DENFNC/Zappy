@@ -8,6 +8,7 @@ import (
 	errpkg "github.com/DENFNC/Zappy/user_service/internal/errors"
 	"github.com/DENFNC/Zappy/user_service/proto/gen/go/common/v1"
 	v1 "github.com/DENFNC/Zappy/user_service/proto/gen/go/wishlist/v1"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -33,8 +34,15 @@ func New(service Wishlist) *serverAPI {
 	}
 }
 
-func (sa *serverAPI) Register(grpc *grpc.Server) {
+func (sa *serverAPI) GRPCRegister(grpc *grpc.Server) {
 	v1.RegisterWishlistItemServiceServer(grpc, sa)
+}
+
+func (api *serverAPI) HTTPRegister(
+	ctx context.Context,
+	mux *runtime.ServeMux,
+) {
+	v1.RegisterWishlistItemServiceHandlerServer(ctx, mux, api)
 }
 
 func (sa *serverAPI) CreateWishlistItem(ctx context.Context, req *v1.CreateWishlistItemRequest) (*v1.CreateWishlistItemResponse, error) {
@@ -109,7 +117,6 @@ func (sa *serverAPI) ListWishlistItems(ctx context.Context, req *v1.ListWishlist
 }
 
 func (sa *serverAPI) UpdateWishlistItem(ctx context.Context, req *v1.UpdateWishlistItemRequest) (*v1.UpdateWishlistItemResponse, error) {
-	// Получаем текущий элемент
 	currentItem, err := sa.service.GetItem(ctx, req.GetWishlistItem().GetItemId())
 	if err != nil {
 		if errors.Is(err, errpkg.ErrNotFound) {
@@ -118,7 +125,6 @@ func (sa *serverAPI) UpdateWishlistItem(ctx context.Context, req *v1.UpdateWishl
 		return nil, status.Error(codes.Internal, "Failed to get wishlist item")
 	}
 
-	// Обновляем только is_active, остальные поля не меняются
 	currentItem.IsActive = req.GetWishlistItem().GetIsActive()
 
 	return &v1.UpdateWishlistItemResponse{}, nil

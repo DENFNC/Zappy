@@ -8,6 +8,7 @@ import (
 	errpkg "github.com/DENFNC/Zappy/user_service/internal/errors"
 	"github.com/DENFNC/Zappy/user_service/proto/gen/go/common/v1"
 	v1 "github.com/DENFNC/Zappy/user_service/proto/gen/go/profile/v1"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -49,8 +50,15 @@ func New(service Profile) *serverAPI {
 	}
 }
 
-func (sa *serverAPI) Register(grpc *grpc.Server) {
+func (sa *serverAPI) GRPCRegister(grpc *grpc.Server) {
 	v1.RegisterUserProfileServiceServer(grpc, sa)
+}
+
+func (api *serverAPI) HTTPRegister(
+	ctx context.Context,
+	mux *runtime.ServeMux,
+) {
+	v1.RegisterUserProfileServiceHandlerServer(ctx, mux, api)
 }
 
 func (sa *serverAPI) CreateProfile(ctx context.Context, req *v1.CreateProfileRequest) (*v1.CreateProfileResponse, error) {
