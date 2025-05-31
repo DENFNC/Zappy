@@ -6,6 +6,12 @@ APP_PROTO_HOOKS    = proto/grpc/v1/hooks
 GOPATH            ?= $(shell go env GOPATH)
 BIN_PATH          := $(GOPATH)/bin
 
+
+ifndef POSTGRES_URL
+$(error ❌ POSTGRES_URL is not set! Please provide it: make mig-up POSTGRES_URL=...)
+endif
+
+
 .PHONY: check-plugins mig-up mig-drop
 
 mig-create:
@@ -13,14 +19,14 @@ mig-create:
 	migrate create -ext sql -dir ./migrations init
 
 mig-up:
-	@echo "🚀 Migrating database..."
+	@echo "🚀 Migrating database with $(POSTGRES_URL)"
 	migrate -source file://./migrations/ \
-		-database pgx5://postgres:admin@localhost:5432/review_service up
+		-database $(POSTGRES_URL) up
 
 mig-drop:
-	@echo "💥 Dropping all database objects"
+	@echo "💥 Dropping all database objects with $(POSTGRES_URL)"
 	migrate -source file://./migrations/ \
-		-database pgx5://postgres:admin@localhost:5432/review_service drop -f
+		-database $(POSTGRES_URL) drop -f
 
 # Ensure required plugins and proto files are installed
 check-plugins:
