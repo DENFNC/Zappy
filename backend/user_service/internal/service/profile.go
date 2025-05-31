@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/DENFNC/Zappy/user_service/internal/domain/models"
-	"github.com/DENFNC/Zappy/user_service/internal/domain/repositories"
 	errpkg "github.com/DENFNC/Zappy/user_service/internal/errors"
 	"github.com/jackc/pgx/v5"
 )
@@ -16,14 +15,37 @@ const (
 	emptyStringValue = ""
 )
 
+type ProfileRepository interface {
+	Create(
+		ctx context.Context,
+		profile *models.Profile,
+	) (string, error)
+	GetByID(
+		ctx context.Context,
+		uid string,
+	) (*models.Profile, error)
+	List(
+		ctx context.Context,
+		params []any,
+	) ([]*models.Profile, error)
+	Update(
+		ctx context.Context,
+		profile *models.Profile,
+	) (string, error)
+	Delete(
+		ctx context.Context,
+		uid string,
+	) (string, error)
+}
+
 type Profile struct {
 	log  *slog.Logger
-	repo repositories.ProfileRepository
+	repo ProfileRepository
 }
 
 func NewProfile(
 	log *slog.Logger,
-	repo repositories.ProfileRepository,
+	repo ProfileRepository,
 ) *Profile {
 	return &Profile{
 		log:  log,
@@ -33,19 +55,11 @@ func NewProfile(
 
 func (p *Profile) Create(
 	ctx context.Context,
-	authUserID string,
-	firstName string,
-	lastName string,
+	profile *models.Profile,
 ) (string, error) {
 	const op = "service.Profile.Create"
 
 	log := p.log.With("op", op)
-
-	profile := models.NewProfile(
-		authUserID,
-		firstName,
-		lastName,
-	)
 
 	profileID, err := p.repo.Create(ctx, profile)
 	if err != nil {
@@ -105,8 +119,26 @@ func (p *Profile) GetByID(ctx context.Context, profileID string) (*models.Profil
 	return profile, nil
 }
 
-func (p *Profile) List(context.Context, []any) ([]any, string, error) {
-	panic("implement me")
+func (p *Profile) List(ctx context.Context, params []any) ([]any, string, error) {
+	const op = "service.Profile.List"
+
+	log := p.log.With("op", op)
+
+	profiles, err := p.repo.List(ctx, params)
+	if err != nil {
+		log.Error(
+			"Critical error",
+			slog.String("error", err.Error()),
+		)
+		return nil, "", errpkg.New("LIST_ERROR", "couldn't list profiles", err)
+	}
+
+	var anyProfiles []any
+	for _, profile := range profiles {
+		anyProfiles = append(anyProfiles, profile)
+	}
+
+	return anyProfiles, "", nil
 }
 
 func (p *Profile) Update(ctx context.Context, profileID string, firstName, lastName string) (string, error) {

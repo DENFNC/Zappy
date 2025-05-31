@@ -6,10 +6,3 @@ type Payment struct {
 	PaymentToken string
 	IsDefault    bool
 }
-
-func NewPayment(profileID string, paymentToken string) *Payment {
-	return &Payment{
-		ProfileID:    profileID,
-		PaymentToken: paymentToken,
-	}
-}

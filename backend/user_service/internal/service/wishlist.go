@@ -7,16 +7,43 @@ import (
 	"time"
 
 	"github.com/DENFNC/Zappy/user_service/internal/domain/models"
-	"github.com/DENFNC/Zappy/user_service/internal/domain/repositories"
 	errpkg "github.com/DENFNC/Zappy/user_service/internal/errors"
 )
 
-type WishlistService struct {
-	log  *slog.Logger
-	repo repositories.WishlistRepository
+type WishlistRepository interface {
+	Create(
+		ctx context.Context,
+		item *models.WishlistItem,
+	) (string, error)
+	GetItemByID(
+		ctx context.Context,
+		itemID string,
+	) (*models.WishlistItem, error)
+	GetItemsByProfileID(
+		ctx context.Context,
+		profileID string,
+	) ([]*models.WishlistItem, error)
+	Delete(
+		ctx context.Context,
+		itemID string,
+	) error
+	Update(
+		ctx context.Context,
+		item *models.WishlistItem,
+	) (*models.WishlistItem, error)
+	Exists(
+		ctx context.Context,
+		profileID string,
+		productID string,
+	) (bool, error)
 }
 
-func NewWishlist(log *slog.Logger, repo repositories.WishlistRepository) *WishlistService {
+type WishlistService struct {
+	log  *slog.Logger
+	repo WishlistRepository
+}
+
+func NewWishlist(log *slog.Logger, repo WishlistRepository) *WishlistService {
 	return &WishlistService{
 		log:  log,
 		repo: repo,
@@ -34,7 +61,7 @@ func (s *WishlistService) CreateItem(ctx context.Context, profileID, productID s
 		IsActive:  true,
 	}
 
-	itemID, err := s.repo.AddItem(ctx, item)
+	itemID, err := s.repo.Create(ctx, item)
 	if err != nil {
 		log.Error("Failed to add wishlist item", slog.String("error", err.Error()))
 		return "", errpkg.New("CREATE_ERROR", "Failed to create wishlist item", err)
@@ -64,7 +91,7 @@ func (s *WishlistService) UpdateItem(ctx context.Context, item *models.WishlistI
 	const op = "service.WishlistService.UpdateItem"
 	log := s.log.With("op", op)
 
-	updatedItem, err := s.repo.UpdateItem(ctx, item)
+	updatedItem, err := s.repo.Update(ctx, item)
 	if err != nil {
 		if errors.Is(err, errpkg.ErrNotFound) {
 			log.Error("Wishlist item not found", slog.String("itemID", item.ItemID))
@@ -81,7 +108,7 @@ func (s *WishlistService) DeleteItem(ctx context.Context, itemID string) error {
 	const op = "service.WishlistService.DeleteItem"
 	log := s.log.With("op", op)
 
-	if err := s.repo.RemoveItem(ctx, itemID); err != nil {
+	if err := s.repo.Delete(ctx, itemID); err != nil {
 		log.Error("Failed to delete wishlist item", slog.String("error", err.Error()))
 		return errpkg.New("DELETE_ERROR", "Failed to delete wishlist item", err)
 	}

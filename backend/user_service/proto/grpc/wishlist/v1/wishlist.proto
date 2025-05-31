@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+package wishlist.v1;
+option go_package = "github.com/DENFNC/Zappy/user_service/proto/gen/go/v1;v1";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+import "validate/validate.proto";
+import "common/v1/common.proto";
+
+message WishlistItem {
+  string item_id    = 1 [(validate.rules).string = {len: 36}];
+  string profile_id = 2 [(validate.rules).string = {len: 36}];
+  string product_id = 3 [(validate.rules).string = {len: 36}];
+  google.protobuf.Timestamp added_at = 4;
+  bool   is_active  = 5;
+}
+
+
+message GetWishlistItemRequest {
+  common.v1.ResourceID item_id = 1;
+}
+message GetWishlistItemResponse {
+  WishlistItem wishlist_item = 1;
+}
+
+
+message CreateWishlistItemRequest {
+  WishlistItem wishlist_item = 1;
+}
+message CreateWishlistItemResponse {
+  common.v1.ResourceID item_id = 1;
+}
+
+
+message UpdateWishlistItemRequest {
+  WishlistItem wishlist_item = 1;
+}
+message UpdateWishlistItemResponse {}
+
+
+message DeleteWishlistItemRequest {
+  common.v1.ResourceID item_id = 1;
+}
+message DeleteWishlistItemResponse {}
+
+
+message ListWishlistItemsRequest {
+  string profile_id = 1 [(validate.rules).string = {len: 36}];
+  common.v1.PaginationRequest pagination = 2;
+}
+message ListWishlistItemsResponse {
+  repeated WishlistItem wishlist_items = 1;
+  common.v1.PaginationResponse pagination = 2;
+}
+
+service WishlistItemService {
+  rpc CreateWishlistItem(CreateWishlistItemRequest) returns (CreateWishlistItemResponse);
+  rpc GetWishlistItem(GetWishlistItemRequest) returns (GetWishlistItemResponse);
+  rpc UpdateWishlistItem(UpdateWishlistItemRequest) returns (UpdateWishlistItemResponse);
+  rpc DeleteWishlistItem(DeleteWishlistItemRequest) returns (DeleteWishlistItemResponse);
+  rpc ListWishlistItems(ListWishlistItemsRequest) returns (ListWishlistItemsResponse);
+}

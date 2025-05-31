@@ -6,19 +6,47 @@ import (
 	"log/slog"
 
 	"github.com/DENFNC/Zappy/user_service/internal/domain/models"
-	"github.com/DENFNC/Zappy/user_service/internal/domain/repositories"
 	errpkg "github.com/DENFNC/Zappy/user_service/internal/errors"
 	"github.com/jackc/pgx/v5"
 )
 
+type PaymentRepository interface {
+	Create(
+		ctx context.Context,
+		method *models.Payment,
+	) (string, error)
+	GetByID(
+		ctx context.Context,
+		uid string,
+	) (*models.Payment, error)
+	GetByProfileID(
+		ctx context.Context,
+		profileID string,
+	) ([]models.Payment, error)
+	SetDefault(
+		ctx context.Context,
+		methodID string,
+		profileID string,
+	) error
+	Update(
+		ctx context.Context,
+		uid string,
+		payment *models.Payment,
+	) (string, error)
+	Delete(
+		ctx context.Context,
+		uid string,
+	) (string, error)
+}
+
 type Payment struct {
 	log  *slog.Logger
-	repo repositories.PaymentRepository
+	repo PaymentRepository
 }
 
 func NewPayment(
 	log *slog.Logger,
-	repo repositories.PaymentRepository,
+	repo PaymentRepository,
 ) *Payment {
 	return &Payment{
 		log:  log,
@@ -26,16 +54,13 @@ func NewPayment(
 	}
 }
 
-func (p *Payment) Create(
+func (p *Payment) CreatePayment(
 	ctx context.Context,
-	profileID string,
-	paymentToken string,
+	payment *models.Payment,
 ) (string, error) {
 	const op = "service.Payment.Create"
 
 	log := p.log.With("op", op)
-
-	payment := models.NewPayment(profileID, paymentToken)
 
 	payID, err := p.repo.Create(ctx, payment)
 	if err != nil {
@@ -49,7 +74,7 @@ func (p *Payment) Create(
 	return payID, nil
 }
 
-func (p *Payment) GetByID(
+func (p *Payment) PaymentGetByID(
 	ctx context.Context,
 	paymentID string,
 ) (*models.Payment, error) {
@@ -69,23 +94,16 @@ func (p *Payment) GetByID(
 	return payment, nil
 }
 
-func (p *Payment) Update(
+func (p *Payment) UpdatePayment(
 	ctx context.Context,
-	paymentID string,
-	profileID string,
-	paymentToken string,
+	uid string,
+	payment *models.Payment,
 ) (string, error) {
 	const op = "service.Payment.Update"
 
 	log := p.log.With("op", op)
 
-	payment := models.Payment{
-		PaymentID:    paymentID,
-		ProfileID:    profileID,
-		PaymentToken: paymentToken,
-	}
-
-	payID, err := p.repo.Update(ctx, &payment)
+	payID, err := p.repo.Update(ctx, uid, payment)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			log.Error(
@@ -104,7 +122,7 @@ func (p *Payment) Update(
 	return payID, nil
 }
 
-func (p *Payment) Delete(
+func (p *Payment) DeletePayment(
 	ctx context.Context,
 	paymentID string,
 ) (string, error) {
@@ -124,7 +142,7 @@ func (p *Payment) Delete(
 	return payID, nil
 }
 
-func (p *Payment) List(
+func (p *Payment) ListPayments(
 	ctx context.Context,
 	profileID string,
 ) ([]models.Payment, error) {
@@ -144,23 +162,22 @@ func (p *Payment) List(
 	return payments, nil
 }
 
-func (p *Payment) SetDefault(
+func (p *Payment) SetDefaultPayment(
 	ctx context.Context,
-	paymentID string,
-	profileID string,
-) (string, error) {
+	payment *models.Payment,
+) error {
 	const op = "service.Payment.SetDefault"
 
 	log := p.log.With("op", op)
 
-	payID, err := p.repo.SetDefault(ctx, paymentID, profileID)
+	err := p.repo.SetDefault(ctx, payment.PaymentID, payment.ProfileID)
 	if err != nil {
 		log.Error(
 			"Critical error",
 			slog.String("error", err.Error()),
 		)
-		return "", nil
+		return nil
 	}
 
-	return payID, nil
+	return nil
 }

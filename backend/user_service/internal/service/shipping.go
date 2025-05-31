@@ -6,7 +6,6 @@ import (
 	"log/slog"
 
 	"github.com/DENFNC/Zappy/user_service/internal/domain/models"
-	"github.com/DENFNC/Zappy/user_service/internal/domain/repositories"
 	errpkg "github.com/DENFNC/Zappy/user_service/internal/errors"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
@@ -14,12 +13,40 @@ import (
 
 const emptyStringAddr = ""
 
-type ShippingService struct {
-	log  *slog.Logger
-	repo repositories.ShippingRepository
+type ShippingRepository interface {
+	Create(
+		ctx context.Context,
+		address *models.Shipping,
+	) (string, error)
+	GetByID(
+		ctx context.Context,
+		id string,
+	) (*models.Shipping, error)
+	GetByProfileID(
+		ctx context.Context,
+		profileID string,
+	) ([]models.Shipping, error)
+	UpdateAddress(
+		ctx context.Context,
+		id string,
+		address *models.Shipping,
+	) (string, error)
+	SetDefault(
+		ctx context.Context,
+		addressID, profileID string,
+	) error
+	Delete(
+		ctx context.Context,
+		id string,
+	) (string, error)
 }
 
-func NewShipping(log *slog.Logger, repo repositories.ShippingRepository) *ShippingService {
+type ShippingService struct {
+	log  *slog.Logger
+	repo ShippingRepository
+}
+
+func NewShipping(log *slog.Logger, repo ShippingRepository) *ShippingService {
 	return &ShippingService{
 		log:  log,
 		repo: repo,

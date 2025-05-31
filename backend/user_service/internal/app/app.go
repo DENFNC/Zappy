@@ -3,13 +3,13 @@ package app
 import (
 	"log/slog"
 
+	"github.com/DENFNC/Zappy/user_service/internal/adapters/sql/postgres"
+	repo "github.com/DENFNC/Zappy/user_service/internal/adapters/sql/postgres/repo"
 	grpcapp "github.com/DENFNC/Zappy/user_service/internal/app/grpc"
-	"github.com/DENFNC/Zappy/user_service/internal/handler/payment"
-	"github.com/DENFNC/Zappy/user_service/internal/handler/profile"
-	"github.com/DENFNC/Zappy/user_service/internal/handler/shipping"
-	repo "github.com/DENFNC/Zappy/user_service/internal/repository/postgres"
 	"github.com/DENFNC/Zappy/user_service/internal/service"
-	psql "github.com/DENFNC/Zappy/user_service/internal/storage/postgres"
+	"github.com/DENFNC/Zappy/user_service/internal/transport/payment"
+	"github.com/DENFNC/Zappy/user_service/internal/transport/profile"
+	"github.com/DENFNC/Zappy/user_service/internal/transport/shipping"
 )
 
 type App struct {
@@ -18,19 +18,19 @@ type App struct {
 
 func New(
 	log *slog.Logger,
-	db *psql.Storage,
+	db *postgres.Storage,
 	port int,
 ) *App {
 
-	profileRepo := repo.NewProfileRepo(db, db.Dial)
+	profileRepo := repo.NewProfileRepo(db)
 	profileSvc := service.NewProfile(log, profileRepo)
 	profileHandle := profile.New(profileSvc)
 
-	shippingRepo := repo.NewShippingRepo(db, db.Dial)
+	shippingRepo := repo.NewShippingRepo(db)
 	shippingSvc := service.NewShipping(log, shippingRepo)
 	shippingHandle := shipping.New(shippingSvc)
 
-	paymentRepo := repo.NewPaymentRepo(db, db.Dial)
+	paymentRepo := repo.NewPaymentRepo(db)
 	paymentSvc := service.NewPayment(log, paymentRepo)
 	paymentHandle := payment.New(paymentSvc)
 

@@ -10,15 +10,3 @@ type Profile struct {
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
 }
-
-func NewProfile(
-	authUserID string,
-	firstName string,
-	lastName string,
-) *Profile {
-	return &Profile{
-		AuthUserID: authUserID,
-		FirstName:  firstName,
-		LastName:   lastName,
-	}
-}

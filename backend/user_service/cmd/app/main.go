@@ -6,10 +6,10 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/DENFNC/Zappy/user_service/internal/adapters/sql/postgres"
 	"github.com/DENFNC/Zappy/user_service/internal/app"
-	"github.com/DENFNC/Zappy/user_service/internal/config"
 	"github.com/DENFNC/Zappy/user_service/internal/pkg/logger"
-	psql "github.com/DENFNC/Zappy/user_service/internal/storage/postgres"
+	"github.com/DENFNC/Zappy/user_service/internal/utils/config"
 )
 
 func main() {
@@ -18,7 +18,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	dbpool, err := psql.New(cfg.Postgres.URL)
+	dbpool, err := postgres.NewStorage(cfg.Postgres.URL)
 	if err != nil {
 		logger.Error(
 			"Error connection to database",

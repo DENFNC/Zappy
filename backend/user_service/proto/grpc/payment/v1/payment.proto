@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package payment.v1;
+
+option go_package = "github.com/DENFNC/Zappy/user_service/proto/gen/go/v1;v1";
+
+import "validate/validate.proto";
+import "common/v1/common.proto";
+
+message CreatePaymentRequest {
+  string profile_id    = 1 [(validate.rules).string = {len: 36}];
+  string payment_token = 2 [(validate.rules).string = {min_len: 1, max_len: 255}];
+  bool is_default = 3;
+}
+
+message Payment {
+  string payment_id    = 1 [(validate.rules).string = {len: 36}];
+  string profile_id    = 2 [(validate.rules).string = {len: 36}];
+  string payment_token = 3;
+  bool   is_default    = 4;
+}
+
+message GetPaymentResponse {
+  Payment payment = 1;
+}
+
+message CreatePaymentResponse {
+  common.v1.ResourceID id = 1;
+}
+
+message UpdatePaymentRequest {
+  common.v1.ResourceID payment_id = 1;
+  CreatePaymentRequest payment = 2;
+}
+
+message UpdatePaymentResponse {
+  common.v1.ResourceID id = 1;
+}
+
+message GetPaymentRequest {
+  common.v1.ResourceID id = 1;
+}
+
+message DeletePaymentRequest {
+  common.v1.ResourceID id = 1;
+}
+
+message DeletePaymentResponse {
+  common.v1.ResourceID id = 1;
+}
+
+message ListPaymentsRequest {
+  string profile_id = 1 [(validate.rules).string = {len: 36}];
+  common.v1.PaginationRequest pagination = 2;
+}
+
+message ListPaymentsResponse {
+  repeated Payment payments = 1;
+  common.v1.PaginationResponse pagination = 2;
+}
+
+message SetDefaultPaymentRequest {
+  common.v1.ResourceID payment_id  = 1;
+  string profile_id  = 2 [(validate.rules).string = {len: 36}];
+}
+
+message SetDefaultPaymentResponse {}
+
+service PaymentService {
+  rpc CreatePayment(CreatePaymentRequest) returns (CreatePaymentResponse);
+  rpc GetPayment(GetPaymentRequest) returns (GetPaymentResponse);
+  rpc DeletePayment(DeletePaymentRequest) returns (DeletePaymentResponse);
+  rpc UpdatePayment(UpdatePaymentRequest) returns (UpdatePaymentResponse);
+  rpc ListPayments(ListPaymentsRequest) returns (ListPaymentsResponse);
+  rpc SetDefaultPayment(SetDefaultPaymentRequest) returns (SetDefaultPaymentResponse);
+}
