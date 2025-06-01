@@ -1,4 +1,18 @@
 services:
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - auth_service
+      - user_service
+      - catalog_service
+      - review_service
+    networks:
+      - zappy
+
   minio:
     image: minio/minio:RELEASE.2025-04-22T22-12-26Z-cpuv1
     container_name: minio
@@ -84,6 +98,114 @@ services:
       - zappy
       # volumes:
       # - redis:
+
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./user_service/:/usr/share/nginx/html/docs/user_service
+      - ./review_service/:/usr/share/nginx/html/docs/review_service
+      - ./catalog_service/:/usr/share/nginx/html/docs/catalog_service
+    environment:
+      URLS: |
+        [
+          { "url": "/docs/user_service/docs/user.swagger.json", "name": "User Service" },
+          { "url": "/docs/review_service/docs/review.swagger.json", "name": "Review Service" },
+          { "url": "/docs/catalog_service/docs/catalog.swagger.json", "name": "Catalog Service" }
+        ]
+    
+  review_service:
+    build:
+      context: ./review_service/
+      dockerfile: Dockerfile
+    image: review-service:1.0.0
+    environment:
+      - APP_LOG=dev
+      - PAGINATE_SECRET=ap-P@M?8pW3vZHcCc%*chQv35s5D5R9p
+      - GRPC_PORT=50052
+      - GRPC_TIMEOUT=5s
+      - GRPC_REFLECTION=true
+      - HTTP_PORT=8082
+      - POSTGRES_URL=postgres://postgres:admin@postgres:5432/review_service?sslmode=disable
+    networks:
+      - zappy
+    depends_on:
+      - postgres
+    
+  user_service:
+    build:
+      context: ./user_service/
+      dockerfile: Dockerfile
+    image: user-service:1.0.0
+    environment:
+      - APP_LOG=dev
+      - PAGINATE_SECRET=ap-P@M?8pW3vZHcCc%*chQv35s5D5R9p
+      - GRPC_PORT=50052
+      - GRPC_TIMEOUT=5s
+      - GRPC_REFLECTION=true
+      - HTTP_PORT=8082
+      - POSTGRES_URL=postgres://postgres:admin@postgres:5432/user_service?sslmode=disable
+    networks:
+      - zappy
+    depends_on:
+      - postgres
+
+  catalog_service:
+    build:
+      context: ./catalog_service/
+      dockerfile: Dockerfile
+    image: catalog-service:1.0.0
+    environment:
+      - LOG_TYPE=dev
+      - PAGINATE_SECRET=ap-P@M?8pW3vZHcCc%*chQv35s5D5R9p
+
+      - GRPC_PORT=50051
+      - GRPC_TIMEOUT=5s
+      - GRPC_REFLECTION=true
+
+      - HTTP_PORT=8081
+
+      - POSTGRES_URL=postgres://postgres:admin@postgres:5432/catalog_service?sslmode=disable
+
+      - OBJECT_STORE_OBJECT_ORIGIN=http://minio:9000
+      - OBJECT_STORE_AWS_BUCKET_IMAGE=image-bucket
+      - OBJECT_STORE_AWS_STAGING_BUCKET=staging-bucket
+      - OBJECT_STORE_ACCESS_KEY=VDG8Aau6KOzWAosA7Jjz
+      - OBJECT_STORE_SECRET_KEY=Y0hvgt8uz5MW3IYHBh7erWgvDW6ALqjGXEeMenpb
+
+      - OBJECT_STORE_BUCKETS_IMAGE_BUCKET_NAME=/image-bucket
+      - OBJECT_STORE_BUCKETS_IMAGE_BUCKET_PATH=/catalog_service/images/
+      - OBJECT_STORE_BUCKETS_IMAGE_BUCKET_MIME_TYPES=image/jpeg,image/png
+
+      - OBJECT_STORE_BUCKETS_STAGING_BUCKET_NAME=/staging-bucket
+      - OBJECT_STORE_BUCKETS_STAGING_BUCKET_PATH=/catalog_service/staging/
+      - OBJECT_STORE_BUCKETS_STAGING_BUCKET_MIME_TYPES=image/jpeg,image/png
+    networks:
+      - zappy
+    depends_on:
+      - postgres
+      - redis
+      - minio
+      
+  auth_service:
+    build:
+      context: ./auth_service/
+      dockerfile: Dockerfile
+    image: auth-service:1.0.0
+    environment:
+      - APP_LOG=dev
+      - GRPC_PORT=50050
+      - GRPC_TIMEOUT=5s
+      - GRPC_REFLECTION=true
+      - HTTP_PORT=8080
+      - POSTGRES_URL=postgres://postgres:admin@postgres:5432/auth_service?sslmode=disable
+      - REDIS_URL=redis:6379
+    networks:
+      - zappy
+    depends_on:
+      - postgres
+      - redis
 
 networks:
   zappy:
