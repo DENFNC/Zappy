@@ -10,7 +10,7 @@ import (
 	"github.com/DENFNC/Zappy/review_service/internal/adapters/sql/postgres"
 	"github.com/DENFNC/Zappy/review_service/internal/app"
 	"github.com/DENFNC/Zappy/review_service/internal/pkg/logger"
-	"github.com/DENFNC/Zappy/review_service/utils/config"
+	"github.com/DENFNC/Zappy/review_service/internal/utils/config"
 )
 
 func main() {

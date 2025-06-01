@@ -11,7 +11,7 @@ import (
 	"github.com/DENFNC/Zappy/review_service/internal/pkg/paginate"
 	"github.com/DENFNC/Zappy/review_service/internal/service"
 	"github.com/DENFNC/Zappy/review_service/internal/transport/review"
-	"github.com/DENFNC/Zappy/review_service/utils/config"
+	"github.com/DENFNC/Zappy/review_service/internal/utils/config"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
