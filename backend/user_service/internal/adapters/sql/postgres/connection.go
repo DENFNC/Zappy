@@ -12,7 +12,7 @@ import (
 
 type Storage struct {
 	Client  *pgxpool.Pool
-	Dialect *goqu.DialectWrapper
+	Dialect goqu.DialectWrapper
 }
 
 func NewStorage(conn string) (*Storage, error) {
@@ -32,7 +32,7 @@ func NewStorage(conn string) (*Storage, error) {
 
 	return &Storage{
 		Client:  dbpool,
-		Dialect: &dialect,
+		Dialect: dialect,
 	}, nil
 }
 func (s *Storage) WithTx(ctx context.Context, f func(tx pgx.Tx) error) (err error) {

@@ -4,10 +4,9 @@ import (
 	"context"
 	"errors"
 	"log/slog"
-	"time"
 
 	"github.com/DENFNC/Zappy/user_service/internal/domain/models"
-	errpkg "github.com/DENFNC/Zappy/user_service/internal/errors"
+	errpkg "github.com/DENFNC/Zappy/user_service/internal/utils/errors"
 	"github.com/jackc/pgx/v5"
 )
 
@@ -26,8 +25,9 @@ type ProfileRepository interface {
 	) (*models.Profile, error)
 	List(
 		ctx context.Context,
-		params []any,
-	) ([]*models.Profile, error)
+		pageSize uint,
+		pageToken string,
+	) ([]*models.Profile, string, error)
 	Update(
 		ctx context.Context,
 		profile *models.Profile,
@@ -39,8 +39,8 @@ type ProfileRepository interface {
 }
 
 type Profile struct {
-	log  *slog.Logger
-	repo ProfileRepository
+	*slog.Logger
+	ProfileRepository
 }
 
 func NewProfile(
@@ -48,20 +48,20 @@ func NewProfile(
 	repo ProfileRepository,
 ) *Profile {
 	return &Profile{
-		log:  log,
-		repo: repo,
+		Logger:            log,
+		ProfileRepository: repo,
 	}
 }
 
-func (p *Profile) Create(
+func (svc *Profile) CreateProfile(
 	ctx context.Context,
 	profile *models.Profile,
 ) (string, error) {
 	const op = "service.Profile.Create"
 
-	log := p.log.With("op", op)
+	log := svc.Logger.With("op", op)
 
-	profileID, err := p.repo.Create(ctx, profile)
+	profileID, err := svc.ProfileRepository.Create(ctx, profile)
 	if err != nil {
 		log.Error(
 			"Critical error",
@@ -73,12 +73,15 @@ func (p *Profile) Create(
 	return profileID, nil
 }
 
-func (p *Profile) Delete(ctx context.Context, profileID string) (string, error) {
+func (svc *Profile) DeleteProfile(
+	ctx context.Context,
+	profileID string,
+) (string, error) {
 	const op = "service.Profile.Delete"
 
-	log := p.log.With("op", op)
+	log := svc.Logger.With("op", op)
 
-	profileID, err := p.repo.Delete(ctx, profileID)
+	profileID, err := svc.ProfileRepository.Delete(ctx, profileID)
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -96,12 +99,15 @@ func (p *Profile) Delete(ctx context.Context, profileID string) (string, error) 
 	return profileID, nil
 }
 
-func (p *Profile) GetByID(ctx context.Context, profileID string) (*models.Profile, error) {
+func (svc *Profile) ProfileGetByID(
+	ctx context.Context,
+	profileID string,
+) (*models.Profile, error) {
 	const op = "service.Profile.GetByID"
 
-	log := p.log.With("op", op)
+	log := svc.Logger.With("op", op)
 
-	profile, err := p.repo.GetByID(ctx, profileID)
+	profile, err := svc.ProfileRepository.GetByID(ctx, profileID)
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -119,12 +125,16 @@ func (p *Profile) GetByID(ctx context.Context, profileID string) (*models.Profil
 	return profile, nil
 }
 
-func (p *Profile) List(ctx context.Context, params []any) ([]any, string, error) {
+func (svc *Profile) ListProfiles(
+	ctx context.Context,
+	pageSize uint,
+	pageToken string,
+) ([]*models.Profile, string, error) {
 	const op = "service.Profile.List"
 
-	log := p.log.With("op", op)
+	log := svc.Logger.With("op", op)
 
-	profiles, err := p.repo.List(ctx, params)
+	items, pageToken, err := svc.ProfileRepository.List(ctx, pageSize, pageToken)
 	if err != nil {
 		log.Error(
 			"Critical error",
@@ -133,27 +143,19 @@ func (p *Profile) List(ctx context.Context, params []any) ([]any, string, error)
 		return nil, "", errpkg.New("LIST_ERROR", "couldn't list profiles", err)
 	}
 
-	var anyProfiles []any
-	for _, profile := range profiles {
-		anyProfiles = append(anyProfiles, profile)
-	}
-
-	return anyProfiles, "", nil
+	return items, pageToken, nil
 }
 
-func (p *Profile) Update(ctx context.Context, profileID string, firstName, lastName string) (string, error) {
+func (svc *Profile) UpdateProfile(
+	ctx context.Context,
+	profileID string,
+	profile *models.Profile,
+) (string, error) {
 	const op = "service.Profile.Update"
 
-	log := p.log.With("op", op)
+	log := svc.Logger.With("op", op)
 
-	profile := &models.Profile{
-		ProfileID: profileID,
-		FirstName: firstName,
-		LastName:  lastName,
-		UpdatedAt: time.Now(),
-	}
-
-	profileID, err := p.repo.Update(
+	profileID, err := svc.ProfileRepository.Update(
 		ctx,
 		profile,
 	)

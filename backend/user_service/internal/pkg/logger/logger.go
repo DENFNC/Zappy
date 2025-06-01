@@ -135,7 +135,7 @@ func New(logType string) (*slog.Logger, error) {
 			}),
 		}
 	case "prod":
-		handle = slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+		handle = slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
 			AddSource: true,
 			Level:     slog.LevelInfo,
 		})

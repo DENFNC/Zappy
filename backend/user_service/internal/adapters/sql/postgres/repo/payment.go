@@ -3,11 +3,12 @@ package repo
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/DENFNC/Zappy/user_service/internal/adapters/sql/postgres"
+	"github.com/DENFNC/Zappy/user_service/internal/adapters/sql/postgres/dao"
 	"github.com/DENFNC/Zappy/user_service/internal/domain/models"
-	errpkg "github.com/DENFNC/Zappy/user_service/internal/errors"
+	"github.com/DENFNC/Zappy/user_service/internal/pkg/paginate"
+	errpkg "github.com/DENFNC/Zappy/user_service/internal/utils/errors"
 	"github.com/doug-martin/goqu/v9"
 	"github.com/gofrs/uuid"
 	"github.com/jackc/pgx/v5"
@@ -15,13 +16,23 @@ import (
 
 type PaymentRepo struct {
 	*postgres.Storage
+	*paginate.Paginator[dao.PaymentDAO]
 }
 
 func NewPaymentRepo(
 	db *postgres.Storage,
+	coder paginate.TokenCoder,
 ) *PaymentRepo {
+	paginate, err := paginate.NewPaginator[dao.PaymentDAO](
+		db.Client, db.Dialect, coder,
+	)
+	if err != nil {
+		panic(err)
+	}
+
 	return &PaymentRepo{
-		Storage: db,
+		Storage:   db,
+		Paginator: paginate,
 	}
 }
 
@@ -37,12 +48,12 @@ func (r *PaymentRepo) Create(ctx context.Context, payment *models.Payment) (stri
 		Returning("payment_id").
 		Prepared(true).ToSQL()
 	if err != nil {
-		return "", err
+		return "", errpkg.New("PAYMENT_CREATE_SQL_BUILD_ERROR", "failed to build create payment sql query", err)
 	}
 
 	var paymentID string
 	if err := r.Client.QueryRow(ctx, stmt, args...).Scan(&paymentID); err != nil {
-		return "", err
+		return "", errpkg.New("PAYMENT_CREATE_QUERY_ERROR", "failed to execute create payment query", err)
 	}
 
 	return paymentID, nil
@@ -61,7 +72,7 @@ func (r *PaymentRepo) GetByID(ctx context.Context, id string) (*models.Payment, 
 			"payment_id": id,
 		}).Prepared(true).ToSQL()
 	if err != nil {
-		return nil, err
+		return nil, errpkg.New("PAYMENT_GETBYID_SQL_BUILD_ERROR", "failed to build get payment by id sql query", err)
 	}
 
 	var p models.Payment
@@ -71,7 +82,10 @@ func (r *PaymentRepo) GetByID(ctx context.Context, id string) (*models.Payment, 
 		&p.PaymentToken,
 		&p.IsDefault,
 	); err != nil {
-		return nil, err
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, errpkg.ErrNotFound
+		}
+		return nil, errpkg.New("PAYMENT_GETBYID_QUERY_ERROR", "failed to execute get payment by id query", err)
 	}
 
 	return &p, nil
@@ -85,12 +99,12 @@ func (r *PaymentRepo) GetByProfileID(ctx context.Context, profileID string) ([]m
 		Prepared(true).
 		ToSQL()
 	if err != nil {
-		return nil, fmt.Errorf("build query GetByProfileID: %w", err)
+		return nil, errpkg.New("PAYMENT_GETBYPROFILEID_SQL_BUILD_ERROR", "failed to build get payment by profile id sql query", err)
 	}
 
 	rows, err := r.Client.Query(ctx, stmt, args...)
 	if err != nil {
-		return nil, fmt.Errorf("exec query GetByProfileID: %w", err)
+		return nil, errpkg.New("PAYMENT_GETBYPROFILEID_QUERY_ERROR", "failed to execute get payment by profile id query", err)
 	}
 	defer rows.Close()
 
@@ -103,12 +117,12 @@ func (r *PaymentRepo) GetByProfileID(ctx context.Context, profileID string) ([]m
 			&payment.PaymentToken,
 			&payment.IsDefault,
 		); err != nil {
-			return nil, fmt.Errorf("scan row GetByProfileID: %w", err)
+			return nil, errpkg.New("PAYMENT_GETBYPROFILEID_SCAN_ERROR", "failed to scan payment row", err)
 		}
 		list = append(list, payment)
 	}
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("rows iteration GetByProfileID: %w", err)
+		return nil, errpkg.New("PAYMENT_GETBYPROFILEID_ROWS_ITERATION_ERROR", "failed to iterate payment rows", err)
 	}
 
 	return list, nil
@@ -154,10 +168,10 @@ func (r *PaymentRepo) SetDefault(ctx context.Context, paymentID, profileID strin
 			Prepared(true).
 			ToSQL()
 		if err != nil {
-			return err
+			return errpkg.New("PAYMENT_SETDEFAULT_UNSET_SQL_BUILD_ERROR", "failed to build unset default payment sql query", err)
 		}
 		if _, err := tx.Exec(ctx, unsetSQL, unsetArgs...); err != nil {
-			return err
+			return errpkg.New("PAYMENT_SETDEFAULT_UNSET_QUERY_ERROR", "failed to execute unset default payment query", err)
 		}
 
 		setSQL, setArgs, err := r.Dialect.Update("payments").
@@ -167,12 +181,15 @@ func (r *PaymentRepo) SetDefault(ctx context.Context, paymentID, profileID strin
 			Prepared(true).
 			ToSQL()
 		if err != nil {
-			return err
+			return errpkg.New("PAYMENT_SETDEFAULT_SET_SQL_BUILD_ERROR", "failed to build set default payment sql query", err)
 		}
 
 		var id string
 		if err := tx.QueryRow(ctx, setSQL, setArgs...).Scan(&id); err != nil {
-			return err
+			if errors.Is(err, pgx.ErrNoRows) {
+				return errpkg.ErrNotFound
+			}
+			return errpkg.New("PAYMENT_SETDEFAULT_SET_QUERY_ERROR", "failed to execute set default payment query", err)
 		}
 
 		return nil
@@ -187,7 +204,7 @@ func (r *PaymentRepo) Delete(ctx context.Context, id string) (string, error) {
 		Returning("payment_id").
 		Prepared(true).ToSQL()
 	if err != nil {
-		return "", err
+		return "", errpkg.New("PAYMENT_DELETE_SQL_BUILD_ERROR", "failed to build delete payment sql query", err)
 	}
 
 	var paymentID string
@@ -195,50 +212,50 @@ func (r *PaymentRepo) Delete(ctx context.Context, id string) (string, error) {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return "", errpkg.ErrNotFound
 		}
-		return "", err
+		return "", errpkg.New("PAYMENT_DELETE_QUERY_ERROR", "failed to execute delete payment query", err)
 	}
 
 	return paymentID, nil
 }
 
-func (r *PaymentRepo) List(ctx context.Context, profileID string) ([]models.Payment, error) {
-	stmt, args, err := r.Dialect.Select(
+func (repo *PaymentRepo) List(
+	ctx context.Context,
+	profileID string,
+	pageSize uint,
+	pageToken string,
+) ([]*models.Payment, string, error) {
+	ds := repo.Dialect.Select(
 		"payment_id",
 		"profile_id",
 		"payment_token",
 		"is_default",
-		"create_at",
+		"created_at",
 		"updated_at",
-	).From("payments").
-		Where(goqu.Ex{"profile_id": profileID}).
-		Order(goqu.C("is_default").Desc()).
-		Prepared(true).ToSQL()
+	).
+		From("payments").
+		Where(goqu.C("profile_id").Eq(profileID))
+
+	repo.Paginator.WithDataset(ds).WithColumns("created_at", "payment_id").WithLimit(pageSize)
+
+	itemsDAO, nextPageToken, err := repo.Paginator.Paginate(
+		ctx,
+		pageToken,
+	)
 	if err != nil {
-		return nil, fmt.Errorf("build query List: %w", err)
+		return nil, "", errpkg.New("PAYMENT_LIST_PAGINATE_ERROR", "failed to paginate payments", err)
 	}
 
-	rows, err := r.Client.Query(ctx, stmt, args...)
-	if err != nil {
-		return nil, fmt.Errorf("exec query List: %w", err)
-	}
-	defer rows.Close()
-
-	var list []models.Payment
-	for rows.Next() {
-		var payment models.Payment
-		if err := rows.Scan(
-			&payment.PaymentID,
-			&payment.ProfileID,
-			&payment.PaymentToken,
-			&payment.IsDefault,
-		); err != nil {
-			return nil, fmt.Errorf("scan row List: %w", err)
+	items := make([]*models.Payment, len(itemsDAO))
+	for i, itemDAO := range itemsDAO {
+		items[i] = &models.Payment{
+			PaymentID:    itemDAO.PaymentID.String(),
+			ProfileID:    itemDAO.ProfileID.String(),
+			PaymentToken: itemDAO.PaymentToken.String,
+			IsDefault:    itemDAO.IsDefault.Bool,
+			// CreatedAt:  itemDAO.CreatedAt.Time,
+			// UpdatedAt:  itemDAO.UpdatedAt.Time,
 		}
-		list = append(list, payment)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("rows iteration List: %w", err)
 	}
 
-	return list, nil
+	return items, nextPageToken, nil
 }

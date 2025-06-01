@@ -5,7 +5,7 @@ import (
 	"errors"
 
 	"github.com/DENFNC/Zappy/user_service/internal/domain/models"
-	errpkg "github.com/DENFNC/Zappy/user_service/internal/errors"
+	errpkg "github.com/DENFNC/Zappy/user_service/internal/utils/errors"
 	"github.com/DENFNC/Zappy/user_service/proto/gen/go/common/v1"
 	v1 "github.com/DENFNC/Zappy/user_service/proto/gen/go/profile/v1"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -16,26 +16,27 @@ import (
 )
 
 type Profile interface {
-	Create(
+	CreateProfile(
 		ctx context.Context,
 		profile *models.Profile,
 	) (string, error)
-	Delete(
+	DeleteProfile(
 		ctx context.Context,
 		profileID string,
 	) (string, error)
-	GetByID(
+	ProfileGetByID(
 		ctx context.Context,
 		profileID string,
 	) (*models.Profile, error)
-	List(
+	ListProfiles(
 		ctx context.Context,
-		params []any,
-	) ([]any, string, error)
-	Update(
+		pageSize uint,
+		pageToken string,
+	) ([]*models.Profile, string, error)
+	UpdateProfile(
 		ctx context.Context,
 		profileID string,
-		firstName, lastName string,
+		profile *models.Profile,
 	) (string, error)
 }
 
@@ -50,8 +51,8 @@ func New(service Profile) *serverAPI {
 	}
 }
 
-func (sa *serverAPI) GRPCRegister(grpc *grpc.Server) {
-	v1.RegisterUserProfileServiceServer(grpc, sa)
+func (api *serverAPI) GRPCRegister(grpc *grpc.Server) {
+	v1.RegisterUserProfileServiceServer(grpc, api)
 }
 
 func (api *serverAPI) HTTPRegister(
@@ -61,8 +62,8 @@ func (api *serverAPI) HTTPRegister(
 	v1.RegisterUserProfileServiceHandlerServer(ctx, mux, api)
 }
 
-func (sa *serverAPI) CreateProfile(ctx context.Context, req *v1.CreateProfileRequest) (*v1.CreateProfileResponse, error) {
-	profileID, err := sa.service.Create(
+func (api *serverAPI) CreateProfile(ctx context.Context, req *v1.CreateProfileRequest) (*v1.CreateProfileResponse, error) {
+	profileID, err := api.service.CreateProfile(
 		ctx,
 		&models.Profile{
 			FirstName: req.Profile.Name.GetFirstName(),
@@ -71,7 +72,7 @@ func (sa *serverAPI) CreateProfile(ctx context.Context, req *v1.CreateProfileReq
 	)
 
 	if err != nil {
-		return nil, status.Error(codes.Internal, "Internal server error")
+		return nil, status.Error(codes.Internal, errpkg.ErrInternal.Message)
 	}
 
 	return &v1.CreateProfileResponse{
@@ -81,17 +82,17 @@ func (sa *serverAPI) CreateProfile(ctx context.Context, req *v1.CreateProfileReq
 	}, nil
 }
 
-func (sa *serverAPI) DeleteProfile(ctx context.Context, req *v1.DeleteProfileRequest) (*v1.DeleteProfileResponse, error) {
-	profileID, err := sa.service.Delete(
+func (api *serverAPI) DeleteProfile(ctx context.Context, req *v1.DeleteProfileRequest) (*v1.DeleteProfileResponse, error) {
+	profileID, err := api.service.DeleteProfile(
 		ctx,
 		req.ProfileId.GetId(),
 	)
 
 	if err != nil {
 		if errors.Is(err, errpkg.ErrNotFound) {
-			return nil, status.Error(codes.NotFound, "Not found")
+			return nil, status.Error(codes.NotFound, errpkg.ErrNotFound.Message)
 		}
-		return nil, status.Error(codes.Internal, "Internal server error")
+		return nil, status.Error(codes.Internal, errpkg.ErrInternal.Message)
 	}
 
 	return &v1.DeleteProfileResponse{
@@ -101,14 +102,14 @@ func (sa *serverAPI) DeleteProfile(ctx context.Context, req *v1.DeleteProfileReq
 	}, nil
 }
 
-func (sa *serverAPI) GetProfile(ctx context.Context, req *v1.GetProfileRequest) (*v1.GetProfileResponse, error) {
-	profile, err := sa.service.GetByID(ctx, req.ProfileId.GetId())
+func (api *serverAPI) GetProfile(ctx context.Context, req *v1.GetProfileRequest) (*v1.GetProfileResponse, error) {
+	profile, err := api.service.ProfileGetByID(ctx, req.ProfileId.GetId())
 
 	if err != nil {
 		if errors.Is(err, errpkg.ErrNotFound) {
-			return nil, status.Error(codes.NotFound, "Not found")
+			return nil, status.Error(codes.NotFound, errpkg.ErrNotFound.Message)
 		}
-		return nil, status.Error(codes.Internal, "Internal server error")
+		return nil, status.Error(codes.Internal, errpkg.ErrInternal.Message)
 	}
 
 	return &v1.GetProfileResponse{
@@ -125,48 +126,59 @@ func (sa *serverAPI) GetProfile(ctx context.Context, req *v1.GetProfileRequest) 
 	}, nil
 }
 
-func (sa *serverAPI) ListProfiles(ctx context.Context, req *v1.ListProfilesRequest) (*v1.ListProfilesResponse, error) {
-	profiles, _, err := sa.service.List(ctx, nil)
+func (api *serverAPI) ListProfiles(ctx context.Context, req *v1.ListProfilesRequest) (*v1.ListProfilesResponse, error) {
+	afterPage := true
+	items, pageToken, err := api.service.ListProfiles(
+		ctx,
+		uint(req.Pagination.GetPageSize()),
+		req.Pagination.GetPageToken(),
+	)
 	if err != nil {
-		return nil, status.Error(codes.Internal, "Internal server error")
+		return nil, status.Error(codes.Internal, errpkg.ErrInternal.Message)
+	}
+	if pageToken == "" {
+		afterPage = false
 	}
 
-	v1Profiles := make([]*v1.Profile, len(profiles))
-	for i, p := range profiles {
-		profile, ok := p.(*models.Profile)
-		if !ok {
-			return nil, status.Error(codes.Internal, "Failed to cast profile")
-		}
+	v1Profiles := make([]*v1.Profile, len(items))
+	for i, item := range items {
 		v1Profiles[i] = &v1.Profile{
-			ProfileId:  profile.ProfileID,
-			AuthUserId: profile.AuthUserID,
+			ProfileId:  item.ProfileID,
+			AuthUserId: item.AuthUserID,
 			Name: &v1.FullName{
-				FirstName: profile.FirstName,
-				LastName:  profile.LastName,
+				FirstName: item.FirstName,
+				LastName:  item.LastName,
 			},
-			CreatedAt: timestamppb.New(profile.CreatedAt),
-			UpdatedAt: timestamppb.New(profile.UpdatedAt),
+			CreatedAt: timestamppb.New(item.CreatedAt),
+			UpdatedAt: timestamppb.New(item.UpdatedAt),
 		}
 	}
 
 	return &v1.ListProfilesResponse{
 		Profiles: v1Profiles,
+		Pagination: &common.PaginationResponse{
+			PageSize:  uint32(len(items)),
+			PageToken: pageToken,
+			AfterPage: afterPage,
+		},
 	}, nil
 }
 
-func (sa *serverAPI) UpdateProfile(ctx context.Context, req *v1.UpdateProfileRequest) (*v1.UpdateProfileResponse, error) {
-	profileID, err := sa.service.Update(
+func (api *serverAPI) UpdateProfile(ctx context.Context, req *v1.UpdateProfileRequest) (*v1.UpdateProfileResponse, error) {
+	profileID, err := api.service.UpdateProfile(
 		ctx,
 		req.ProfileId.GetId(),
-		req.GetProfile().GetFirstName(),
-		req.GetProfile().GetLastName(),
+		&models.Profile{
+			FirstName: req.Profile.GetFirstName(),
+			LastName:  req.Profile.GetLastName(),
+		},
 	)
 
 	if err != nil {
 		if errors.Is(err, errpkg.ErrNotFound) {
-			return nil, status.Error(codes.NotFound, "Not found")
+			return nil, status.Error(codes.NotFound, errpkg.ErrNotFound.Message)
 		}
-		return nil, status.Error(codes.Internal, "Internal server error")
+		return nil, status.Error(codes.Internal, errpkg.ErrInternal.Message)
 	}
 
 	return &v1.UpdateProfileResponse{

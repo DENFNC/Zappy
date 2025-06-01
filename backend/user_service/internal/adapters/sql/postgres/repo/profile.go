@@ -5,8 +5,10 @@ import (
 	"errors"
 
 	"github.com/DENFNC/Zappy/user_service/internal/adapters/sql/postgres"
+	"github.com/DENFNC/Zappy/user_service/internal/adapters/sql/postgres/dao"
 	"github.com/DENFNC/Zappy/user_service/internal/domain/models"
-	errpkg "github.com/DENFNC/Zappy/user_service/internal/errors"
+	"github.com/DENFNC/Zappy/user_service/internal/pkg/paginate"
+	errpkg "github.com/DENFNC/Zappy/user_service/internal/utils/errors"
 	"github.com/doug-martin/goqu/v9"
 	"github.com/gofrs/uuid"
 	"github.com/jackc/pgx/v5"
@@ -14,13 +16,23 @@ import (
 
 type ProfileRepo struct {
 	*postgres.Storage
+	*paginate.Paginator[dao.ProfileDAO]
 }
 
 func NewProfileRepo(
 	db *postgres.Storage,
+	coder paginate.TokenCoder,
 ) *ProfileRepo {
+	paginate, err := paginate.NewPaginator[dao.ProfileDAO](
+		db.Client, db.Dialect, coder,
+	)
+	if err != nil {
+		panic(err)
+	}
+
 	return &ProfileRepo{
-		Storage: db,
+		Storage:   db,
+		Paginator: paginate,
 	}
 }
 
@@ -35,12 +47,12 @@ func (r *ProfileRepo) Create(ctx context.Context, profile *models.Profile) (stri
 		Returning("profile_id").
 		Prepared(true).ToSQL()
 	if err != nil {
-		return "", err
+		return "", errpkg.New("PROFILE_CREATE_SQL_BUILD_ERROR", "failed to build create profile sql query", err)
 	}
 
 	var profileID string
 	if err := r.Client.QueryRow(ctx, stmt, args...).Scan(&profileID); err != nil {
-		return "", err
+		return "", errpkg.New("PROFILE_CREATE_QUERY_ERROR", "failed to execute create profile query", err)
 	}
 
 	return profileID, nil
@@ -59,7 +71,7 @@ func (r *ProfileRepo) GetByID(ctx context.Context, id string) (*models.Profile, 
 			"profile_id": id,
 		}).Prepared(true).ToSQL()
 	if err != nil {
-		return nil, err
+		return nil, errpkg.New("PROFILE_GETBYID_SQL_BUILD_ERROR", "failed to build get profile by id sql query", err)
 	}
 
 	var profile models.Profile
@@ -68,7 +80,10 @@ func (r *ProfileRepo) GetByID(ctx context.Context, id string) (*models.Profile, 
 		&profile.FirstName,
 		&profile.LastName,
 	); err != nil {
-		return nil, err
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, errpkg.ErrNotFound
+		}
+		return nil, errpkg.New("PROFILE_GETBYID_QUERY_ERROR", "failed to execute get profile by id query", err)
 	}
 
 	return &profile, nil
@@ -87,7 +102,7 @@ func (r *ProfileRepo) GetByUserID(ctx context.Context, userID string) (*models.P
 			"user_id": userID,
 		}).Prepared(true).ToSQL()
 	if err != nil {
-		return nil, err
+		return nil, errpkg.New("PROFILE_GETBYUSERID_SQL_BUILD_ERROR", "failed to build get profile by user id sql query", err)
 	}
 
 	var profile models.Profile
@@ -96,7 +111,10 @@ func (r *ProfileRepo) GetByUserID(ctx context.Context, userID string) (*models.P
 		&profile.FirstName,
 		&profile.LastName,
 	); err != nil {
-		return nil, err
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, errpkg.ErrNotFound
+		}
+		return nil, errpkg.New("PROFILE_GETBYUSERID_QUERY_ERROR", "failed to execute get profile by user id query", err)
 	}
 
 	return &profile, nil
@@ -114,7 +132,7 @@ func (r *ProfileRepo) Update(ctx context.Context, profile *models.Profile) (stri
 		Returning("profile_id").
 		Prepared(true).ToSQL()
 	if err != nil {
-		return "", err
+		return "", errpkg.New("PROFILE_UPDATE_SQL_BUILD_ERROR", "failed to build update profile sql query", err)
 	}
 
 	var profileID string
@@ -122,7 +140,7 @@ func (r *ProfileRepo) Update(ctx context.Context, profile *models.Profile) (stri
 		if errors.Is(err, pgx.ErrNoRows) {
 			return "", errpkg.ErrNotFound
 		}
-		return "", err
+		return "", errpkg.New("PROFILE_UPDATE_QUERY_ERROR", "failed to execute update profile query", err)
 	}
 
 	return profileID, nil
@@ -136,7 +154,7 @@ func (r *ProfileRepo) Delete(ctx context.Context, id string) (string, error) {
 		Returning("profile_id").
 		Prepared(true).ToSQL()
 	if err != nil {
-		return "", err
+		return "", errpkg.New("PROFILE_DELETE_SQL_BUILD_ERROR", "failed to build delete profile sql query", err)
 	}
 
 	var profileID string
@@ -144,47 +162,47 @@ func (r *ProfileRepo) Delete(ctx context.Context, id string) (string, error) {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return "", errpkg.ErrNotFound
 		}
-		return "", err
+		return "", errpkg.New("PROFILE_DELETE_QUERY_ERROR", "failed to execute delete profile query", err)
 	}
 
 	return profileID, nil
 }
 
-func (r *ProfileRepo) List(ctx context.Context, params []any) ([]*models.Profile, error) {
-	stmt, args, err := r.Dialect.Select(
+func (repo *ProfileRepo) List(
+	ctx context.Context,
+	pageSize uint,
+	pageToken string,
+) ([]*models.Profile, string, error) {
+	ds := repo.Dialect.Select(
 		"profile_id",
 		"user_id",
 		"first_name",
 		"last_name",
 		"email",
 		"phone",
-	).From("profiles").
-		Prepared(true).ToSQL()
+	).From("profiles")
+
+	repo.Paginator.WithDataset(ds).WithColumns("profile_id").WithLimit(pageSize)
+
+	itemsDAO, nextPageToken, err := repo.Paginator.Paginate(
+		ctx,
+		pageToken,
+	)
 	if err != nil {
-		return nil, err
+		return nil, "", errpkg.New("PROFILE_LIST_PAGINATE_ERROR", "failed to paginate profiles", err)
 	}
 
-	rows, err := r.Client.Query(ctx, stmt, args...)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	var profiles []*models.Profile
-	for rows.Next() {
-		var profile models.Profile
-		if err := rows.Scan(
-			&profile.ProfileID,
-			&profile.FirstName,
-			&profile.LastName,
-		); err != nil {
-			return nil, err
+	items := make([]*models.Profile, len(itemsDAO))
+	for i, itemDAO := range itemsDAO {
+		items[i] = &models.Profile{
+			ProfileID:  itemDAO.ProfileID.String(),
+			AuthUserID: itemDAO.AuthUserID.String(),
+			FirstName:  itemDAO.FirstName.String,
+			LastName:   itemDAO.LastName.String,
+			CreatedAt:  itemDAO.CreatedAt.Time,
+			UpdatedAt:  itemDAO.UpdatedAt.Time,
 		}
-		profiles = append(profiles, &profile)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
 	}
 
-	return profiles, nil
+	return items, nextPageToken, nil
 }

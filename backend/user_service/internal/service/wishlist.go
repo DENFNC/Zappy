@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/DENFNC/Zappy/user_service/internal/domain/models"
-	errpkg "github.com/DENFNC/Zappy/user_service/internal/errors"
+	errpkg "github.com/DENFNC/Zappy/user_service/internal/utils/errors"
 )
 
 type WishlistRepository interface {
@@ -36,23 +36,37 @@ type WishlistRepository interface {
 		profileID string,
 		productID string,
 	) (bool, error)
+	List(
+		ctx context.Context,
+		profileID string,
+		pageSize uint,
+		pageToken string,
+	) ([]*models.WishlistItem, string, error)
 }
 
-type WishlistService struct {
-	log  *slog.Logger
-	repo WishlistRepository
+type Wishlist struct {
+	*slog.Logger
+	WishlistRepository
 }
 
-func NewWishlist(log *slog.Logger, repo WishlistRepository) *WishlistService {
-	return &WishlistService{
-		log:  log,
-		repo: repo,
+func NewWishlist(
+	log *slog.Logger,
+	repo WishlistRepository,
+) *Wishlist {
+	return &Wishlist{
+		Logger:             log,
+		WishlistRepository: repo,
 	}
 }
 
-func (s *WishlistService) CreateItem(ctx context.Context, profileID, productID string) (string, error) {
-	const op = "service.WishlistService.CreateItem"
-	log := s.log.With("op", op)
+func (svc *Wishlist) CreateItem(
+	ctx context.Context,
+	profileID string,
+	productID string,
+) (string, error) {
+	const op = "service.Wishlist.CreateItem"
+
+	log := svc.Logger.With("op", op)
 
 	item := &models.WishlistItem{
 		ProfileID: profileID,
@@ -61,70 +75,108 @@ func (s *WishlistService) CreateItem(ctx context.Context, profileID, productID s
 		IsActive:  true,
 	}
 
-	itemID, err := s.repo.Create(ctx, item)
+	itemID, err := svc.WishlistRepository.Create(ctx, item)
 	if err != nil {
-		log.Error("Failed to add wishlist item", slog.String("error", err.Error()))
+		log.Error(
+			"Failed to add wishlist item",
+			slog.String("error", err.Error()),
+		)
 		return "", errpkg.New("CREATE_ERROR", "Failed to create wishlist item", err)
 	}
 
 	return itemID, nil
 }
 
-func (s *WishlistService) GetItem(ctx context.Context, itemID string) (*models.WishlistItem, error) {
-	const op = "service.WishlistService.GetItem"
-	log := s.log.With("op", op)
+func (svc *Wishlist) GetItem(
+	ctx context.Context,
+	itemID string,
+) (*models.WishlistItem, error) {
+	const op = "service.Wishlist.GetItem"
 
-	item, err := s.repo.GetItemByID(ctx, itemID)
+	log := svc.Logger.With("op", op)
+
+	item, err := svc.WishlistRepository.GetItemByID(ctx, itemID)
 	if err != nil {
 		if errors.Is(err, errpkg.ErrNotFound) {
 			log.Error("Not found", slog.String("itemID", itemID))
 			return nil, errpkg.ErrNotFound
 		}
-		log.Error("Failed to get wishlist item", slog.String("error", err.Error()))
+		log.Error(
+			"Failed to get wishlist item",
+			slog.String("error", err.Error()),
+		)
 		return nil, errpkg.New("GET_ERROR", "Failed to get wishlist item", err)
 	}
 
 	return item, nil
 }
 
-func (s *WishlistService) UpdateItem(ctx context.Context, item *models.WishlistItem) (*models.WishlistItem, error) {
-	const op = "service.WishlistService.UpdateItem"
-	log := s.log.With("op", op)
+func (svc *Wishlist) UpdateItem(
+	ctx context.Context,
+	item *models.WishlistItem,
+) (*models.WishlistItem, error) {
+	const op = "service.Wishlist.UpdateItem"
 
-	updatedItem, err := s.repo.Update(ctx, item)
+	log := svc.Logger.With("op", op)
+
+	updatedItem, err := svc.WishlistRepository.Update(ctx, item)
 	if err != nil {
 		if errors.Is(err, errpkg.ErrNotFound) {
 			log.Error("Wishlist item not found", slog.String("itemID", item.ItemID))
 			return nil, errpkg.ErrNotFound
 		}
-		log.Error("Failed to update wishlist item", slog.String("error", err.Error()))
+		log.Error(
+			"Failed to update wishlist item",
+			slog.String("error", err.Error()),
+		)
 		return nil, errpkg.New("UPDATE_ERROR", "Failed to update wishlist item", err)
 	}
 
 	return updatedItem, nil
 }
 
-func (s *WishlistService) DeleteItem(ctx context.Context, itemID string) error {
-	const op = "service.WishlistService.DeleteItem"
-	log := s.log.With("op", op)
+func (svc *Wishlist) DeleteItem(
+	ctx context.Context,
+	itemID string,
+) error {
+	const op = "service.Wishlist.DeleteItem"
 
-	if err := s.repo.Delete(ctx, itemID); err != nil {
-		log.Error("Failed to delete wishlist item", slog.String("error", err.Error()))
+	log := svc.Logger.With("op", op)
+
+	if err := svc.WishlistRepository.Delete(ctx, itemID); err != nil {
+		log.Error(
+			"Failed to delete wishlist item",
+			slog.String("error", err.Error()),
+		)
 		return errpkg.New("DELETE_ERROR", "Failed to delete wishlist item", err)
 	}
 
 	return nil
 }
 
-func (s *WishlistService) ListItems(ctx context.Context, profileID string) ([]*models.WishlistItem, error) {
-	const op = "service.WishlistService.ListItems"
-	log := s.log.With("op", op)
+func (svc *Wishlist) ListItems(
+	ctx context.Context,
+	profileID string,
+	pageSize uint,
+	pageToken string,
+) ([]*models.WishlistItem, string, error) {
+	const op = "service.Wishlist.ListItems"
 
-	items, err := s.repo.GetItemsByProfileID(ctx, profileID)
+	log := svc.Logger.With("op", op)
+
+	items, nextPageToken, err := svc.WishlistRepository.List(
+		ctx,
+		profileID,
+		pageSize,
+		pageToken,
+	)
 	if err != nil {
-		log.Error("Failed to list wishlist items", slog.String("error", err.Error()))
-		return nil, errpkg.New("LIST_ERROR", "Failed to list wishlist items", err)
+		log.Error(
+			"Failed to list wishlist items",
+			slog.String("error", err.Error()),
+		)
+		return nil, "", errpkg.New("LIST_ERROR", "Failed to list wishlist items", err)
 	}
 
-	return items, nil
+	return items, nextPageToken, nil
 }

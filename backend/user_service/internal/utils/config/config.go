@@ -11,10 +11,11 @@ import (
 
 type (
 	Config struct {
-		LogType  string     `yaml:"log_type" env:"LOG_TYPE" env-default:"dev"`
-		GRPC     gRPConfig  `yaml:"grpc"`
-		HTTP     httpConfig `yaml:"http"`
-		Postgres configPSQL `yaml:"postgres"`
+		LogType        string     `yaml:"log_type" env:"LOG_TYPE" env-default:"dev"`
+		PaginateSecret string     `yaml:"paginate_secret" env:"PAGINATE_SECRET" env-required:"true"`
+		GRPC           gRPConfig  `yaml:"grpc"`
+		HTTP           httpConfig `yaml:"http"`
+		Postgres       configPSQL `yaml:"postgres"`
 	}
 
 	gRPConfig struct {

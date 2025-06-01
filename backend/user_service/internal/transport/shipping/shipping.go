@@ -5,7 +5,7 @@ import (
 	"errors"
 
 	"github.com/DENFNC/Zappy/user_service/internal/domain/models"
-	errpkg "github.com/DENFNC/Zappy/user_service/internal/errors"
+	errpkg "github.com/DENFNC/Zappy/user_service/internal/utils/errors"
 	"github.com/DENFNC/Zappy/user_service/proto/gen/go/common/v1"
 	v1 "github.com/DENFNC/Zappy/user_service/proto/gen/go/shipping/v1"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -65,39 +65,19 @@ func (api *serverAPI) HTTPRegister(
 }
 
 func (sa *serverAPI) CreateShipping(ctx context.Context, req *v1.CreateShippingRequest) (*v1.CreateShippingResponse, error) {
-	if err := req.Validate(); err != nil {
-		return nil, status.Error(
-			codes.InvalidArgument,
-			errpkg.ErrInvalidArgument.Message,
-		)
-	}
-
 	addrID, err := sa.service.Create(ctx, &models.Shipping{
 		ProfileID:  req.Address.GetProfileId(),
 		Country:    req.Address.GetCountry(),
 		City:       req.Address.GetCity(),
-		Street:     req.Address.GetCity(),
+		Street:     req.Address.GetStreet(),
 		PostalCode: req.Address.GetPostalCode(),
 		IsDefault:  req.Address.GetIsDefault(),
 	})
 	if err != nil {
-		switch {
-		case errors.Is(err, errpkg.ErrConstraint):
-			return nil, status.Error(
-				codes.NotFound,
-				errpkg.ErrConstraint.Message,
-			)
-		case errors.Is(err, errpkg.ErrUniqueViolation):
-			return nil, status.Error(
-				codes.AlreadyExists,
-				errpkg.ErrUniqueViolation.Message,
-			)
-		default:
-			return nil, status.Error(
-				codes.Internal,
-				errpkg.ErrInternal.Message,
-			)
-		}
+		return nil, status.Error(
+			codes.Internal,
+			errpkg.ErrInternal.Message,
+		)
 	}
 
 	return &v1.CreateShippingResponse{
@@ -113,13 +93,7 @@ func (sa *serverAPI) DeleteShipping(ctx context.Context, req *v1.DeleteShippingR
 		req.Id.GetId(),
 	)
 	if err != nil {
-		switch {
-		case errors.Is(err, errpkg.ErrNotFound):
-			return nil, status.Error(
-				codes.NotFound,
-				errpkg.ErrNotFound.Message,
-			)
-		}
+		// В соответствии с payment.go, возвращаем Internal для всех ошибок удаления
 		return nil, status.Error(
 			codes.Internal,
 			errpkg.ErrInternal.Message,
@@ -193,16 +167,24 @@ func (sa *serverAPI) UpdateShipping(ctx context.Context, req *v1.UpdateShippingR
 			ProfileID:  req.Address.GetProfileId(),
 			Country:    req.Address.GetCountry(),
 			City:       req.Address.GetCity(),
-			Street:     req.Address.GetCity(),
+			Street:     req.Address.GetStreet(),
 			PostalCode: req.Address.GetPostalCode(),
 			IsDefault:  req.Address.GetIsDefault(),
 		},
 	)
 	if err != nil {
-		return nil, status.Error(
-			codes.Internal,
-			errpkg.ErrInternal.Message,
-		)
+		switch {
+		case errors.Is(err, errpkg.ErrNotFound):
+			return nil, status.Error(
+				codes.NotFound,
+				errpkg.ErrNotFound.Message,
+			)
+		default:
+			return nil, status.Error(
+				codes.Internal,
+				errpkg.ErrInternal.Message,
+			)
+		}
 	}
 
 	return &v1.UpdateShippingResponse{

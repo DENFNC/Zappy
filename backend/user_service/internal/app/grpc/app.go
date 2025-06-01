@@ -47,6 +47,7 @@ func New(
 		grpc.ChainUnaryInterceptor(
 			interceptor.TimingInterceptor(ctx, log),
 			interceptor.ValidateArgsInterceptor(ctx, log),
+			interceptor.RecoveryUnaryInterceptor(log),
 		),
 	)
 

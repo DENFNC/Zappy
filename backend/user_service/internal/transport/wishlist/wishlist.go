@@ -5,7 +5,7 @@ import (
 	"errors"
 
 	"github.com/DENFNC/Zappy/user_service/internal/domain/models"
-	errpkg "github.com/DENFNC/Zappy/user_service/internal/errors"
+	errpkg "github.com/DENFNC/Zappy/user_service/internal/utils/errors"
 	"github.com/DENFNC/Zappy/user_service/proto/gen/go/common/v1"
 	v1 "github.com/DENFNC/Zappy/user_service/proto/gen/go/wishlist/v1"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -52,7 +52,7 @@ func (sa *serverAPI) CreateWishlistItem(ctx context.Context, req *v1.CreateWishl
 		req.GetWishlistItem().GetProductId(),
 	)
 	if err != nil {
-		return nil, status.Error(codes.Internal, "Failed to create wishlist item")
+		return nil, status.Error(codes.Internal, errpkg.ErrInternal.Message)
 	}
 
 	return &v1.CreateWishlistItemResponse{
@@ -66,9 +66,9 @@ func (sa *serverAPI) DeleteWishlistItem(ctx context.Context, req *v1.DeleteWishl
 	err := sa.service.DeleteItem(ctx, req.ItemId.GetId())
 	if err != nil {
 		if errors.Is(err, errpkg.ErrNotFound) {
-			return nil, status.Error(codes.NotFound, "Wishlist item not found")
+			return nil, status.Error(codes.NotFound, errpkg.ErrNotFound.Message)
 		}
-		return nil, status.Error(codes.Internal, "Failed to delete wishlist item")
+		return nil, status.Error(codes.Internal, errpkg.ErrInternal.Message)
 	}
 
 	return &v1.DeleteWishlistItemResponse{}, nil
@@ -78,9 +78,9 @@ func (sa *serverAPI) GetWishlistItem(ctx context.Context, req *v1.GetWishlistIte
 	item, err := sa.service.GetItem(ctx, req.ItemId.GetId())
 	if err != nil {
 		if errors.Is(err, errpkg.ErrNotFound) {
-			return nil, status.Error(codes.NotFound, "Wishlist item not found")
+			return nil, status.Error(codes.NotFound, errpkg.ErrNotFound.Message)
 		}
-		return nil, status.Error(codes.Internal, "Failed to get wishlist item")
+		return nil, status.Error(codes.Internal, errpkg.ErrInternal.Message)
 	}
 
 	return &v1.GetWishlistItemResponse{
@@ -97,7 +97,7 @@ func (sa *serverAPI) GetWishlistItem(ctx context.Context, req *v1.GetWishlistIte
 func (sa *serverAPI) ListWishlistItems(ctx context.Context, req *v1.ListWishlistItemsRequest) (*v1.ListWishlistItemsResponse, error) {
 	items, err := sa.service.ListItems(ctx, req.GetProfileId())
 	if err != nil {
-		return nil, status.Error(codes.Internal, "Failed to list wishlist items")
+		return nil, status.Error(codes.Internal, errpkg.ErrInternal.Message)
 	}
 
 	result := make([]*v1.WishlistItem, len(items))
@@ -117,15 +117,16 @@ func (sa *serverAPI) ListWishlistItems(ctx context.Context, req *v1.ListWishlist
 }
 
 func (sa *serverAPI) UpdateWishlistItem(ctx context.Context, req *v1.UpdateWishlistItemRequest) (*v1.UpdateWishlistItemResponse, error) {
-	currentItem, err := sa.service.GetItem(ctx, req.GetWishlistItem().GetItemId())
+	_, err := sa.service.UpdateItem(ctx, &models.WishlistItem{
+		ItemID:   req.GetWishlistItem().GetItemId(),
+		IsActive: req.GetWishlistItem().GetIsActive(),
+	})
 	if err != nil {
 		if errors.Is(err, errpkg.ErrNotFound) {
-			return nil, status.Error(codes.NotFound, "Wishlist item not found")
+			return nil, status.Error(codes.NotFound, errpkg.ErrNotFound.Message)
 		}
-		return nil, status.Error(codes.Internal, "Failed to get wishlist item")
+		return nil, status.Error(codes.Internal, errpkg.ErrInternal.Message)
 	}
-
-	currentItem.IsActive = req.GetWishlistItem().GetIsActive()
 
 	return &v1.UpdateWishlistItemResponse{}, nil
 }

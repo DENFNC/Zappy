@@ -6,7 +6,7 @@ import (
 	"log/slog"
 
 	"github.com/DENFNC/Zappy/user_service/internal/domain/models"
-	errpkg "github.com/DENFNC/Zappy/user_service/internal/errors"
+	errpkg "github.com/DENFNC/Zappy/user_service/internal/utils/errors"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 )
@@ -39,26 +39,38 @@ type ShippingRepository interface {
 		ctx context.Context,
 		id string,
 	) (string, error)
+	List(
+		ctx context.Context,
+		profileID string,
+		pageSize uint,
+		pageToken string,
+	) ([]*models.Shipping, string, error)
 }
 
-type ShippingService struct {
-	log  *slog.Logger
-	repo ShippingRepository
+type Shipping struct {
+	*slog.Logger
+	ShippingRepository
 }
 
-func NewShipping(log *slog.Logger, repo ShippingRepository) *ShippingService {
-	return &ShippingService{
-		log:  log,
-		repo: repo,
+func NewShipping(
+	log *slog.Logger,
+	repo ShippingRepository,
+) *Shipping {
+	return &Shipping{
+		Logger:             log,
+		ShippingRepository: repo,
 	}
 }
 
-func (s *ShippingService) Create(ctx context.Context, address *models.Shipping) (string, error) {
+func (svc *Shipping) Create(
+	ctx context.Context,
+	address *models.Shipping,
+) (string, error) {
 	const op = "service.ShippingService.Create"
 
-	log := s.log.With("op", op)
+	log := svc.Logger.With("op", op)
 
-	addrID, err := s.repo.Create(ctx, address)
+	addrID, err := svc.ShippingRepository.Create(ctx, address)
 	if err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) {
@@ -73,104 +85,137 @@ func (s *ShippingService) Create(ctx context.Context, address *models.Shipping) 
 			"Critical error",
 			slog.String("error", err.Error()),
 		)
-		return emptyStringAddr, err
+		return emptyStringAddr, errpkg.New("SHIPPING_CREATE_ERROR", "Failed to create shipping address", err)
 	}
 
 	return addrID, nil
 }
 
-func (s *ShippingService) GetByID(ctx context.Context, id string) (*models.Shipping, error) {
+func (svc *Shipping) GetByID(
+	ctx context.Context,
+	id string,
+) (*models.Shipping, error) {
 	const op = "service.ShippingService.GetByID"
 
-	log := s.log.With("op", op)
+	log := svc.Logger.With("op", op)
 
-	address, err := s.repo.GetByID(ctx, id)
-	if err != nil {
-		log.Error(
-			"Critical error",
-			slog.String("error", err.Error()),
-			slog.String("address_id", id),
-		)
-		return nil, err
-	}
-
-	return address, nil
-}
-
-func (s *ShippingService) ListByProfile(ctx context.Context, profileID string) ([]models.Shipping, error) {
-	const op = "service.ShippingService.ListByProfile"
-
-	log := s.log.With("op", op)
-
-	addresses, err := s.repo.GetByProfileID(ctx, profileID)
-	if err != nil {
-		log.Error(
-			"Critical error",
-			slog.String("error", err.Error()),
-			slog.String("profile_id", profileID),
-		)
-		return nil, err
-	}
-
-	return addresses, nil
-}
-
-func (s *ShippingService) Update(ctx context.Context, id string, address *models.Shipping) (string, error) {
-	const op = "service.ShippingService.Update"
-
-	log := s.log.With("op", op)
-
-	addrID, err := s.repo.UpdateAddress(
-		ctx,
-		id,
-		address,
-	)
-	if err != nil {
-		log.Error(
-			"Critical error",
-			slog.String("error", err.Error()),
-		)
-		return emptyStringAddr, err
-	}
-
-	return addrID, nil
-}
-
-func (s *ShippingService) SetDefault(ctx context.Context, addressID, profileID string) (string, error) {
-	const op = "service.ShippingService.SetDefault"
-
-	log := s.log.With("op", op)
-
-	if err := s.repo.SetDefault(ctx, addressID, profileID); err != nil {
-		log.Error(
-			"Critical error",
-			slog.String("error", err.Error()),
-			slog.String("address_id", addressID),
-			slog.String("profile_id", profileID),
-		)
-		return emptyStringAddr, err
-	}
-
-	return addressID, nil
-}
-
-func (s *ShippingService) Delete(ctx context.Context, id string) (string, error) {
-	const op = "service.ShippingService.Delete"
-
-	log := s.log.With("op", op)
-
-	addrID, err := s.repo.Delete(ctx, id)
+	address, err := svc.ShippingRepository.GetByID(ctx, id)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return emptyStringAddr, errpkg.ErrNotFound
+			log.Error("Shipping address not found", slog.String("address_id", id))
+			return nil, errpkg.ErrNotFound
 		}
 		log.Error(
 			"Critical error",
 			slog.String("error", err.Error()),
 			slog.String("address_id", id),
 		)
-		return emptyStringAddr, err
+		return nil, errpkg.New("SHIPPING_GET_ERROR", "Failed to get shipping address", err)
+	}
+
+	return address, nil
+}
+
+func (svc *Shipping) ListByProfile(
+	ctx context.Context,
+	profileID string,
+) ([]models.Shipping, error) {
+	const op = "service.ShippingService.ListByProfile"
+
+	log := svc.Logger.With("op", op)
+
+	addresses, err := svc.ShippingRepository.GetByProfileID(ctx, profileID)
+	if err != nil {
+		log.Error(
+			"Critical error",
+			slog.String("error", err.Error()),
+			slog.String("profile_id", profileID),
+		)
+		return nil, errpkg.New("SHIPPING_LIST_ERROR", "Failed to list shipping addresses", err)
+	}
+
+	return addresses, nil
+}
+
+func (svc *Shipping) Update(
+	ctx context.Context,
+	id string,
+	address *models.Shipping,
+) (string, error) {
+	const op = "service.ShippingService.Update"
+
+	log := svc.Logger.With("op", op)
+
+	addrID, err := svc.ShippingRepository.UpdateAddress(
+		ctx,
+		id,
+		address,
+	)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			log.Error("Shipping address not found", slog.String("address_id", id))
+			return emptyStringAddr, errpkg.ErrNotFound
+		}
+		log.Error(
+			"Critical error",
+			slog.String("error", err.Error()),
+		)
+		return emptyStringAddr, errpkg.New("SHIPPING_UPDATE_ERROR", "Failed to update shipping address", err)
 	}
 
 	return addrID, nil
+}
+
+func (svc *Shipping) SetDefault(
+	ctx context.Context,
+	addressID, profileID string,
+) (string, error) {
+	const op = "service.ShippingService.SetDefault"
+
+	log := svc.Logger.With("op", op)
+
+	if err := svc.ShippingRepository.SetDefault(ctx, addressID, profileID); err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			log.Error("Shipping address not found",
+				slog.String("address_id", addressID),
+				slog.String("profile_id", profileID))
+			return emptyStringAddr, errpkg.ErrNotFound
+		}
+		log.Error(
+			"Critical error",
+			slog.String("error", err.Error()),
+			slog.String("address_id", addressID),
+			slog.String("profile_id", profileID),
+		)
+		return emptyStringAddr, errpkg.New("SHIPPING_SETDEFAULT_ERROR", "Failed to set default shipping address", err)
+	}
+
+	return addressID, nil
+}
+
+func (svc *Shipping) ListShipping(
+	ctx context.Context,
+	profileID string,
+	pageSize uint,
+	pageToken string,
+) ([]*models.Shipping, string, error) {
+	const op = "service.Shipping.ListShipping"
+
+	log := svc.Logger.With("op", op)
+
+	items, pageToken, err := svc.ShippingRepository.List(
+		ctx,
+		profileID,
+		pageSize,
+		pageToken,
+	)
+	if err != nil {
+		log.Error(
+			"Critical error",
+			slog.String("error", err.Error()),
+		)
+		return nil, "", errpkg.New("SHIPPING_LIST_ERROR", "Failed to list shipping addresses", err)
+	}
+
+	return items, pageToken, nil
 }

@@ -5,7 +5,7 @@ import (
 	"errors"
 
 	"github.com/DENFNC/Zappy/user_service/internal/domain/models"
-	errpkg "github.com/DENFNC/Zappy/user_service/internal/errors"
+	errpkg "github.com/DENFNC/Zappy/user_service/internal/utils/errors"
 	"github.com/DENFNC/Zappy/user_service/proto/gen/go/common/v1"
 	v1 "github.com/DENFNC/Zappy/user_service/proto/gen/go/payment/v1"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -35,7 +35,9 @@ type Payment interface {
 	ListPayments(
 		ctx context.Context,
 		profileID string,
-	) ([]models.Payment, error)
+		pageSize uint,
+		pageToken string,
+	) ([]*models.Payment, string, error)
 	SetDefaultPayment(
 		ctx context.Context,
 		payment *models.Payment,
@@ -153,26 +155,40 @@ func (sa *serverAPI) DeletePayment(ctx context.Context, req *v1.DeletePaymentReq
 }
 
 func (sa *serverAPI) ListPayments(ctx context.Context, req *v1.ListPaymentsRequest) (*v1.ListPaymentsResponse, error) {
-	payments, err := sa.service.ListPayments(ctx, req.GetProfileId())
+	afterPage := true
+	items, pageToken, err := sa.service.ListPayments(
+		ctx,
+		req.GetProfileId(),
+		uint(req.Pagination.GetPageSize()),
+		req.Pagination.GetPageToken(),
+	)
 	if err != nil {
 		return nil, status.Error(
 			codes.Internal,
 			errpkg.ErrInternal.Message,
 		)
 	}
+	if pageToken == "" {
+		afterPage = false
+	}
 
-	v1Payments := make([]*v1.Payment, len(payments))
-	for i, p := range payments {
+	v1Payments := make([]*v1.Payment, len(items))
+	for i, item := range items {
 		v1Payments[i] = &v1.Payment{
-			PaymentId:    p.PaymentID,
-			ProfileId:    p.ProfileID,
-			PaymentToken: p.PaymentToken,
-			IsDefault:    p.IsDefault,
+			PaymentId:    item.PaymentID,
+			ProfileId:    item.ProfileID,
+			PaymentToken: item.PaymentToken,
+			IsDefault:    item.IsDefault,
 		}
 	}
 
 	return &v1.ListPaymentsResponse{
 		Payments: v1Payments,
+		Pagination: &common.PaginationResponse{
+			PageSize:  uint32(len(items)),
+			PageToken: pageToken,
+			AfterPage: afterPage,
+		},
 	}, nil
 }
 
