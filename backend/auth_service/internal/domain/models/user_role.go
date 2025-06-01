@@ -7,6 +7,3 @@ type UserRole struct {
 	RoleID    int64
 	CreatedAt time.Time
 }
-
-type UserRoleRepository interface {
-}

@@ -1,36 +1,33 @@
 package app
 
 import (
+	"context"
 	"log/slog"
 
+	"github.com/DENFNC/Zappy/auth_service/internal/adapters/sql/postgres"
 	grpcapp "github.com/DENFNC/Zappy/auth_service/internal/app/grpc"
-	"github.com/DENFNC/Zappy/auth_service/internal/config"
-	"github.com/DENFNC/Zappy/auth_service/internal/infrastructure/repo"
-	vaulttoken "github.com/DENFNC/Zappy/auth_service/internal/pkg/authjwt"
-	authservice "github.com/DENFNC/Zappy/auth_service/internal/service/auth"
-	psql "github.com/DENFNC/Zappy/auth_service/internal/storage/postgres"
+	"github.com/DENFNC/Zappy/auth_service/internal/utils/config"
 )
 
 type App struct {
-	App *grpcapp.App
+	App grpcapp.App
 }
 
 func New(
+	ctx context.Context,
 	log *slog.Logger,
-	db *psql.Storage,
-	vault vaulttoken.VaultKMS,
-	cfgVault config.ConfigVault,
-	port int,
+	db *postgres.Storage,
+	cfg *config.Config,
 ) (*App, error) {
-	userRepo := repo.NewUser(db)
-
-	authService := authservice.NewAuth(log, userRepo, vault, cfgVault)
 
 	return &App{
-		App: grpcapp.New(
-			log,
-			port,
-			authService,
-		),
-	}, nil
+			App: *grpcapp.New(
+				ctx,
+				log,
+				cfg.GRPC.Reflection,
+				cfg.GRPC.Port,
+				cfg.HTTP.Port,
+			),
+		},
+		nil
 }

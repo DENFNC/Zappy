@@ -1,0 +1,104 @@
+syntax = "proto3";
+
+package auth.v1;
+
+option go_package = "github.com/DENFNC/Zappy/auth_service/proto/gen/go/v1;v1";
+
+import "validate/validate.proto";
+import "google/api/annotations.proto";
+import "common/v1/common.proto";
+
+
+service AuthService {
+    rpc Register(RegisterRequest) returns (RegisterResponse) {
+        option (google.api.http) = {
+            post: "/v1/auth/register"
+            body: "*"
+        };
+    }
+    rpc Login(LoginRequest) returns (LoginResponse) {
+        option (google.api.http) = {
+            post: "/v1/auth/login"
+            body: "*"
+        };
+    }
+    rpc Refresh(RefreshRequest) returns (RefreshResponse) {
+        option (google.api.http) = {
+            post: "/v1/auth/refresh"
+            body: "*"
+        };
+    }
+    rpc ListUsers(ListUsersRequest) returns (ListUsersResponse) {
+        option (google.api.http) = {
+            get: "/v1/auth/users"
+        };
+    }
+}
+
+
+message Username {
+    string username = 1 [(validate.rules).string = {
+        min_len: 5,
+        max_len: 255,
+        pattern: "^[a-zA-Z0-9._-]{5,255}$"
+    }];
+}
+
+
+message Email {
+    string email = 1 [(validate.rules).string.email = true];
+}
+
+
+message Password {
+    string password = 1 [(validate.rules).string = {
+        min_len: 10,
+        max_len: 255,
+    }];
+}
+
+
+message UserDefault {
+    Username username = 1 [(validate.rules).message.required = true];
+    Email email = 2 [(validate.rules).message.required = true];
+}
+
+
+message RegisterRequest {
+    UserDefault user = 1 [(validate.rules).message.required = true];
+    Password password = 2 [(validate.rules).message.required = true];
+}
+message RegisterResponse {
+    string token = 1;
+    uint64 user_id = 2;
+}
+
+
+message LoginRequest {
+    oneof auth_type {
+        Username username = 1;
+        Email email = 2;
+    }
+    Password password = 3 [(validate.rules).message.required = true];
+}
+message LoginResponse {
+    string token = 1;
+}
+
+
+message RefreshRequest {
+    string token = 1 [(validate.rules).string.min_len = 1];
+}
+message RefreshResponse {
+    string token = 1;
+}
+
+
+message ListUsersRequest {
+    common.v1.PaginationRequest pagination = 1;
+}
+
+message ListUsersResponse {
+    repeated UserDefault users = 1;
+    common.v1.PaginationResponse pagination = 2;
+}
