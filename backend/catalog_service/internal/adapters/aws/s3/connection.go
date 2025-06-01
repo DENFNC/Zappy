@@ -2,11 +2,14 @@ package s3client
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/smithy-go"
 )
 
 type Client struct {
@@ -88,4 +91,56 @@ func NewClient(ctx context.Context, opts ...Option) (*Client, error) {
 		PresignClient:  presigner,
 		presignExpires: co.presignExpiry,
 	}, nil
+}
+
+func (c *Client) EnsureBucketExists(ctx context.Context, bucketNames ...string) error {
+	for _, bucketName := range bucketNames {
+		_, err := c.API.HeadBucket(ctx, &s3.HeadBucketInput{
+			Bucket: aws.String(bucketName),
+		})
+		if err != nil {
+			if isNotFound(err) {
+				// Создаём бакет
+				_, err := c.API.CreateBucket(ctx, &s3.CreateBucketInput{
+					Bucket: aws.String(bucketName),
+				})
+				if err != nil {
+					return fmt.Errorf("failed to create bucket %q: %w", bucketName, err)
+				}
+				// Ждём, пока бакет станет доступен
+				waiter := s3.NewBucketExistsWaiter(c.API)
+				waitCtx, cancel := context.WithTimeout(ctx, 1*time.Minute)
+				defer cancel()
+
+				if waitErr := waiter.Wait(waitCtx, &s3.HeadBucketInput{
+					Bucket: aws.String(bucketName),
+				}, 5*time.Second); waitErr != nil {
+					return fmt.Errorf("bucket %q создан, но не стал доступен: %w", bucketName, waitErr)
+				}
+				continue
+			}
+			if isForbidden(err) {
+				return fmt.Errorf("no permissions to access bucket %q: %w", bucketName, err)
+			}
+			return fmt.Errorf("failed to check bucket %q: %w", bucketName, err)
+		}
+	}
+	return nil
+}
+
+func isNotFound(err error) bool {
+	var apiErr smithy.APIError
+	if errors.As(err, &apiErr) {
+		code := apiErr.ErrorCode()
+		return code == "NoSuchBucket" || code == "NotFound"
+	}
+	return false
+}
+
+func isForbidden(err error) bool {
+	var apiErr smithy.APIError
+	if errors.As(err, &apiErr) {
+		return apiErr.ErrorCode() == "Forbidden"
+	}
+	return false
 }

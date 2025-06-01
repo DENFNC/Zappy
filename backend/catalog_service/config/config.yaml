@@ -11,10 +11,12 @@ http:
   port: 8081
 
 postgres:
-  url: "postgres://postgres:admin@localhost:5432/catalog_service?sslmode=disable"
+  url: "postgres://postgres:admin@postgres:5432/catalog_service?sslmode=disable"
 
 object_store:
-  object_origin: "http://localhost:9000"
+  access_key: "lDeFkaV4ztCt4xKvL4Wc"
+  secret_key: "49nGrY6xzsiV2pElpaGnU4ezRtnbJ1w4lENad91G"
+  object_origin: "http://minio:9000"
   aws_bucket_image: "image-bucket"
   aws_staging_bucket: "staging-bucket"
   buckets:

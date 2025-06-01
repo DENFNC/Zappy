@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"log/slog"
 	"os"
 	"os/signal"
 	"syscall"
@@ -23,7 +24,7 @@ func main() {
 		panic(err)
 	}
 
-	dbpool := MustInitDatabasePool(cfg)
+	dbpool := MustInitDatabasePool(logger, cfg)
 
 	application, err := app.New(
 		context.TODO(), logger,
@@ -50,9 +51,10 @@ func main() {
 }
 
 func MustInitDatabasePool(
+	log *slog.Logger,
 	cfg *config.Config,
 ) *postgres.Storage {
-	dbpool, err := postgres.NewStorage(cfg.Postgres.URL)
+	dbpool, err := postgres.NewStorage(cfg.Postgres.URL, log)
 	if err != nil {
 		panic(err)
 	}

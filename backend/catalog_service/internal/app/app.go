@@ -39,15 +39,24 @@ func New(
 ) (*App, error) {
 	paginateCoder, err := initPaginateCoder(cfg)
 	if err != nil {
+		log.Error(
+			"Failed to init paginate coder",
+			slog.String("error", err.Error()),
+		)
 		return nil, err
 	}
 
-	s3Client, objectStore, err := initS3Store()
+	s3Client, objectStore, err := initS3Store(cfg, cfg.ObjectStore.ObjectOrigin, log)
 	if err != nil {
+		log.Error(
+			"Failed to init S3 store",
+			slog.String("error", err.Error()),
+		)
 		return nil, err
 	}
-	kvstore := initKVStorage(cfg)
-	initObjectStoreNotifyer(s3Client, cfg.ObjectStore.StagingBucket)
+
+	kvstore := initKVStorage(cfg, log)
+	initObjectStoreNotifyer(s3Client, cfg.ObjectStore.StagingBucket, cfg.ObjectStore.ObjectOrigin, log)
 
 	productRepo := repo.NewProductRepo(db, paginateCoder)
 	productSvc := productservice.NewProduct(log, productRepo)
@@ -65,39 +74,40 @@ func New(
 	checkMimeHandleHook := hooks.New(checkMimeSvcHook)
 
 	return &App{
-		App: *grpcapp.New(
-			ctx,
-			log,
-			cfg.GRPC.Reflection,
-			cfg.GRPC.Port,
-			cfg.HTTP.Port,
-			productHandle,
-			categoryHandle,
-			productImageHandle,
-			checkMimeHandleHook,
-		),
-	}, nil
+			App: *grpcapp.New(
+				ctx,
+				log,
+				cfg.GRPC.Reflection,
+				cfg.GRPC.Port,
+				cfg.HTTP.Port,
+				productHandle,
+				categoryHandle,
+				productImageHandle,
+				checkMimeHandleHook,
+			),
+		},
+		nil
 }
 
-func initS3Store() (*s3client.Client, *awsstore.Store, error) {
-	// TODO: в prod креды должны передаваться через переменные среды
-	// TODO: Измени ключи для нормальной работы в локали (в minio вкладка -> Access Keys)
+func initS3Store(cfg *config.Config, objectOrigin string, log *slog.Logger) (*s3client.Client, *awsstore.Store, error) {
 	creds := credentials.NewStaticCredentialsProvider(
-		"VtK99Smfp4o5KCzw1LBu",                     // * Access key
-		"LeSncjLNQZoCTncz1nTJw0XL28eUy7cGEwAIuu8X", // * Secret key
+		cfg.ObjectStore.AccessKey,
+		cfg.ObjectStore.SecretKey,
 		"",
 	)
 
 	client, err := s3client.NewClient(
 		context.TODO(),
 		s3client.WithPresignExpiry(time.Minute*15),
-		s3client.WithEndpoint("http://localhost:9000"),
+		s3client.WithEndpoint(objectOrigin),
 		s3client.WithCredentials(creds),
 	)
 	if err != nil {
 		return nil, nil, err
 	}
-
+	if err := client.EnsureBucketExists(context.TODO(), cfg.ObjectStore.ImageBucket, cfg.ObjectStore.StagingBucket); err != nil {
+		return nil, nil, fmt.Errorf("failed to ensure buckets exist: %w", err)
+	}
 	store := awsstore.NewStore(client)
 
 	return client, store, nil
@@ -106,6 +116,8 @@ func initS3Store() (*s3client.Client, *awsstore.Store, error) {
 func initObjectStoreNotifyer(
 	client *s3client.Client,
 	bucket string,
+	objectOrigin string,
+	log *slog.Logger,
 ) {
 	notify := s3client.NewNotifyer(client)
 	// TODO: Временный хардкод, затем переменные будут передаваться через конфиг
@@ -118,8 +130,10 @@ func initObjectStoreNotifyer(
 		"PUT",
 	)
 	if err != nil {
-		fmt.Println(err)
-		panic(err)
+		log.Error(
+			"Failed to register new notifyer",
+			slog.String("error", err.Error()),
+		)
 	}
 }
 
@@ -139,6 +153,7 @@ func initPaginateCoder(
 
 func initKVStorage(
 	cfg *config.Config,
+	log *slog.Logger,
 ) *kvstore.Store {
 	client := redis.NewClient(
 		redis.WithAddr("localhost:6379"),
@@ -146,7 +161,7 @@ func initKVStorage(
 		redis.WithDB(0),
 	)
 
-	store := kvstore.New(client)
+	store := kvstore.New(client, log)
 
 	return store
 }

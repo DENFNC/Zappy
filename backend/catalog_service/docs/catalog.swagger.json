@@ -1,0 +1,934 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "common/v1/common.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "CategoryService"
+    },
+    {
+      "name": "WebHookService"
+    },
+    {
+      "name": "ProductService"
+    },
+    {
+      "name": "ProductImageService"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/v1/catalog_service/categories": {
+      "get": {
+        "operationId": "CategoryService_ListCategories",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListCategoriesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "pagination.page_size",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "pagination.page_token",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "CategoryService"
+        ]
+      },
+      "post": {
+        "operationId": "CategoryService_CreateCategory",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CreateCategoryResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateCategoryRequest"
+            }
+          }
+        ],
+        "tags": [
+          "CategoryService"
+        ]
+      }
+    },
+    "/api/v1/catalog_service/categories/{category_id}": {
+      "delete": {
+        "operationId": "CategoryService_DeleteCategory",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1DeleteCategoryResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "category_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "CategoryService"
+        ]
+      }
+    },
+    "/api/v1/catalog_service/product_images/{image_id}": {
+      "get": {
+        "operationId": "ProductImageService_GetProductImage",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetProductImageResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "image_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "ProductImageService"
+        ]
+      },
+      "delete": {
+        "operationId": "ProductImageService_DeleteProductImage",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1DeleteProductImageResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "image_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "ProductImageService"
+        ]
+      },
+      "patch": {
+        "operationId": "ProductImageService_UpdateProductImage",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpdateProductImageResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "image_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ProductImageServiceUpdateProductImageBody"
+            }
+          }
+        ],
+        "tags": [
+          "ProductImageService"
+        ]
+      }
+    },
+    "/api/v1/catalog_service/products/{product_id}/images": {
+      "get": {
+        "operationId": "ProductImageService_ListProductImages",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListProductImagesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "pagination.page_size",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "pagination.page_token",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "ProductImageService"
+        ]
+      }
+    },
+    "/api/v1/catalog_service/upload-status": {
+      "get": {
+        "operationId": "ProductImageService_UploadStatus",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UploadStatusResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "ProductImageService"
+        ]
+      }
+    },
+    "/api/v1/catalog_service/uploads:prepare": {
+      "post": {
+        "operationId": "ProductImageService_UploadFileURL",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UploadFileURLResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1UploadFileURLRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ProductImageService"
+        ]
+      }
+    },
+    "/api/v1/catalog_service/webhook/checkmime": {
+      "post": {
+        "operationId": "WebHookService_CheckMimeObjectStorage",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1WebHookServiceCheckMimeObjectStorageResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1WebHookServiceCheckMimeObjectStorageRequest"
+            }
+          }
+        ],
+        "tags": [
+          "WebHookService"
+        ]
+      }
+    },
+    "/v1/products": {
+      "get": {
+        "operationId": "ProductService_ListProducts",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListProductsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "pagination.page_size",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "pagination.page_token",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "ProductService"
+        ]
+      },
+      "post": {
+        "operationId": "ProductService_CreateProduct",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CreateProductResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateProductRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ProductService"
+        ]
+      }
+    },
+    "/v1/products/{product_id}": {
+      "get": {
+        "operationId": "ProductService_GetProduct",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetProductResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "ProductService"
+        ]
+      },
+      "delete": {
+        "operationId": "ProductService_DeleteProduct",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1DeleteProductResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "product_id",
+            "description": "empty response",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "ProductService"
+        ]
+      },
+      "patch": {
+        "operationId": "ProductService_UpdateProduct",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpdateProductResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ProductServiceUpdateProductBody"
+            }
+          }
+        ],
+        "tags": [
+          "ProductService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "ProductImageServiceUpdateProductImageBody": {
+      "type": "object",
+      "properties": {
+        "update_mask": {
+          "type": "string"
+        }
+      }
+    },
+    "ProductServiceUpdateProductBody": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "price_cents": {
+          "type": "string",
+          "format": "int64"
+        },
+        "category_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "googlerpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "product_imagev1Status": {
+      "type": "string",
+      "enum": [
+        "STATUS_UNSPECIFIED",
+        "STATUS_PENDING",
+        "STATUS_SUCCESS",
+        "STATUS_FAILED"
+      ],
+      "default": "STATUS_UNSPECIFIED"
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "v1Category": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "parent_id": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "v1CreateCategoryRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "parent_id": {
+          "type": "string"
+        }
+      }
+    },
+    "v1CreateCategoryResponse": {
+      "type": "object",
+      "properties": {
+        "category_id": {
+          "$ref": "#/definitions/v1ResourceID"
+        }
+      }
+    },
+    "v1CreateProductRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "price_cents": {
+          "type": "string",
+          "format": "int64"
+        },
+        "category_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "v1CreateProductResponse": {
+      "type": "object",
+      "properties": {
+        "product_id": {
+          "$ref": "#/definitions/v1ResourceID"
+        }
+      }
+    },
+    "v1DeleteCategoryResponse": {
+      "type": "object"
+    },
+    "v1DeleteProductImageResponse": {
+      "type": "object"
+    },
+    "v1DeleteProductResponse": {
+      "type": "object"
+    },
+    "v1GetProductImageResponse": {
+      "type": "object",
+      "properties": {
+        "product_image": {
+          "$ref": "#/definitions/v1ProductImage"
+        }
+      }
+    },
+    "v1GetProductResponse": {
+      "type": "object",
+      "properties": {
+        "product": {
+          "$ref": "#/definitions/v1Product"
+        }
+      }
+    },
+    "v1ListCategoriesResponse": {
+      "type": "object",
+      "properties": {
+        "categories": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Category"
+          }
+        },
+        "pagination": {
+          "$ref": "#/definitions/v1PaginationResponse"
+        }
+      }
+    },
+    "v1ListProductImagesResponse": {
+      "type": "object",
+      "properties": {
+        "product_image": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1ProductImage"
+          }
+        },
+        "pagination": {
+          "$ref": "#/definitions/v1PaginationResponse"
+        }
+      }
+    },
+    "v1ListProductsResponse": {
+      "type": "object",
+      "properties": {
+        "products": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Product"
+          }
+        },
+        "pagination": {
+          "$ref": "#/definitions/v1PaginationResponse"
+        }
+      }
+    },
+    "v1ObjectStorageBucket": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "arn": {
+          "type": "string"
+        }
+      }
+    },
+    "v1ObjectStorageObject": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "size": {
+          "type": "string",
+          "format": "int64"
+        },
+        "content_type": {
+          "type": "string"
+        }
+      }
+    },
+    "v1ObjectStorageRecord": {
+      "type": "object",
+      "properties": {
+        "s3": {
+          "$ref": "#/definitions/v1ObjectStorageS3"
+        }
+      }
+    },
+    "v1ObjectStorageS3": {
+      "type": "object",
+      "properties": {
+        "bucket": {
+          "$ref": "#/definitions/v1ObjectStorageBucket"
+        },
+        "object": {
+          "$ref": "#/definitions/v1ObjectStorageObject"
+        }
+      }
+    },
+    "v1PaginationRequest": {
+      "type": "object",
+      "properties": {
+        "page_size": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "page_token": {
+          "type": "string"
+        }
+      }
+    },
+    "v1PaginationResponse": {
+      "type": "object",
+      "properties": {
+        "page_size": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "page_token": {
+          "type": "string"
+        },
+        "after_page": {
+          "type": "boolean"
+        }
+      }
+    },
+    "v1Product": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "price_cents": {
+          "type": "string",
+          "format": "int64"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "v1ProductImage": {
+      "type": "object",
+      "properties": {
+        "image_id": {
+          "type": "string"
+        },
+        "product_id": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "alt": {
+          "type": "string"
+        },
+        "object_key": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "v1ResourceID": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "v1UpdateProductImageResponse": {
+      "type": "object",
+      "properties": {
+        "product_image": {
+          "$ref": "#/definitions/v1ProductImage"
+        }
+      }
+    },
+    "v1UpdateProductResponse": {
+      "type": "object",
+      "title": "string product_id = 1;\r\n empty response"
+    },
+    "v1UploadFileURLRequest": {
+      "type": "object",
+      "properties": {
+        "product_id": {
+          "type": "string"
+        },
+        "filename": {
+          "type": "string"
+        },
+        "content_type": {
+          "type": "string"
+        },
+        "alt": {
+          "type": "string"
+        }
+      }
+    },
+    "v1UploadFileURLResponse": {
+      "type": "object",
+      "properties": {
+        "upload_url": {
+          "type": "string"
+        },
+        "object_key": {
+          "type": "string"
+        }
+      }
+    },
+    "v1UploadStatusResponse": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/definitions/product_imagev1Status"
+        }
+      }
+    },
+    "v1WebHookServiceCheckMimeObjectStorageRequest": {
+      "type": "object",
+      "properties": {
+        "event_name": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "records": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1ObjectStorageRecord"
+          }
+        }
+      }
+    },
+    "v1WebHookServiceCheckMimeObjectStorageResponse": {
+      "type": "object"
+    }
+  }
+}

@@ -18,6 +18,14 @@ plugins:
     opt:
       - paths=source_relative
 
+  - remote: buf.build/grpc-ecosystem/openapiv2:v2.26.3
+    out: docs
+    opt:
+      - allow_merge=true
+      - merge_file_name=catalog.json
+      - json_names_for_fields=false
+      - logtostderr=true
+
   - local: protoc-gen-validate
     out: proto/gen/go
     opt:

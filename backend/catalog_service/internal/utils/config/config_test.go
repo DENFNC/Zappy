@@ -57,6 +57,8 @@ http:
 postgres:
   url: postgres://user:pass@localhost:5432/db
 object_store:
+  access_key: test_access_key
+  secret_key: test_secret_key
   aws_bucket_image: img-bucket
   aws_staging_bucket: staging-bucket
   buckets:
@@ -77,6 +79,8 @@ object_store:
 	assert.Equal(t, "postgres://user:pass@localhost:5432/db", cfg.Postgres.URL)
 
 	assert.Equal(t, "http://localhost:9000", cfg.ObjectStore.ObjectOrigin)
+	assert.Equal(t, "test_access_key", cfg.ObjectStore.AccessKey)
+	assert.Equal(t, "test_secret_key", cfg.ObjectStore.SecretKey)
 	assert.Equal(t, "img-bucket", cfg.ObjectStore.ImageBucket)
 	assert.Equal(t, "staging-bucket", cfg.ObjectStore.StagingBucket)
 

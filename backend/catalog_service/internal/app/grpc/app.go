@@ -7,7 +7,7 @@ import (
 	"net"
 	"net/http"
 
-	"github.com/DENFNC/Zappy/catalog_service/internal/app/interceptors"
+	"github.com/DENFNC/Zappy/catalog_service/internal/app/interceptor"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -45,7 +45,9 @@ func New(
 
 	grpcServer := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
-			interceptors.ValidateArgsInterceptor(ctx, log),
+			interceptor.ValidateArgsInterceptor(ctx, log),
+			interceptor.TimingInterceptor(ctx, log),
+			interceptor.RecoveryUnaryInterceptor(log),
 		),
 	)
 

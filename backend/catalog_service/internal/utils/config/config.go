@@ -34,7 +34,9 @@ type (
 	}
 
 	BucketCfg struct {
-		ObjectOrigin  string `yaml:"object_origin" env:"OBJECT_STORE_OBJECT_ORIGIN" env-default:"http://localhost:9000"`
+		ObjectOrigin  string `yaml:"object_origin" env:"OBJECT_STORE_OBJECT_ORIGIN"`
+		AccessKey     string `yaml:"access_key" env:"OBJECT_STORE_ACCESS_KEY" env-required:"true"`
+		SecretKey     string `yaml:"secret_key" env:"OBJECT_STORE_SECRET_KEY" env-required:"true"`
 		ImageBucket   string `yaml:"aws_bucket_image" env:"OBJECT_STORE_AWS_BUCKET_IMAGE" env-required:"true"`
 		StagingBucket string `yaml:"aws_staging_bucket" env:"OBJECT_STORE_AWS_STAGING_BUCKET" env-required:"true"`
 		Buckets       map[string]struct {
