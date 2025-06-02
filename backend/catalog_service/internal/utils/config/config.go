@@ -37,9 +37,9 @@ type (
 	}
 
 	ConfigRedis struct {
-		URL             string        `yaml:"url" env-required:"true"`
-		Password        string        `yaml:"password" env-default:""`
-		DB              int           `yaml:"db" env-required:"true"`
+		URL             string        `yaml:"url" env:"REDIS_URL" env-required:"true"`
+		Password        string        `yaml:"password" env:"REDIS_PASSWORD" env-default:""`
+		DB              int           `yaml:"db" env:"REDIS_DB" env-required:"true"`
 		MaxRetries      int           `yaml:"max_retries" env:"REDIS_MAX_RETRIES" env-required:"true"`
 		RetryIntervalMS time.Duration `yaml:"retry_interval_ms" env:"REDIS_RETRY_INTERVAL_MS" env-required:"true"`
 	}
@@ -50,8 +50,8 @@ type (
 		SecretKey       string        `yaml:"secret_key" env:"OBJECT_STORE_SECRET_KEY" env-required:"true"`
 		ImageBucket     string        `yaml:"aws_bucket_image" env:"OBJECT_STORE_AWS_BUCKET_IMAGE" env-required:"true"`
 		StagingBucket   string        `yaml:"aws_staging_bucket" env:"OBJECT_STORE_AWS_STAGING_BUCKET" env-required:"true"`
-		MaxRetries      int           `yaml:"max_retries" env:"S3_MAX_RETRIES" env-required:"true"`
-		RetryIntervalMS time.Duration `yaml:"retry_interval_ms" env:"S3_RETRY_INTERVAL_MS" env-required:"true"`
+		MaxRetries      int           `yaml:"max_retries" env:"OBJECT_STORE_MAX_RETRIES" env-required:"true"`
+		RetryIntervalMS time.Duration `yaml:"retry_interval_ms" env:"OBJECT_STORE_RETRY_INTERVAL_MS" env-required:"true"`
 		Buckets         map[string]struct {
 			Name      string   `yaml:"name" env:"NAME"`
 			MimeTypes []string `yaml:"mime_types" env:"MIME_TYPES"`

@@ -128,6 +128,8 @@ services:
       - GRPC_REFLECTION=false
       - HTTP_URL=0.0.0.0:8080
       - POSTGRES_URL=postgres://postgres:admin@postgres:5432/review_service?sslmode=disable
+      - POSTGRES_MAX_RETRIES=3
+      - POSTGRES_RETRY_INTERVAL_MS=2000ms
     networks:
       - zappy
     depends_on:
@@ -146,6 +148,8 @@ services:
       - GRPC_REFLECTION=false
       - HTTP_URL=0.0.0.0:8081
       - POSTGRES_URL=postgres://postgres:admin@postgres:5432/user_service?sslmode=disable
+      - POSTGRES_MAX_RETRIES=3
+      - POSTGRES_RETRY_INTERVAL_MS=2000ms
     networks:
       - zappy
     depends_on:
@@ -167,6 +171,8 @@ services:
       - HTTP_URL=0.0.0.0:8082
 
       - POSTGRES_URL=postgres://postgres:admin@postgres:5432/catalog_service?sslmode=disable
+      - POSTGRES_MAX_RETRIES=3
+      - POSTGRES_RETRY_INTERVAL_MS=2000ms
 
       - OBJECT_STORE_OBJECT_ORIGIN=http://minio:9000
       - OBJECT_STORE_AWS_BUCKET_IMAGE=image-bucket
@@ -181,6 +187,14 @@ services:
       - OBJECT_STORE_BUCKETS_STAGING_BUCKET_NAME=/staging-bucket
       - OBJECT_STORE_BUCKETS_STAGING_BUCKET_PATH=/catalog_service/staging/
       - OBJECT_STORE_BUCKETS_STAGING_BUCKET_MIME_TYPES=image/jpeg,image/png
+      - OBJECT_STORE_MAX_RETRIES=3
+      - OBJECT_STORE_RETRY_INTERVAL_MS=2000ms
+
+      - REDIS_URL=redis://localhost:6379
+      - REDIS_PASSWORD=""
+      - REDIS_DB=0
+      - REDIS_MAX_RETRIES=3
+      - REDIS_RETRY_INTERVAL_MS=2000ms
     networks:
       - zappy
     depends_on:
@@ -212,6 +226,10 @@ services:
       - VAULT_TOKEN=root
       - VAULT_EXPIRES=10h
       - VAULT_KEY_NAME=rsa
+      - POSTGRES_MAX_RETRIES=3
+      - POSTGRES_RETRY_INTERVAL_MS=2000ms
+      - VAULT_MAX_RETRIES=3
+      - VAULT_RETRY_INTERVAL_MS=2000ms
     networks:
       - zappy
     depends_on:
