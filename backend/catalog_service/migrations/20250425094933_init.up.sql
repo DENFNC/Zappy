@@ -14,6 +14,7 @@ CREATE TABLE
         product_id UUID NOT NULL,
         url VARCHAR(255) NOT NULL,
         alt VARCHAR(255) NOT NULL,
+        object_key TEXT NOT NULL,
         created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
         updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
         CONSTRAINT fk_product_image FOREIGN KEY (product_id) REFERENCES product (product_id) ON DELETE CASCADE

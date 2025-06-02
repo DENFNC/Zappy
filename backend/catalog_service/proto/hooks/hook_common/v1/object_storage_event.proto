@@ -26,3 +26,10 @@ message ObjectStorageObject {
     int64  size = 2 [json_name = "size"];
     string content_type = 3 [json_name = "contentType"];
 }
+
+message MessageFields {
+    string detected_content_type = 1;
+    string message = 2;
+    string key     = 3;
+    bool   valid   = 4;
+}

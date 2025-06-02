@@ -71,7 +71,7 @@ func RegisterWebHookServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/object.v1.WebHookService/CheckMimeObjectStorage", runtime.WithHTTPPathPattern("/api/v1/webhook/checkmime"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/object.v1.WebHookService/CheckMimeObjectStorage", runtime.WithHTTPPathPattern("/api/v1/catalog_service/webhook/checkmime"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -129,7 +129,7 @@ func RegisterWebHookServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/object.v1.WebHookService/CheckMimeObjectStorage", runtime.WithHTTPPathPattern("/api/v1/webhook/checkmime"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/object.v1.WebHookService/CheckMimeObjectStorage", runtime.WithHTTPPathPattern("/api/v1/catalog_service/webhook/checkmime"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -146,7 +146,7 @@ func RegisterWebHookServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 }
 
 var (
-	pattern_WebHookService_CheckMimeObjectStorage_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"api", "v1", "webhook", "checkmime"}, ""))
+	pattern_WebHookService_CheckMimeObjectStorage_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 2, 4}, []string{"api", "v1", "catalog_service", "webhook", "checkmime"}, ""))
 )
 
 var (

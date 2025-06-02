@@ -203,12 +203,6 @@ func (m *WebHookServiceCheckMimeObjectStorageResponse) validate(all bool) error 
 
 	var errors []error
 
-	// no validation rules for DetectedContentType
-
-	// no validation rules for Message
-
-	// no validation rules for Valid
-
 	if len(errors) > 0 {
 		return WebHookServiceCheckMimeObjectStorageResponseMultiError(errors)
 	}

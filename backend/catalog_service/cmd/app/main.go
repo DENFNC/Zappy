@@ -14,7 +14,6 @@ import (
 
 func main() {
 	// Для тестов использовать ./config/config_test.yaml
-
 	// TODO: Чтобы приложение работало нужно прописать переменные окружения
 	// TODO: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY и AWS_ENDPOINT_URL
 
@@ -53,7 +52,7 @@ func main() {
 func MustInitDatabasePool(
 	cfg *config.Config,
 ) *postgres.Storage {
-	dbpool, err := postgres.New(cfg.Postgres.URL)
+	dbpool, err := postgres.NewStorage(cfg.Postgres.URL)
 	if err != nil {
 		panic(err)
 	}

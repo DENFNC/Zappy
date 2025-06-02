@@ -124,14 +124,14 @@ func (api *serverAPI) ListProducts(
 		req.Pagination.GetPageSize(),
 		req.Pagination.GetPageToken(),
 	)
-	if nextPageToken == "" {
-		afterPage = false
-	}
 	if err != nil {
 		return nil, status.Error(
 			codes.Internal,
 			errpkg.ErrInternal.Message,
 		)
+	}
+	if nextPageToken == "" {
+		afterPage = false
 	}
 
 	v1Products := make([]*v1.Product, len(items))

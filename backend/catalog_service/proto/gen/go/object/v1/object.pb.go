@@ -84,12 +84,9 @@ func (x *WebHookServiceCheckMimeObjectStorageRequest) GetRecords() []*v1.ObjectS
 }
 
 type WebHookServiceCheckMimeObjectStorageResponse struct {
-	state               protoimpl.MessageState `protogen:"open.v1"`
-	DetectedContentType string                 `protobuf:"bytes,2,opt,name=detected_content_type,json=detectedContentType,proto3" json:"detected_content_type,omitempty"`
-	Message             string                 `protobuf:"bytes,3,opt,name=message,proto3" json:"message,omitempty"`
-	Valid               bool                   `protobuf:"varint,1,opt,name=valid,proto3" json:"valid,omitempty"`
-	unknownFields       protoimpl.UnknownFields
-	sizeCache           protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *WebHookServiceCheckMimeObjectStorageResponse) Reset() {
@@ -122,27 +119,6 @@ func (*WebHookServiceCheckMimeObjectStorageResponse) Descriptor() ([]byte, []int
 	return file_object_v1_object_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *WebHookServiceCheckMimeObjectStorageResponse) GetDetectedContentType() string {
-	if x != nil {
-		return x.DetectedContentType
-	}
-	return ""
-}
-
-func (x *WebHookServiceCheckMimeObjectStorageResponse) GetMessage() string {
-	if x != nil {
-		return x.Message
-	}
-	return ""
-}
-
-func (x *WebHookServiceCheckMimeObjectStorageResponse) GetValid() bool {
-	if x != nil {
-		return x.Valid
-	}
-	return false
-}
-
 var File_object_v1_object_proto protoreflect.FileDescriptor
 
 const file_object_v1_object_proto_rawDesc = "" +
@@ -152,13 +128,10 @@ const file_object_v1_object_proto_rawDesc = "" +
 	"\n" +
 	"event_name\x18\x01 \x01(\tR\tEventName\x12\x10\n" +
 	"\x03key\x18\x02 \x01(\tR\x03Key\x12>\n" +
-	"\arecords\x18\x03 \x03(\v2$.hooks.common.v1.ObjectStorageRecordR\aRecords\"\x92\x01\n" +
-	",WebHookServiceCheckMimeObjectStorageResponse\x122\n" +
-	"\x15detected_content_type\x18\x02 \x01(\tR\x13detectedContentType\x12\x18\n" +
-	"\amessage\x18\x03 \x01(\tR\amessage\x12\x14\n" +
-	"\x05valid\x18\x01 \x01(\bR\x05valid2\xc2\x01\n" +
-	"\x0eWebHookService\x12\xaf\x01\n" +
-	"\x16CheckMimeObjectStorage\x126.object.v1.WebHookServiceCheckMimeObjectStorageRequest\x1a7.object.v1.WebHookServiceCheckMimeObjectStorageResponse\"$\x82\xd3\xe4\x93\x02\x1e:\x01*\"\x19/api/v1/webhook/checkmimeBFZDgithub.com/DENFNC/Zappy/catalog_service/proto/gen/go/object/v1;hooksb\x06proto3"
+	"\arecords\x18\x03 \x03(\v2$.hooks.common.v1.ObjectStorageRecordR\aRecords\".\n" +
+	",WebHookServiceCheckMimeObjectStorageResponse2\xd2\x01\n" +
+	"\x0eWebHookService\x12\xbf\x01\n" +
+	"\x16CheckMimeObjectStorage\x126.object.v1.WebHookServiceCheckMimeObjectStorageRequest\x1a7.object.v1.WebHookServiceCheckMimeObjectStorageResponse\"4\x82\xd3\xe4\x93\x02.:\x01*\")/api/v1/catalog_service/webhook/checkmimeBFZDgithub.com/DENFNC/Zappy/catalog_service/proto/gen/go/object/v1;hooksb\x06proto3"
 
 var (
 	file_object_v1_object_proto_rawDescOnce sync.Once

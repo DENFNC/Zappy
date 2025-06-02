@@ -44,6 +44,50 @@ func (store *Store) Set(
 	).Err()
 }
 
+func (store *Store) HSet(
+	ctx context.Context,
+	key string,
+	values map[string]any,
+) error {
+	_, err := store.TxPipelined(ctx, func(p redis.Pipeliner) error {
+		p.HSet(ctx, key, values)
+		p.Expire(ctx, key, time.Hour)
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (store *Store) HGet(
+	ctx context.Context,
+	key, field string,
+) (string, error) {
+	cmd := store.Client.HGet(
+		ctx,
+		key, field,
+	)
+	if cmd.Err() != nil {
+		return "", cmd.Err()
+	}
+
+	return cmd.Result()
+}
+
+func (store *Store) HGetAll(
+	ctx context.Context,
+	key string,
+) (map[string]string, error) {
+	cmd := store.Client.HGetAll(ctx, key)
+	if cmd.Err() != nil {
+		return nil, cmd.Err()
+	}
+
+	return cmd.Result()
+}
+
 func (store *Store) SetEx(
 	ctx context.Context,
 	key string,

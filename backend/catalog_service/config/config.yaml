@@ -1,11 +1,35 @@
 app_log: "dev"
+
 paginate_secret: "ap-P@M?8pW3vZHcCc%*chQv35s5D5R9p"
+
 grpc:
   port: 50051
   timeout: 5s
+  reflection: true
+
 http:
   port: 8081
+
 postgres:
   url: "postgres://postgres:admin@localhost:5432/catalog_service?sslmode=disable"
+
 object_store:
-  aws_bucket_image: "test-bucket"
+  object_origin: "http://localhost:9000"
+  aws_bucket_image: "image-bucket"
+  aws_staging_bucket: "staging-bucket"
+  buckets:
+    image-bucket:
+      alias: "aws_image_bucket"
+      name: "/image-bucket"
+      path: "/catalog_service/images/"
+      mime_types:
+        - "image/jpeg"
+        - "image/png"
+
+    staging-bucket:
+      alias: "aws_staging_bucket"
+      name: "/staging-bucket"
+      path: ""
+      mime_types:
+        - "image/jpeg"
+        - "image/png"

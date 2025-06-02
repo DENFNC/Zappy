@@ -16,7 +16,7 @@ services:
       - MINIO_NOTIFY_WEBHOOK_ENABLE_MIME=on
       # TODO: host.docker.internal для тестов 
       # TODO: Потом сменить на DNS
-      - MINIO_NOTIFY_WEBHOOK_ENDPOINT_MIME=http://host.docker.internal:8081/api/v1/webhook/checkmime
+      - MINIO_NOTIFY_WEBHOOK_ENDPOINT_MIME=http://host.docker.internal:8081/api/v1/catalog_service/webhook/checkmime
       # - MINIO_NOTIFY_WEBHOOK_AUTH_TOKEN_MIME=123                    # TODO: Токен аутентификации для Webhook-сервиса (Bearer)
       # - MINIO_NOTIFY_WEBHOOK_QUEUE_DIR_MIME=path                    # TODO: Путь к директории для хранения неотправленных сообщений
       # - MINIO_NOTIFY_WEBHOOK_CLIENT_CERT_MIME=path/to               # TODO: Путь к клиентскому сертификату для mTLS-аутентификации

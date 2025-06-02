@@ -7,9 +7,11 @@
 package v1
 
 import (
+	v1 "github.com/DENFNC/Zappy/catalog_service/proto/gen/go/common/v1"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	fieldmaskpb "google.golang.org/protobuf/types/known/fieldmaskpb"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
@@ -23,14 +25,67 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type Status int32
+
+const (
+	Status_STATUS_UNSPECIFIED Status = 0
+	Status_STATUS_PENDING     Status = 1
+	Status_STATUS_SUCCESS     Status = 2
+	Status_STATUS_FAILED      Status = 3
+)
+
+// Enum value maps for Status.
+var (
+	Status_name = map[int32]string{
+		0: "STATUS_UNSPECIFIED",
+		1: "STATUS_PENDING",
+		2: "STATUS_SUCCESS",
+		3: "STATUS_FAILED",
+	}
+	Status_value = map[string]int32{
+		"STATUS_UNSPECIFIED": 0,
+		"STATUS_PENDING":     1,
+		"STATUS_SUCCESS":     2,
+		"STATUS_FAILED":      3,
+	}
+)
+
+func (x Status) Enum() *Status {
+	p := new(Status)
+	*p = x
+	return p
+}
+
+func (x Status) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (Status) Descriptor() protoreflect.EnumDescriptor {
+	return file_product_image_v1_product_image_proto_enumTypes[0].Descriptor()
+}
+
+func (Status) Type() protoreflect.EnumType {
+	return &file_product_image_v1_product_image_proto_enumTypes[0]
+}
+
+func (x Status) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use Status.Descriptor instead.
+func (Status) EnumDescriptor() ([]byte, []int) {
+	return file_product_image_v1_product_image_proto_rawDescGZIP(), []int{0}
+}
+
 type ProductImage struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ImageId       string                 `protobuf:"bytes,1,opt,name=image_id,json=imageId,proto3" json:"image_id,omitempty"`
 	ProductId     string                 `protobuf:"bytes,2,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
 	Url           string                 `protobuf:"bytes,3,opt,name=url,proto3" json:"url,omitempty"`
 	Alt           string                 `protobuf:"bytes,4,opt,name=alt,proto3" json:"alt,omitempty"`
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	ObjectKey     string                 `protobuf:"bytes,5,opt,name=object_key,json=objectKey,proto3" json:"object_key,omitempty"`
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -93,6 +148,13 @@ func (x *ProductImage) GetAlt() string {
 	return ""
 }
 
+func (x *ProductImage) GetObjectKey() string {
+	if x != nil {
+		return x.ObjectKey
+	}
+	return ""
+}
+
 func (x *ProductImage) GetCreatedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.CreatedAt
@@ -107,29 +169,30 @@ func (x *ProductImage) GetUpdatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
-type ProductImageServiceUploadFileURLRequest struct {
+type UploadFileURLRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ProductId     string                 `protobuf:"bytes,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
 	Filename      string                 `protobuf:"bytes,2,opt,name=filename,proto3" json:"filename,omitempty"`
 	ContentType   string                 `protobuf:"bytes,3,opt,name=content_type,json=contentType,proto3" json:"content_type,omitempty"`
+	Alt           string                 `protobuf:"bytes,4,opt,name=alt,proto3" json:"alt,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ProductImageServiceUploadFileURLRequest) Reset() {
-	*x = ProductImageServiceUploadFileURLRequest{}
+func (x *UploadFileURLRequest) Reset() {
+	*x = UploadFileURLRequest{}
 	mi := &file_product_image_v1_product_image_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ProductImageServiceUploadFileURLRequest) String() string {
+func (x *UploadFileURLRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ProductImageServiceUploadFileURLRequest) ProtoMessage() {}
+func (*UploadFileURLRequest) ProtoMessage() {}
 
-func (x *ProductImageServiceUploadFileURLRequest) ProtoReflect() protoreflect.Message {
+func (x *UploadFileURLRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_product_image_v1_product_image_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -141,33 +204,40 @@ func (x *ProductImageServiceUploadFileURLRequest) ProtoReflect() protoreflect.Me
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ProductImageServiceUploadFileURLRequest.ProtoReflect.Descriptor instead.
-func (*ProductImageServiceUploadFileURLRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use UploadFileURLRequest.ProtoReflect.Descriptor instead.
+func (*UploadFileURLRequest) Descriptor() ([]byte, []int) {
 	return file_product_image_v1_product_image_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *ProductImageServiceUploadFileURLRequest) GetProductId() string {
+func (x *UploadFileURLRequest) GetProductId() string {
 	if x != nil {
 		return x.ProductId
 	}
 	return ""
 }
 
-func (x *ProductImageServiceUploadFileURLRequest) GetFilename() string {
+func (x *UploadFileURLRequest) GetFilename() string {
 	if x != nil {
 		return x.Filename
 	}
 	return ""
 }
 
-func (x *ProductImageServiceUploadFileURLRequest) GetContentType() string {
+func (x *UploadFileURLRequest) GetContentType() string {
 	if x != nil {
 		return x.ContentType
 	}
 	return ""
 }
 
-type ProductImageServiceUploadFileURLResponse struct {
+func (x *UploadFileURLRequest) GetAlt() string {
+	if x != nil {
+		return x.Alt
+	}
+	return ""
+}
+
+type UploadFileURLResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	UploadUrl     string                 `protobuf:"bytes,1,opt,name=upload_url,json=uploadUrl,proto3" json:"upload_url,omitempty"`
 	ObjectKey     string                 `protobuf:"bytes,2,opt,name=object_key,json=objectKey,proto3" json:"object_key,omitempty"`
@@ -175,20 +245,20 @@ type ProductImageServiceUploadFileURLResponse struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ProductImageServiceUploadFileURLResponse) Reset() {
-	*x = ProductImageServiceUploadFileURLResponse{}
+func (x *UploadFileURLResponse) Reset() {
+	*x = UploadFileURLResponse{}
 	mi := &file_product_image_v1_product_image_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ProductImageServiceUploadFileURLResponse) String() string {
+func (x *UploadFileURLResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ProductImageServiceUploadFileURLResponse) ProtoMessage() {}
+func (*UploadFileURLResponse) ProtoMessage() {}
 
-func (x *ProductImageServiceUploadFileURLResponse) ProtoReflect() protoreflect.Message {
+func (x *UploadFileURLResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_product_image_v1_product_image_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -200,52 +270,558 @@ func (x *ProductImageServiceUploadFileURLResponse) ProtoReflect() protoreflect.M
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ProductImageServiceUploadFileURLResponse.ProtoReflect.Descriptor instead.
-func (*ProductImageServiceUploadFileURLResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use UploadFileURLResponse.ProtoReflect.Descriptor instead.
+func (*UploadFileURLResponse) Descriptor() ([]byte, []int) {
 	return file_product_image_v1_product_image_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *ProductImageServiceUploadFileURLResponse) GetUploadUrl() string {
+func (x *UploadFileURLResponse) GetUploadUrl() string {
 	if x != nil {
 		return x.UploadUrl
 	}
 	return ""
 }
 
-func (x *ProductImageServiceUploadFileURLResponse) GetObjectKey() string {
+func (x *UploadFileURLResponse) GetObjectKey() string {
 	if x != nil {
 		return x.ObjectKey
 	}
 	return ""
 }
 
+type UploadStatusRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Key           string                 `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UploadStatusRequest) Reset() {
+	*x = UploadStatusRequest{}
+	mi := &file_product_image_v1_product_image_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UploadStatusRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UploadStatusRequest) ProtoMessage() {}
+
+func (x *UploadStatusRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_product_image_v1_product_image_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UploadStatusRequest.ProtoReflect.Descriptor instead.
+func (*UploadStatusRequest) Descriptor() ([]byte, []int) {
+	return file_product_image_v1_product_image_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *UploadStatusRequest) GetKey() string {
+	if x != nil {
+		return x.Key
+	}
+	return ""
+}
+
+type UploadStatusResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Key           string                 `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
+	Status        Status                 `protobuf:"varint,2,opt,name=status,proto3,enum=product_image.v1.Status" json:"status,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UploadStatusResponse) Reset() {
+	*x = UploadStatusResponse{}
+	mi := &file_product_image_v1_product_image_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UploadStatusResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UploadStatusResponse) ProtoMessage() {}
+
+func (x *UploadStatusResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_product_image_v1_product_image_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UploadStatusResponse.ProtoReflect.Descriptor instead.
+func (*UploadStatusResponse) Descriptor() ([]byte, []int) {
+	return file_product_image_v1_product_image_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *UploadStatusResponse) GetKey() string {
+	if x != nil {
+		return x.Key
+	}
+	return ""
+}
+
+func (x *UploadStatusResponse) GetStatus() Status {
+	if x != nil {
+		return x.Status
+	}
+	return Status_STATUS_UNSPECIFIED
+}
+
+type GetProductImageRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ImageId       string                 `protobuf:"bytes,1,opt,name=image_id,json=imageId,proto3" json:"image_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetProductImageRequest) Reset() {
+	*x = GetProductImageRequest{}
+	mi := &file_product_image_v1_product_image_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetProductImageRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetProductImageRequest) ProtoMessage() {}
+
+func (x *GetProductImageRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_product_image_v1_product_image_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetProductImageRequest.ProtoReflect.Descriptor instead.
+func (*GetProductImageRequest) Descriptor() ([]byte, []int) {
+	return file_product_image_v1_product_image_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *GetProductImageRequest) GetImageId() string {
+	if x != nil {
+		return x.ImageId
+	}
+	return ""
+}
+
+type GetProductImageResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ProductImage  *ProductImage          `protobuf:"bytes,1,opt,name=product_image,json=productImage,proto3" json:"product_image,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetProductImageResponse) Reset() {
+	*x = GetProductImageResponse{}
+	mi := &file_product_image_v1_product_image_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetProductImageResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetProductImageResponse) ProtoMessage() {}
+
+func (x *GetProductImageResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_product_image_v1_product_image_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetProductImageResponse.ProtoReflect.Descriptor instead.
+func (*GetProductImageResponse) Descriptor() ([]byte, []int) {
+	return file_product_image_v1_product_image_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *GetProductImageResponse) GetProductImage() *ProductImage {
+	if x != nil {
+		return x.ProductImage
+	}
+	return nil
+}
+
+type ListProductImagesRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ProductId     string                 `protobuf:"bytes,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
+	Pagination    *v1.PaginationRequest  `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListProductImagesRequest) Reset() {
+	*x = ListProductImagesRequest{}
+	mi := &file_product_image_v1_product_image_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListProductImagesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListProductImagesRequest) ProtoMessage() {}
+
+func (x *ListProductImagesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_product_image_v1_product_image_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListProductImagesRequest.ProtoReflect.Descriptor instead.
+func (*ListProductImagesRequest) Descriptor() ([]byte, []int) {
+	return file_product_image_v1_product_image_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *ListProductImagesRequest) GetProductId() string {
+	if x != nil {
+		return x.ProductId
+	}
+	return ""
+}
+
+func (x *ListProductImagesRequest) GetPagination() *v1.PaginationRequest {
+	if x != nil {
+		return x.Pagination
+	}
+	return nil
+}
+
+type ListProductImagesResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ProductImage  []*ProductImage        `protobuf:"bytes,1,rep,name=product_image,json=productImage,proto3" json:"product_image,omitempty"`
+	Pagination    *v1.PaginationResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListProductImagesResponse) Reset() {
+	*x = ListProductImagesResponse{}
+	mi := &file_product_image_v1_product_image_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListProductImagesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListProductImagesResponse) ProtoMessage() {}
+
+func (x *ListProductImagesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_product_image_v1_product_image_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListProductImagesResponse.ProtoReflect.Descriptor instead.
+func (*ListProductImagesResponse) Descriptor() ([]byte, []int) {
+	return file_product_image_v1_product_image_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *ListProductImagesResponse) GetProductImage() []*ProductImage {
+	if x != nil {
+		return x.ProductImage
+	}
+	return nil
+}
+
+func (x *ListProductImagesResponse) GetPagination() *v1.PaginationResponse {
+	if x != nil {
+		return x.Pagination
+	}
+	return nil
+}
+
+type UpdateProductImageRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ImageId       string                 `protobuf:"bytes,1,opt,name=image_id,json=imageId,proto3" json:"image_id,omitempty"`
+	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,2,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateProductImageRequest) Reset() {
+	*x = UpdateProductImageRequest{}
+	mi := &file_product_image_v1_product_image_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateProductImageRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateProductImageRequest) ProtoMessage() {}
+
+func (x *UpdateProductImageRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_product_image_v1_product_image_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateProductImageRequest.ProtoReflect.Descriptor instead.
+func (*UpdateProductImageRequest) Descriptor() ([]byte, []int) {
+	return file_product_image_v1_product_image_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *UpdateProductImageRequest) GetImageId() string {
+	if x != nil {
+		return x.ImageId
+	}
+	return ""
+}
+
+func (x *UpdateProductImageRequest) GetUpdateMask() *fieldmaskpb.FieldMask {
+	if x != nil {
+		return x.UpdateMask
+	}
+	return nil
+}
+
+type UpdateProductImageResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ProductImage  *ProductImage          `protobuf:"bytes,1,opt,name=product_image,json=productImage,proto3" json:"product_image,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateProductImageResponse) Reset() {
+	*x = UpdateProductImageResponse{}
+	mi := &file_product_image_v1_product_image_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateProductImageResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateProductImageResponse) ProtoMessage() {}
+
+func (x *UpdateProductImageResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_product_image_v1_product_image_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateProductImageResponse.ProtoReflect.Descriptor instead.
+func (*UpdateProductImageResponse) Descriptor() ([]byte, []int) {
+	return file_product_image_v1_product_image_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *UpdateProductImageResponse) GetProductImage() *ProductImage {
+	if x != nil {
+		return x.ProductImage
+	}
+	return nil
+}
+
+type DeleteProductImageRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ImageId       string                 `protobuf:"bytes,1,opt,name=image_id,json=imageId,proto3" json:"image_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteProductImageRequest) Reset() {
+	*x = DeleteProductImageRequest{}
+	mi := &file_product_image_v1_product_image_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteProductImageRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteProductImageRequest) ProtoMessage() {}
+
+func (x *DeleteProductImageRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_product_image_v1_product_image_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteProductImageRequest.ProtoReflect.Descriptor instead.
+func (*DeleteProductImageRequest) Descriptor() ([]byte, []int) {
+	return file_product_image_v1_product_image_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *DeleteProductImageRequest) GetImageId() string {
+	if x != nil {
+		return x.ImageId
+	}
+	return ""
+}
+
+type DeleteProductImageResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteProductImageResponse) Reset() {
+	*x = DeleteProductImageResponse{}
+	mi := &file_product_image_v1_product_image_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteProductImageResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteProductImageResponse) ProtoMessage() {}
+
+func (x *DeleteProductImageResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_product_image_v1_product_image_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteProductImageResponse.ProtoReflect.Descriptor instead.
+func (*DeleteProductImageResponse) Descriptor() ([]byte, []int) {
+	return file_product_image_v1_product_image_proto_rawDescGZIP(), []int{12}
+}
+
 var File_product_image_v1_product_image_proto protoreflect.FileDescriptor
 
 const file_product_image_v1_product_image_proto_rawDesc = "" +
 	"\n" +
-	"$product_image/v1/product_image.proto\x12\x10product_image.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1cgoogle/api/annotations.proto\"\xe2\x01\n" +
+	"$product_image/v1/product_image.proto\x12\x10product_image.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x16common/v1/common.proto\"\x81\x02\n" +
 	"\fProductImage\x12\x19\n" +
 	"\bimage_id\x18\x01 \x01(\tR\aimageId\x12\x1d\n" +
 	"\n" +
 	"product_id\x18\x02 \x01(\tR\tproductId\x12\x10\n" +
 	"\x03url\x18\x03 \x01(\tR\x03url\x12\x10\n" +
-	"\x03alt\x18\x04 \x01(\tR\x03alt\x129\n" +
+	"\x03alt\x18\x04 \x01(\tR\x03alt\x12\x1d\n" +
 	"\n" +
-	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
+	"object_key\x18\x05 \x01(\tR\tobjectKey\x129\n" +
 	"\n" +
-	"updated_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\x87\x01\n" +
-	"'ProductImageServiceUploadFileURLRequest\x12\x1d\n" +
+	"created_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
+	"\n" +
+	"updated_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\x86\x01\n" +
+	"\x14UploadFileURLRequest\x12\x1d\n" +
 	"\n" +
 	"product_id\x18\x01 \x01(\tR\tproductId\x12\x1a\n" +
 	"\bfilename\x18\x02 \x01(\tR\bfilename\x12!\n" +
-	"\fcontent_type\x18\x03 \x01(\tR\vcontentType\"h\n" +
-	"(ProductImageServiceUploadFileURLResponse\x12\x1d\n" +
+	"\fcontent_type\x18\x03 \x01(\tR\vcontentType\x12\x10\n" +
+	"\x03alt\x18\x04 \x01(\tR\x03alt\"U\n" +
+	"\x15UploadFileURLResponse\x12\x1d\n" +
 	"\n" +
 	"upload_url\x18\x01 \x01(\tR\tuploadUrl\x12\x1d\n" +
 	"\n" +
-	"object_key\x18\x02 \x01(\tR\tobjectKey2\xd2\x01\n" +
-	"\x13ProductImageService\x12\xba\x01\n" +
-	"\rUploadFileURL\x129.product_image.v1.ProductImageServiceUploadFileURLRequest\x1a:.product_image.v1.ProductImageServiceUploadFileURLResponse\"2\x82\xd3\xe4\x93\x02,:\x01*\"'/api/v1/catalog_service/uploads:prepareB9Z7github.com/DENFNC/Zappy/catalog_service/proto/gen/v1;v1b\x06proto3"
+	"object_key\x18\x02 \x01(\tR\tobjectKey\"'\n" +
+	"\x13UploadStatusRequest\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\"Z\n" +
+	"\x14UploadStatusResponse\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x120\n" +
+	"\x06status\x18\x02 \x01(\x0e2\x18.product_image.v1.StatusR\x06status\"3\n" +
+	"\x16GetProductImageRequest\x12\x19\n" +
+	"\bimage_id\x18\x01 \x01(\tR\aimageId\"^\n" +
+	"\x17GetProductImageResponse\x12C\n" +
+	"\rproduct_image\x18\x01 \x01(\v2\x1e.product_image.v1.ProductImageR\fproductImage\"w\n" +
+	"\x18ListProductImagesRequest\x12\x1d\n" +
+	"\n" +
+	"product_id\x18\x01 \x01(\tR\tproductId\x12<\n" +
+	"\n" +
+	"pagination\x18\x02 \x01(\v2\x1c.common.v1.PaginationRequestR\n" +
+	"pagination\"\x9f\x01\n" +
+	"\x19ListProductImagesResponse\x12C\n" +
+	"\rproduct_image\x18\x01 \x03(\v2\x1e.product_image.v1.ProductImageR\fproductImage\x12=\n" +
+	"\n" +
+	"pagination\x18\x02 \x01(\v2\x1d.common.v1.PaginationResponseR\n" +
+	"pagination\"s\n" +
+	"\x19UpdateProductImageRequest\x12\x19\n" +
+	"\bimage_id\x18\x01 \x01(\tR\aimageId\x12;\n" +
+	"\vupdate_mask\x18\x02 \x01(\v2\x1a.google.protobuf.FieldMaskR\n" +
+	"updateMask\"a\n" +
+	"\x1aUpdateProductImageResponse\x12C\n" +
+	"\rproduct_image\x18\x01 \x01(\v2\x1e.product_image.v1.ProductImageR\fproductImage\"6\n" +
+	"\x19DeleteProductImageRequest\x12\x19\n" +
+	"\bimage_id\x18\x01 \x01(\tR\aimageId\"\x1c\n" +
+	"\x1aDeleteProductImageResponse*[\n" +
+	"\x06Status\x12\x16\n" +
+	"\x12STATUS_UNSPECIFIED\x10\x00\x12\x12\n" +
+	"\x0eSTATUS_PENDING\x10\x01\x12\x12\n" +
+	"\x0eSTATUS_SUCCESS\x10\x02\x12\x11\n" +
+	"\rSTATUS_FAILED\x10\x032\xe9\a\n" +
+	"\x13ProductImageService\x12\x94\x01\n" +
+	"\rUploadFileURL\x12&.product_image.v1.UploadFileURLRequest\x1a'.product_image.v1.UploadFileURLResponse\"2\x82\xd3\xe4\x93\x02,:\x01*\"'/api/v1/catalog_service/uploads:prepare\x12\x8c\x01\n" +
+	"\fUploadStatus\x12%.product_image.v1.UploadStatusRequest\x1a&.product_image.v1.UploadStatusResponse\"-\x82\xd3\xe4\x93\x02'\x12%/api/v1/catalog_service/upload-status\x12\xa1\x01\n" +
+	"\x0fGetProductImage\x12(.product_image.v1.GetProductImageRequest\x1a).product_image.v1.GetProductImageResponse\"9\x82\xd3\xe4\x93\x023\x121/api/v1/catalog_service/product_images/{image_id}\x12\xaa\x01\n" +
+	"\x11ListProductImages\x12*.product_image.v1.ListProductImagesRequest\x1a+.product_image.v1.ListProductImagesResponse\"<\x82\xd3\xe4\x93\x026\x124/api/v1/catalog_service/products/{product_id}/images\x12\xad\x01\n" +
+	"\x12UpdateProductImage\x12+.product_image.v1.UpdateProductImageRequest\x1a,.product_image.v1.UpdateProductImageResponse\"<\x82\xd3\xe4\x93\x026:\x01*21/api/v1/catalog_service/product_images/{image_id}\x12\xaa\x01\n" +
+	"\x12DeleteProductImage\x12+.product_image.v1.DeleteProductImageRequest\x1a,.product_image.v1.DeleteProductImageResponse\"9\x82\xd3\xe4\x93\x023*1/api/v1/catalog_service/product_images/{image_id}B9Z7github.com/DENFNC/Zappy/catalog_service/proto/gen/v1;v1b\x06proto3"
 
 var (
 	file_product_image_v1_product_image_proto_rawDescOnce sync.Once
@@ -259,23 +835,55 @@ func file_product_image_v1_product_image_proto_rawDescGZIP() []byte {
 	return file_product_image_v1_product_image_proto_rawDescData
 }
 
-var file_product_image_v1_product_image_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_product_image_v1_product_image_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_product_image_v1_product_image_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
 var file_product_image_v1_product_image_proto_goTypes = []any{
-	(*ProductImage)(nil),                             // 0: product_image.v1.ProductImage
-	(*ProductImageServiceUploadFileURLRequest)(nil),  // 1: product_image.v1.ProductImageServiceUploadFileURLRequest
-	(*ProductImageServiceUploadFileURLResponse)(nil), // 2: product_image.v1.ProductImageServiceUploadFileURLResponse
-	(*timestamppb.Timestamp)(nil),                    // 3: google.protobuf.Timestamp
+	(Status)(0),                        // 0: product_image.v1.Status
+	(*ProductImage)(nil),               // 1: product_image.v1.ProductImage
+	(*UploadFileURLRequest)(nil),       // 2: product_image.v1.UploadFileURLRequest
+	(*UploadFileURLResponse)(nil),      // 3: product_image.v1.UploadFileURLResponse
+	(*UploadStatusRequest)(nil),        // 4: product_image.v1.UploadStatusRequest
+	(*UploadStatusResponse)(nil),       // 5: product_image.v1.UploadStatusResponse
+	(*GetProductImageRequest)(nil),     // 6: product_image.v1.GetProductImageRequest
+	(*GetProductImageResponse)(nil),    // 7: product_image.v1.GetProductImageResponse
+	(*ListProductImagesRequest)(nil),   // 8: product_image.v1.ListProductImagesRequest
+	(*ListProductImagesResponse)(nil),  // 9: product_image.v1.ListProductImagesResponse
+	(*UpdateProductImageRequest)(nil),  // 10: product_image.v1.UpdateProductImageRequest
+	(*UpdateProductImageResponse)(nil), // 11: product_image.v1.UpdateProductImageResponse
+	(*DeleteProductImageRequest)(nil),  // 12: product_image.v1.DeleteProductImageRequest
+	(*DeleteProductImageResponse)(nil), // 13: product_image.v1.DeleteProductImageResponse
+	(*timestamppb.Timestamp)(nil),      // 14: google.protobuf.Timestamp
+	(*v1.PaginationRequest)(nil),       // 15: common.v1.PaginationRequest
+	(*v1.PaginationResponse)(nil),      // 16: common.v1.PaginationResponse
+	(*fieldmaskpb.FieldMask)(nil),      // 17: google.protobuf.FieldMask
 }
 var file_product_image_v1_product_image_proto_depIdxs = []int32{
-	3, // 0: product_image.v1.ProductImage.created_at:type_name -> google.protobuf.Timestamp
-	3, // 1: product_image.v1.ProductImage.updated_at:type_name -> google.protobuf.Timestamp
-	1, // 2: product_image.v1.ProductImageService.UploadFileURL:input_type -> product_image.v1.ProductImageServiceUploadFileURLRequest
-	2, // 3: product_image.v1.ProductImageService.UploadFileURL:output_type -> product_image.v1.ProductImageServiceUploadFileURLResponse
-	3, // [3:4] is the sub-list for method output_type
-	2, // [2:3] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	14, // 0: product_image.v1.ProductImage.created_at:type_name -> google.protobuf.Timestamp
+	14, // 1: product_image.v1.ProductImage.updated_at:type_name -> google.protobuf.Timestamp
+	0,  // 2: product_image.v1.UploadStatusResponse.status:type_name -> product_image.v1.Status
+	1,  // 3: product_image.v1.GetProductImageResponse.product_image:type_name -> product_image.v1.ProductImage
+	15, // 4: product_image.v1.ListProductImagesRequest.pagination:type_name -> common.v1.PaginationRequest
+	1,  // 5: product_image.v1.ListProductImagesResponse.product_image:type_name -> product_image.v1.ProductImage
+	16, // 6: product_image.v1.ListProductImagesResponse.pagination:type_name -> common.v1.PaginationResponse
+	17, // 7: product_image.v1.UpdateProductImageRequest.update_mask:type_name -> google.protobuf.FieldMask
+	1,  // 8: product_image.v1.UpdateProductImageResponse.product_image:type_name -> product_image.v1.ProductImage
+	2,  // 9: product_image.v1.ProductImageService.UploadFileURL:input_type -> product_image.v1.UploadFileURLRequest
+	4,  // 10: product_image.v1.ProductImageService.UploadStatus:input_type -> product_image.v1.UploadStatusRequest
+	6,  // 11: product_image.v1.ProductImageService.GetProductImage:input_type -> product_image.v1.GetProductImageRequest
+	8,  // 12: product_image.v1.ProductImageService.ListProductImages:input_type -> product_image.v1.ListProductImagesRequest
+	10, // 13: product_image.v1.ProductImageService.UpdateProductImage:input_type -> product_image.v1.UpdateProductImageRequest
+	12, // 14: product_image.v1.ProductImageService.DeleteProductImage:input_type -> product_image.v1.DeleteProductImageRequest
+	3,  // 15: product_image.v1.ProductImageService.UploadFileURL:output_type -> product_image.v1.UploadFileURLResponse
+	5,  // 16: product_image.v1.ProductImageService.UploadStatus:output_type -> product_image.v1.UploadStatusResponse
+	7,  // 17: product_image.v1.ProductImageService.GetProductImage:output_type -> product_image.v1.GetProductImageResponse
+	9,  // 18: product_image.v1.ProductImageService.ListProductImages:output_type -> product_image.v1.ListProductImagesResponse
+	11, // 19: product_image.v1.ProductImageService.UpdateProductImage:output_type -> product_image.v1.UpdateProductImageResponse
+	13, // 20: product_image.v1.ProductImageService.DeleteProductImage:output_type -> product_image.v1.DeleteProductImageResponse
+	15, // [15:21] is the sub-list for method output_type
+	9,  // [9:15] is the sub-list for method input_type
+	9,  // [9:9] is the sub-list for extension type_name
+	9,  // [9:9] is the sub-list for extension extendee
+	0,  // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_product_image_v1_product_image_proto_init() }
@@ -288,13 +896,14 @@ func file_product_image_v1_product_image_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_product_image_v1_product_image_proto_rawDesc), len(file_product_image_v1_product_image_proto_rawDesc)),
-			NumEnums:      0,
-			NumMessages:   3,
+			NumEnums:      1,
+			NumMessages:   13,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_product_image_v1_product_image_proto_goTypes,
 		DependencyIndexes: file_product_image_v1_product_image_proto_depIdxs,
+		EnumInfos:         file_product_image_v1_product_image_proto_enumTypes,
 		MessageInfos:      file_product_image_v1_product_image_proto_msgTypes,
 	}.Build()
 	File_product_image_v1_product_image_proto = out.File

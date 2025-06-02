@@ -1,22 +1,28 @@
 version: v2
+
 clean: true
+
 plugins:
   - remote: buf.build/protocolbuffers/go:v1.36.6
     out: proto/gen/go
     opt:
       - paths=source_relative
+
   - remote: buf.build/grpc/go:v1.5.1
     out: proto/gen/go
     opt:
       - paths=source_relative
+
   - remote: buf.build/grpc-ecosystem/gateway:v2.26.3
     out: proto/gen/go
     opt:
       - paths=source_relative
+
   - local: protoc-gen-validate
     out: proto/gen/go
     opt:
       - lang=go
       - paths=source_relative
+
 inputs:
   - directory: proto

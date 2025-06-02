@@ -1,15 +1,19 @@
 # For details on buf.yaml configuration, visit https://buf.build/docs/configuration/v2/buf-yaml
 version: v2
+
 modules:
-    - path: proto/grpc
-    - path: proto/hooks
+  - path: proto/grpc
+  - path: proto/hooks
+
 lint:
   use:
     - STANDARD
+
 breaking:
   use:
     - FILE
+
 deps:
-    - buf.build/googleapis/googleapis
-    - buf.build/envoyproxy/protoc-gen-validate
-    - buf.build/grpc-ecosystem/grpc-gateway
+  - buf.build/googleapis/googleapis
+  - buf.build/envoyproxy/protoc-gen-validate
+  - buf.build/grpc-ecosystem/grpc-gateway
