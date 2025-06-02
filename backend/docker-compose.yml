@@ -123,10 +123,10 @@ services:
     environment:
       - APP_LOG=dev
       - PAGINATE_SECRET=ap-P@M?8pW3vZHcCc%*chQv35s5D5R9p
-      - GRPC_PORT=50052
+      - GRPC_URL=0.0.0.0:50050
       - GRPC_TIMEOUT=5s
-      - GRPC_REFLECTION=true
-      - HTTP_PORT=8082
+      - GRPC_REFLECTION=false
+      - HTTP_URL=0.0.0.0:8080
       - POSTGRES_URL=postgres://postgres:admin@postgres:5432/review_service?sslmode=disable
     networks:
       - zappy
@@ -141,10 +141,10 @@ services:
     environment:
       - APP_LOG=dev
       - PAGINATE_SECRET=ap-P@M?8pW3vZHcCc%*chQv35s5D5R9p
-      - GRPC_PORT=50052
+      - GRPC_URL=0.0.0.0:50051
       - GRPC_TIMEOUT=5s
-      - GRPC_REFLECTION=true
-      - HTTP_PORT=8082
+      - GRPC_REFLECTION=false
+      - HTTP_URL=0.0.0.0:8081
       - POSTGRES_URL=postgres://postgres:admin@postgres:5432/user_service?sslmode=disable
     networks:
       - zappy
@@ -160,11 +160,11 @@ services:
       - LOG_TYPE=dev
       - PAGINATE_SECRET=ap-P@M?8pW3vZHcCc%*chQv35s5D5R9p
 
-      - GRPC_PORT=50051
+      - GRPC_URL=0.0.0.0:50052
       - GRPC_TIMEOUT=5s
-      - GRPC_REFLECTION=true
+      - GRPC_REFLECTION=false
 
-      - HTTP_PORT=8081
+      - HTTP_URL=0.0.0.0:8082
 
       - POSTGRES_URL=postgres://postgres:admin@postgres:5432/catalog_service?sslmode=disable
 
@@ -195,17 +195,29 @@ services:
     image: auth-service:1.0.0
     environment:
       - APP_LOG=dev
-      - GRPC_PORT=50050
+
+      - PAGINATE_SECRET=ap-P@M?8pW3vZHcCc%*chQv35s5D5R9p
+
+      - GRPC_URL=0.0.0.0:50053
       - GRPC_TIMEOUT=5s
-      - GRPC_REFLECTION=true
-      - HTTP_PORT=8080
+      - GRPC_REFLECTION=false
+
+      - HTTP_URL=0.0.0.0:8083
+
       - POSTGRES_URL=postgres://postgres:admin@postgres:5432/auth_service?sslmode=disable
-      - REDIS_URL=redis:6379
+
+      - VAULT_ISSUER=auth-service
+      - VAULT_APP_UUID=f7f7db8a-1827-404a-97e8-2c36595a4db4
+      - VAULT_URL=http://vault:8200
+      - VAULT_TOKEN=root
+      - VAULT_EXPIRES=10h
+      - VAULT_KEY_NAME=rsa
     networks:
       - zappy
     depends_on:
       - postgres
       - redis
+      - vault
 
 networks:
   zappy:

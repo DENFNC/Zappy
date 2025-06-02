@@ -20,8 +20,7 @@ func main() {
 
 	application, err := app.New(
 		context.TODO(),
-		log, db,
-		cfg,
+		log, cfg,
 	)
 	if err != nil {
 		log.Error(

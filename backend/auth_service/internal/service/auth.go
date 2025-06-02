@@ -1,4 +1,4 @@
-package authservice
+package service
 
 import (
 	"context"
@@ -46,23 +46,23 @@ type UserRepository interface {
 }
 
 type Auth struct {
-	log      *slog.Logger
-	repo     UserRepository
-	vault    vaulttoken.VaultKMS
-	tokenCfg config.ConfigVault
+	log   *slog.Logger
+	repo  UserRepository
+	vault vaulttoken.VaultKMS
+	cfg   *config.Config
 }
 
 func NewAuth(
 	log *slog.Logger,
 	repo UserRepository,
 	vault vaulttoken.VaultKMS,
-	tokenCfg config.ConfigVault,
+	cfg *config.Config,
 ) *Auth {
 	return &Auth{
-		log:      log,
-		repo:     repo,
-		vault:    vault,
-		tokenCfg: tokenCfg,
+		log:   log,
+		repo:  repo,
+		vault: vault,
+		cfg:   cfg,
 	}
 }
 
@@ -210,9 +210,9 @@ func (a *Auth) ListUsers(
 func (a *Auth) generateToken() (string, error) {
 	token, err := vaulttoken.Generate(
 		a.vault,
-		a.tokenCfg.Issuer,
-		a.tokenCfg.KeyName,
-		a.tokenCfg.Expires,
+		a.cfg.Vault.Issuer,
+		a.cfg.Vault.KeyName,
+		a.cfg.Vault.Expires,
 	)
 	if err != nil {
 		return "", errpkg.New(

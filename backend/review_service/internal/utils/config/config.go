@@ -18,17 +18,19 @@ type Config struct {
 }
 
 type gRPCConfig struct {
-	Port       int           `yaml:"port" env:"GRPC_PORT" env-default:"50052"`
+	URL        string        `yaml:"url" env:"GRPC_URL" env-default:"50052"`
 	Timeout    time.Duration `yaml:"timeout" env:"GRPC_TIMEOUT" env-default:"10s"`
 	Reflection bool          `yaml:"reflection" env:"GRPC_REFLECTION" env-default:"true"`
 }
 
 type httpConfig struct {
-	Port int `yaml:"port" env:"HTTP_PORT" env-default:"8081"`
+	URL string `yaml:"url" env:"HTTP_URL" env-default:"8081"`
 }
 
 type ConfigPSQL struct {
-	URL string `yaml:"url" env:"POSTGRES_URL" env-required:"true"`
+	URL             string        `yaml:"url" env:"POSTGRES_URL" env-required:"true"`
+	MaxRetries      int           `yaml:"max_retries" env:"POSTGRES_MAX_RETRIES" env-default:"3"`
+	RetryIntervalMS time.Duration `yaml:"retry_interval_ms" env:"POSTGRES_RETRY_INTERVAL_MS" env-default:"2000ms"`
 }
 
 func MustLoad(path string) *Config {

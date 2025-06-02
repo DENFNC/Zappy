@@ -1,0 +1,71 @@
+name: Catalog Service CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "catalog_service/**"
+  pull_request:
+    branches: [main]
+    paths:
+      - "catalog_service/**"
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:17.4-alpine3.21
+        env:
+          POSTGRES_PASSWORD: admin
+          PGDATA: /var/lib/postgresql/data/pgdata
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:8.0.0-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      minio:
+        image: minio/minio:RELEASE.2025-04-22T22-12-26Z-cpuv1
+        env:
+          MINIO_ROOT_USER: admin
+          MINIO_ROOT_PASSWORD: adminadmin
+        ports:
+          - 9000:9000
+          - 9010:9010
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.22"
+
+      - name: Install dependencies
+        working-directory: ./catalog_service
+        run: |
+          go mod download
+
+      - name: Run linter
+        working-directory: ./catalog_service
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.57.2
+          golangci-lint run --config .golangci.yml
+
+      - name: Run tests
+        working-directory: ./catalog_service
+        run: go test -v ./...

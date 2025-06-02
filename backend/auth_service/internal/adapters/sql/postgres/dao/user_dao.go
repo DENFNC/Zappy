@@ -25,3 +25,15 @@ type (
 		AssignedAt pgtype.Timestamptz `db:"assigned_at"`
 	}
 )
+
+func (dao *UserDAO) Reset() {
+	*dao = UserDAO{}
+}
+
+func (dao *RoleDAO) Reset() {
+	*dao = RoleDAO{}
+}
+
+func (dao *UserRoleDAO) Reset() {
+	*dao = UserRoleDAO{}
+}

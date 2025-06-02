@@ -40,6 +40,12 @@ type serverAPI struct {
 	svc Auth
 }
 
+func New(svc Auth) *serverAPI {
+	return &serverAPI{
+		svc: svc,
+	}
+}
+
 func (api *serverAPI) GRPCRegister(gRPC *grpc.Server) {
 	v1.RegisterAuthServiceServer(gRPC, api)
 }

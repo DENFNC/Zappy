@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 	"errors"
+	"sync"
 
 	"github.com/DENFNC/Zappy/auth_service/internal/adapters/sql/postgres"
 	"github.com/DENFNC/Zappy/auth_service/internal/adapters/sql/postgres/dao"
@@ -15,6 +16,28 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
+
+// poolDAO хранит уже созданные dao.UserDAO, чтобы не аллоцировать каждый раз
+var poolDAO = sync.Pool{
+	New: func() any {
+		return new(dao.UserDAO)
+	},
+}
+
+// poolModel хранит экземпляры models.User, чтобы переиспользовать
+var poolModel = sync.Pool{
+	New: func() any {
+		return new(models.User)
+	},
+}
+
+// poolSliceUsers даёт готовый срез []*models.User (под initial capacity)
+var poolSliceUsers = sync.Pool{
+	New: func() any {
+		slice := make([]*models.User, 0, 250)
+		return &slice
+	},
+}
 
 type User struct {
 	*postgres.Storage
@@ -41,11 +64,12 @@ func (repo *User) Create(
 	var userID uint64
 	err := repo.Client.AcquireFunc(ctx, func(c *pgxpool.Conn) error {
 		return repo.WithTx(ctx, func(tx pgx.Tx) error {
-			daoUser := dao.UserDAO{
-				Email:    user.Email,
-				Username: user.Username,
-				Password: user.Password,
-			}
+			daoUser := poolDAO.Get().(*dao.UserDAO)
+			daoUser.Reset()
+			daoUser.Email = user.Email
+			daoUser.Username = user.Username
+			daoUser.Password = user.Password
+
 			stmt, args, err := repo.Dialect.Insert("users").Rows(
 				goqu.Record{
 					"email":         daoUser.Email,
@@ -54,13 +78,18 @@ func (repo *User) Create(
 				},
 			).Returning("id").Prepared(true).ToSQL()
 			if err != nil {
+				// Вернём dao в пул, чтобы не терять
+				poolDAO.Put(daoUser)
 				return errpkg.New("CREATE_USER_ERROR", "failed to build SQL query", err)
 			}
 
 			if err := tx.QueryRow(ctx, stmt, args...).Scan(&userID); err != nil {
+				poolDAO.Put(daoUser)
 				return errpkg.New("CREATE_USER_ERROR", "failed to create user", err)
 			}
 
+			// Возвращаем daoUser в пул
+			poolDAO.Put(daoUser)
 			return nil
 		})
 	})
@@ -75,34 +104,38 @@ func (repo *User) GetByID(
 	id string,
 ) (*models.User, error) {
 	stmt, args, err := repo.Dialect.Select(
-		"id",
-		"email",
-		"username",
-		"password_hash",
-		"created_at",
-		"updated_at",
+		"id", "email", "username", "password_hash", "created_at", "updated_at",
 	).From("users").Where(goqu.C("id").Eq(id)).Prepared(true).ToSQL()
 	if err != nil {
 		return nil, errpkg.New("GET_USER_BY_ID_ERROR", "failed to build SQL query", err)
 	}
 
-	var userDAO dao.UserDAO
+	// Берём dao из пула
+	daoUser := poolDAO.Get().(*dao.UserDAO)
+	daoUser.Reset()
+
 	row := repo.Client.QueryRow(ctx, stmt, args...)
-	if err := dbutils.ScanStruct(row, &userDAO); err != nil {
+	if err := dbutils.ScanStruct(row, daoUser); err != nil {
+		poolDAO.Put(daoUser)
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, errpkg.ErrUserNotFound
 		}
 		return nil, errpkg.New("GET_USER_BY_ID_ERROR", "failed to get user by id", err)
 	}
 
-	return &models.User{
-		ID:        uint64(userDAO.ID.Int64),
-		Email:     userDAO.Email,
-		Username:  userDAO.Username,
-		Password:  userDAO.Password,
-		CreatedAt: userDAO.CreatedAt.Time,
-		UpdatedAt: userDAO.UpdatedAt.Time,
-	}, nil
+	// Берём модель из пула
+	modelUser := poolModel.Get().(*models.User)
+	*modelUser = models.User{
+		ID:        uint64(daoUser.ID.Int64),
+		Email:     daoUser.Email,
+		Username:  daoUser.Username,
+		Password:  daoUser.Password,
+		CreatedAt: daoUser.CreatedAt.Time,
+		UpdatedAt: daoUser.UpdatedAt.Time,
+	}
+	// Возвращаем dao обратно в пул
+	poolDAO.Put(daoUser)
+	return modelUser, nil
 }
 
 func (repo *User) GetByAuthIdentifier(
@@ -110,34 +143,44 @@ func (repo *User) GetByAuthIdentifier(
 	identifier string,
 ) (*models.User, error) {
 	stmt, args, err := repo.Dialect.Select(
-		"id",
-		"email",
-		"username",
-		"password_hash",
-		"created_at",
-		"updated_at",
-	).From("users").Where(goqu.Or(goqu.C("username").Eq(identifier), goqu.C("email").Eq(identifier))).Limit(1).Prepared(true).ToSQL()
+		"id", "email", "username", "password_hash", "created_at", "updated_at",
+	).From("users").
+		Where(
+			goqu.Or(
+				goqu.C("username").Eq(identifier),
+				goqu.C("email").Eq(identifier),
+			),
+		).
+		Limit(1).
+		Prepared(true).
+		ToSQL()
 	if err != nil {
 		return nil, errpkg.New("GET_USER_BY_AUTH_ERROR", "failed to build SQL query", err)
 	}
 
-	var userDAO dao.UserDAO
+	daoUser := poolDAO.Get().(*dao.UserDAO)
+	daoUser.Reset()
+
 	row := repo.Client.QueryRow(ctx, stmt, args...)
-	if err := dbutils.ScanStruct(row, &userDAO); err != nil {
+	if err := dbutils.ScanStruct(row, daoUser); err != nil {
+		poolDAO.Put(daoUser)
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, errpkg.ErrUserNotFound
 		}
 		return nil, errpkg.New("GET_USER_BY_AUTH_ERROR", "failed to scan user", err)
 	}
 
-	return &models.User{
-		ID:        uint64(userDAO.ID.Int64),
-		Email:     userDAO.Email,
-		Username:  userDAO.Username,
-		Password:  userDAO.Password,
-		CreatedAt: userDAO.CreatedAt.Time,
-		UpdatedAt: userDAO.UpdatedAt.Time,
-	}, nil
+	modelUser := poolModel.Get().(*models.User)
+	*modelUser = models.User{
+		ID:        uint64(daoUser.ID.Int64),
+		Email:     daoUser.Email,
+		Username:  daoUser.Username,
+		Password:  daoUser.Password,
+		CreatedAt: daoUser.CreatedAt.Time,
+		UpdatedAt: daoUser.UpdatedAt.Time,
+	}
+	poolDAO.Put(daoUser)
+	return modelUser, nil
 }
 
 func (repo *User) Update(
@@ -148,12 +191,14 @@ func (repo *User) Update(
 
 	err := repo.Client.AcquireFunc(ctx, func(c *pgxpool.Conn) error {
 		return repo.WithTx(ctx, func(tx pgx.Tx) error {
-			daoUser := dao.UserDAO{
+			daoUser := poolDAO.Get().(*dao.UserDAO)
+			*daoUser = dao.UserDAO{
 				ID:       pgtype.Int8{Int64: int64(user.ID), Valid: true},
 				Email:    user.Email,
 				Username: user.Username,
 				Password: user.Password,
 			}
+
 			stmt, args, err := repo.Dialect.Update("users").Set(
 				goqu.Record{
 					"email":         daoUser.Email,
@@ -163,25 +208,28 @@ func (repo *User) Update(
 				},
 			).Where(goqu.C("id").Eq(daoUser.ID)).Prepared(true).ToSQL()
 			if err != nil {
+				poolDAO.Put(daoUser)
 				return errpkg.New("UPDATE_USER_ERROR", "failed to build SQL query", err)
 			}
 
 			cmd, err := tx.Exec(ctx, stmt, args...)
 			if err != nil {
+				poolDAO.Put(daoUser)
 				return errpkg.New("UPDATE_USER_ERROR", "failed to update user", err)
 			}
 
 			if cmd.RowsAffected() == 0 {
+				poolDAO.Put(daoUser)
 				return errpkg.ErrUserNotFound
 			}
 
+			poolDAO.Put(daoUser)
 			return nil
 		})
 	})
 	if err != nil {
 		return errpkg.New("UPDATE_USER_TX_ERROR", "transaction error while updating user", err)
 	}
-
 	return nil
 }
 
@@ -193,12 +241,7 @@ func (repo *User) List(
 	const op = "repository.User.List"
 
 	sqlStr := goqu.Select(
-		"id",
-		"email",
-		"username",
-		"password_hash",
-		"created_at",
-		"updated_at",
+		"id", "email", "username", "password_hash", "created_at", "updated_at",
 	).From("users")
 
 	paginator := repo.paginator.WithDataset(sqlStr).
@@ -209,19 +252,34 @@ func (repo *User) List(
 		return nil, "", errpkg.New("LIST_USERS_ERROR", "failed to paginate users", err)
 	}
 
-	users := make([]*models.User, len(itemsDAO))
-	for i, itemDAO := range itemsDAO {
-		users[i] = &models.User{
-			ID:        uint64(itemDAO.ID.Int64),
-			Email:     itemDAO.Email,
-			Username:  itemDAO.Username,
-			Password:  itemDAO.Password,
-			CreatedAt: itemDAO.CreatedAt.Time,
-			UpdatedAt: itemDAO.UpdatedAt.Time,
+	// Берём срез из пула
+	ptr := poolSliceUsers.Get().(*[]*models.User)
+	users := *ptr
+	// Очищаем содержимое, но оставляем capacity
+	users = users[:0]
+
+	for i := range itemsDAO {
+		daoUser := &itemsDAO[i]
+		modelUser := poolModel.Get().(*models.User)
+		*modelUser = models.User{
+			ID:        uint64(daoUser.ID.Int64),
+			Email:     daoUser.Email,
+			Username:  daoUser.Username,
+			Password:  daoUser.Password,
+			CreatedAt: daoUser.CreatedAt.Time,
+			UpdatedAt: daoUser.UpdatedAt.Time,
 		}
+		users = append(users, modelUser)
 	}
 
-	return users, nextToken, nil
+	// Скопируем users (к примеру, чтобы не держать pointer на слайс из пула)
+	// Затем вернём слайс в пул
+	result := make([]*models.User, len(users))
+	copy(result, users)
+	*ptr = users
+	poolSliceUsers.Put(ptr)
+
+	return result, nextToken, nil
 }
 
 func (repo *User) Delete(
@@ -232,7 +290,10 @@ func (repo *User) Delete(
 
 	err := repo.Client.AcquireFunc(ctx, func(c *pgxpool.Conn) error {
 		return repo.WithTx(ctx, func(tx pgx.Tx) error {
-			stmt, args, err := repo.Dialect.Delete("users").Where(goqu.C("id").Eq(id)).Prepared(true).ToSQL()
+			stmt, args, err := repo.Dialect.Delete("users").
+				Where(goqu.C("id").Eq(id)).
+				Prepared(true).
+				ToSQL()
 			if err != nil {
 				return errpkg.New("DELETE_USER_ERROR", "failed to build SQL query", err)
 			}
@@ -252,6 +313,5 @@ func (repo *User) Delete(
 	if err != nil {
 		return errpkg.New("DELETE_USER_TX_ERROR", "transaction error while deleting user", err)
 	}
-
 	return nil
 }

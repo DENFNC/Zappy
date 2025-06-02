@@ -6,7 +6,7 @@ WORKDIR /app
 COPY go.mod go.sum ./
 RUN apk add --no-cache git \
     && go mod download \
-    && go install -tags 'pgx5' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+    && go install -tags 'postgres,pgx' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 
 COPY . .
 RUN go build -ldflags="-s -w" -o auth_service ./cmd/app
@@ -18,6 +18,7 @@ WORKDIR /app
 
 COPY --from=builder /app/migrations /migrations
 COPY --from=builder /go/bin/migrate /usr/local/bin/migrate
+
 COPY --from=builder /app/auth_service /usr/local/bin/auth_service
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh

@@ -49,11 +49,11 @@ func TestMustLoad_Success(t *testing.T) {
 log_type: prod
 paginate_secret: topsecret
 grpc:
-  port: 50051
+  URL: 127.0.0.1:50051
   timeout: 2s
   reflection: true
 http:
-  port: 8080
+  port: 127.0.0.1:8080
 postgres:
   url: postgres://user:pass@localhost:5432/db
 object_store:
@@ -72,10 +72,10 @@ object_store:
 
 	assert.Equal(t, "prod", cfg.LogType)
 	assert.Equal(t, "topsecret", cfg.PaginateSecret)
-	assert.Equal(t, 50051, cfg.GRPC.Port)
+	assert.Equal(t, 50051, cfg.GRPC.URL)
 	assert.Equal(t, 2*time.Second, cfg.GRPC.Timeout)
 	assert.True(t, cfg.GRPC.Reflection)
-	assert.Equal(t, 8080, cfg.HTTP.Port)
+	assert.Equal(t, 8080, cfg.HTTP.URL)
 	assert.Equal(t, "postgres://user:pass@localhost:5432/db", cfg.Postgres.URL)
 
 	assert.Equal(t, "http://localhost:9000", cfg.ObjectStore.ObjectOrigin)

@@ -7,7 +7,6 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/DENFNC/Zappy/auth_service/internal/adapters/sql/postgres"
 	"github.com/DENFNC/Zappy/auth_service/internal/app"
 	"github.com/DENFNC/Zappy/auth_service/internal/pkg/logger"
 	"github.com/DENFNC/Zappy/auth_service/internal/utils/config"
@@ -20,32 +19,7 @@ func main() {
 		panic(err)
 	}
 
-	logger.Info("Starting application...")
-
-	db, err := postgres.NewStorage(cfg.Postgres.URL, logger)
-	if err != nil {
-		logger.Error(
-			"Error connection to database",
-			slog.String("error", err.Error()),
-		)
-		os.Exit(1)
-	}
-
-	// Инициализация сервиса.
-	// vault, err := vault.New(cfg.Vault.URL, cfg.Vault.Token)
-	// if err != nil {
-	// 	logger.Error(
-	// 		"Error connecting to vault",
-	// 		slog.String("error", err.Error()),
-	// 	)
-	// 	os.Exit(1)
-	// }
-	application, err := app.New(context.Background(),
-		logger,
-		db,
-		// vault,
-		cfg,
-	)
+	application, err := app.New(context.Background(), logger, cfg)
 	if err != nil {
 		logger.Error(
 			"Error starting application",
@@ -55,6 +29,7 @@ func main() {
 	}
 
 	go application.App.MustRunGrpc()
+	go application.App.MustRunHttp()
 
 	sigCh := make(chan os.Signal, 1)
 	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)

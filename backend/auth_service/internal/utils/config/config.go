@@ -10,35 +10,39 @@ import (
 )
 
 type Config struct {
-	AppLog         string `yaml:"app_log" env-default:"dev"`
-	PaginateSecret string `yaml:"paginate_secret" env-required:"true"`
-	GRPC           ConfigGRPC
-	HTTP           ConfigHTTP
-	Postgres       ConfigPSQL
+	AppLog         string     `yaml:"app_log" env:"APP_LOG" env-default:"dev"`
+	PaginateSecret string     `yaml:"paginate_secret" env:"PAGINATE_SECRET" env-required:"true"`
+	GRPC           ConfigGRPC `yaml:"grpc" env-required:"true"`
+	HTTP           ConfigHTTP `yaml:"http" env-required:"true"`
+	Postgres       ConfigPSQL `yaml:"postgres" env-required:"true"`
 	Vault          ConfigVault
 }
 
 type ConfigGRPC struct {
-	Port       int           `yaml:"port" env-required:"true"`
-	Timeout    time.Duration `yaml:"timeout" env-default:"5s"`
-	Reflection bool          `yaml:"reflection" env-default:"true"`
+	URL        string        `yaml:"url" env:"GRPC_URL" env-required:"true"`
+	Timeout    time.Duration `yaml:"timeout" env:"GRPC_TIMEOUT" env-default:"5s"`
+	Reflection bool          `yaml:"reflection" env:"GRPC_REFLECTION" env-default:"true"`
 }
 
 type ConfigHTTP struct {
-	Port int `yaml:"port" env-required:"true"`
+	URL string `yaml:"url" env:"HTTP_URL" env-required:"true"`
 }
 
 type ConfigPSQL struct {
-	URL string `yaml:"url" env-required:"true"`
+	URL             string        `yaml:"url" env:"POSTGRES_URL" env-required:"true"`
+	MaxRetries      int           `yaml:"max_retries" env:"POSTGRES_MAX_RETRIES" env-required:"true"`
+	RetryIntervalMS time.Duration `yaml:"retry_interval_ms" env:"POSTGRES_RETRY_INTERVAL_MS" env-required:"true"`
 }
 
 type ConfigVault struct {
-	URL     string        `yaml:"url" env-required:"true"`
-	Token   string        `yaml:"token" env-required:"true"`
-	AppUUID string        `yaml:"app_uuid" env-required:"true"`
-	Issuer  string        `yaml:"issuer" env-required:"true"`
-	Expires time.Duration `yaml:"expires" env-default:"5m"`
-	KeyName string        `yaml:"key_name" env-required:"true"`
+	URL             string        `yaml:"url" env:"VAULT_URL" env-required:"true"`
+	Token           string        `yaml:"token" env:"VAULT_TOKEN" env-required:"true"`
+	AppUUID         string        `yaml:"app_uuid" env:"VAULT_APP_UUID" env-required:"true"`
+	Issuer          string        `yaml:"issuer" env:"VAULT_ISSUER" env-required:"true"`
+	Expires         time.Duration `yaml:"expires" env:"VAULT_EXPIRES" env-default:"5m"`
+	KeyName         string        `yaml:"key_name" env:"VAULT_KEY_NAME" env-required:"true"`
+	MaxRetries      int           `yaml:"max_retries" env:"VAULT_MAX_RETRIES" env-required:"true"`
+	RetryIntervalMS time.Duration `yaml:"retry_interval_ms" env:"VAULT_RETRY_INTERVAL_MS" env-required:"true"`
 }
 
 func MustLoad(path string) *Config {

@@ -19,17 +19,19 @@ type (
 	}
 
 	gRPConfig struct {
-		Port       int           `yaml:"port" env:"GRPC_PORT" env-required:"true"`
+		URL        string        `yaml:"url" env:"GRPC_URL" env-required:"true"`
 		Timeout    time.Duration `yaml:"timeout" env:"GRPC_TIMEOUT"`
 		Reflection bool          `yaml:"reflection" env:"GRPC_REFLECTION"`
 	}
 
 	httpConfig struct {
-		Port int `yaml:"port" env:"HTTP_PORT" env-default:"8081"`
+		URL string `yaml:"url" env:"HTTP_URL" env-default:"8081"`
 	}
 
 	configPSQL struct {
-		URL string `yaml:"url" env:"POSTGRES_URL" env-required:"true"`
+		URL             string        `yaml:"url" env:"POSTGRES_URL" env-required:"true"`
+		MaxRetries      int           `yaml:"max_retries" env:"POSTGRES_MAX_RETRIES" env-required:"true"`
+		RetryIntervalMS time.Duration `yaml:"retry_interval_ms" env:"POSTGRES_RETRY_INTERVAL_MS" env-required:"true"`
 	}
 )
 

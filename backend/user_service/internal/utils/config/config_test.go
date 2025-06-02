@@ -15,11 +15,11 @@ func TestConfig_LoadFromFile(t *testing.T) {
 log_type: test
 paginate_secret: test_secret
 grpc:
-  port: 50051
+  port: 127.0.0.1:50051
   timeout: 5s
   reflection: true
 http:
-  port: 8081
+  port: 127.0.0.1:8081
 postgres:
   url: postgres://test:test@localhost:5432/test
 `
@@ -36,10 +36,10 @@ postgres:
 
 	assert.Equal(t, "test", cfg.LogType)
 	assert.Equal(t, "test_secret", cfg.PaginateSecret)
-	assert.Equal(t, 50051, cfg.GRPC.Port)
+	assert.Equal(t, 50051, cfg.GRPC.URL)
 	assert.Equal(t, 5*time.Second, cfg.GRPC.Timeout)
 	assert.True(t, cfg.GRPC.Reflection)
-	assert.Equal(t, 8081, cfg.HTTP.Port)
+	assert.Equal(t, 8081, cfg.HTTP.URL)
 	assert.Equal(t, "postgres://test:test@localhost:5432/test", cfg.Postgres.URL)
 }
 
@@ -58,10 +58,10 @@ func TestConfig_LoadFromEnv(t *testing.T) {
 
 	assert.Equal(t, "env_test", cfg.LogType)
 	assert.Equal(t, "env_secret", cfg.PaginateSecret)
-	assert.Equal(t, 50052, cfg.GRPC.Port)
+	assert.Equal(t, 50052, cfg.GRPC.URL)
 	assert.Equal(t, 10*time.Second, cfg.GRPC.Timeout)
 	assert.False(t, cfg.GRPC.Reflection)
-	assert.Equal(t, 8082, cfg.HTTP.Port)
+	assert.Equal(t, 8082, cfg.HTTP.URL)
 	assert.Equal(t, "postgres://env:env@localhost:5432/env", cfg.Postgres.URL)
 }
 
@@ -74,7 +74,7 @@ func TestConfig_DefaultValues(t *testing.T) {
 	cfg := MustLoad("")
 
 	assert.Equal(t, "dev", cfg.LogType)
-	assert.Equal(t, 8081, cfg.HTTP.Port)
+	assert.Equal(t, 8081, cfg.HTTP.URL)
 }
 
 func TestConfig_RequiredFields(t *testing.T) {

@@ -25,16 +25,16 @@ type App struct {
 	log        *slog.Logger
 	gRPCServer *grpc.Server
 	httpServer *runtime.ServeMux
-	grpcPort   int
-	httpPort   int
+	grpcURL    string
+	httpURL    string
 }
 
 func New(
 	ctx context.Context,
 	log *slog.Logger,
 	reflect bool,
-	grpcPort int,
-	httpPort int,
+	grpcURL string,
+	httpURL string,
 	services ...ServiceRegistrar,
 ) *App {
 	const op = "grpcapp.New"
@@ -67,8 +67,8 @@ func New(
 		log:        log,
 		gRPCServer: grpcServer,
 		httpServer: mux,
-		grpcPort:   grpcPort,
-		httpPort:   httpPort,
+		grpcURL:    grpcURL,
+		httpURL:    httpURL,
 	}
 }
 
@@ -113,10 +113,10 @@ func (a *App) httpStart() error {
 	log := a.log.With("op", op)
 	log.Info(
 		"Starting HTTP server",
-		"addr", fmt.Sprintf(":%d", a.httpPort),
+		slog.String("addr", a.httpURL),
 	)
 
-	if err := http.ListenAndServe(fmt.Sprintf("127.0.0.1:%d", a.httpPort), a.httpServer); err != nil {
+	if err := http.ListenAndServe(a.httpURL, a.httpServer); err != nil {
 		return err
 	}
 
@@ -126,7 +126,7 @@ func (a *App) httpStart() error {
 func (a *App) gRPCstart() error {
 	const op = "grpcapp.App.gRPCstart"
 
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", a.grpcPort))
+	lis, err := net.Listen("tcp", a.grpcURL)
 	if err != nil {
 		return fmt.Errorf("failed to listen: %w", err)
 	}

@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package health.v1;
+
+import "google/protobuf/empty.proto";
+import "google/api/annotations.proto";
+
+option go_package = "github.com/DENFNC/Zappy/auth_service/proto/gen/go/health/v1;health";
+
+service HealthService {
+    rpc Check(google.protobuf.Empty) returns (HealthResponse) {
+        option (google.api.http) = {
+            get: "api/v1/health"
+        };
+    }
+}
+
+message HealthResponse {
+    string status = 1;
+}
